@@ -1,0 +1,222 @@
+{% extends "admin/base_site.html" %}
+{% load static table_tags %}
+{% block extrahead %}
+{{block.super}}
+
+<link rel="stylesheet" type="text/css" href="{% static "qpm_static_content/css/jquery.dataTables.css" %}">
+<script type="text/javascript" src="{% static 'qpm_static_content/js/jquery.dataTables.min.js' %}"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css" />
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.6.3/jquery-ui-timepicker-addon.min.css" />
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.6.3/jquery-ui-timepicker-addon.min.js"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<style type="text/css">
+	#qpsubmissionsdownloadtable_filter input { width: 347px }
+	#id_date  {margin-left: 9px;width: 168px;height: 36px;position: relative; z-index: 1000; }
+	.sorting {text-transform: none;}
+	.sorting_disabled {text-transform: none;background-color: white;}
+	.placeholdercls::placeholder {color: dimgray; font-weight: 500; opacity: 1}
+	#qpsubmissionsdownloadtable { border-spacing: 0;border-collapse: collapse;}
+	label {color: rgb(64,64,64); font-weight: normal !important;}
+
+
+	.no-close .ui-dialog-titlebar-close {display: none }
+</style>
+
+{% endblock %}
+
+
+{% block content %}
+
+<!-- img/icon_calendar.gif -->
+
+  <script>
+  $( function() {
+		$( "#id_date" ).datetimepicker({
+
+		    dateFormat: 'yy-mm-dd',
+			showOn: "button",
+			buttonImage: "{% static 'qpm_static_content/img/img-calendar-lg.gif' %}",
+			buttonImageOnly: true,
+			buttonText: "Select date"
+
+			});
+		$("#id_date").attr("autocomplete", "off");
+
+		$('#id_date').click(function(){
+		    $('#id_date').datepicker('show');
+		});
+		$('#id_date').attr("placeholder", "Choose Date Time Cut-off");
+		$("#id_date").addClass('placeholdercls')
+
+		// to send searched result to ajax
+		$('#qpsubmissionsdownloadtable').on('search.dt', function() {
+		    var value = $('.dataTables_filter input').val();
+		    $("#search_for_ajax").val(value);
+
+		});
+
+		$('input[type="checkbox"][name="chckbox1"]').change(function() {
+			if($("#chckbox1").prop('checked') == true){
+
+			    $("#chckbox2").prop("checked",false);
+			}
+		});
+
+		$('input[type="checkbox"][name="chckbox2"]').change(function() {
+			if($("#chckbox2").prop('checked') == true){
+
+			    $("#chckbox1").prop("checked",false);
+			}
+		}); 
+
+
+		$("#submit_button").click(function(){
+			var refreshIntervalId = setInterval(function(){
+			$('#status_pop1').dialog({
+				autoopen: false,
+				modal: true,
+				width: 500,
+				dialogClass: 'no-close' ,
+			})
+
+			$.ajax({
+				type: 'get',
+				url: "{% url 'administrator:multi_download_ajax_view' %}",
+				data:{job: $('#celery_job').val(),
+				search:$('#search_for_ajax').val(),
+				doc_uuid: $("#doc_uuid").val(),
+				program_type : $('#id_program_type').val(),
+				semester_name : $('#id_semester_name').val(),
+				batch_name : $('#id_batch_name').val(),
+				faculty_id : $('#id_faculty_id').val(),
+				exam_type_name : $('#id_exam_type_name').val(),
+				exam_slot : $('#id_exam_slot').val(),
+				date : $('#id_date').val(),
+				checkbox1 : $("#chckbox1").prop('checked'),
+				checkbox2 : $("#chckbox2").prop('checked'),
+				},
+				success: function(response){
+				console.log(response)
+
+				if (response['Job_created']==true){
+					$("#celery_job").val(response['job_id']);
+					$("#doc_uuid").val(response['doc_uuid']);
+					document.getElementById('status_pop1').innerHTML = "Process started for downloading files. Please do not refresh the page.";
+				}else if (response['no_files']==0){
+					clearInterval(refreshIntervalId);
+					$('#status_pop1').dialog('close')
+				}
+
+				if (response['status']=='SUCCESS'){
+					clearInterval(refreshIntervalId);
+					doc_uuid =$('#doc_uuid').val()
+					$("#doc_uuid").val('');
+					$("#celery_job").val('');
+					window.location.href="{% url 'administrator:multi-doc-download-view' %}"+"?doc_uuid="+doc_uuid;
+
+					$('#status_pop1').dialog('close')
+
+					return false;
+				}else if(response['status']=='FAILURE' && response['exception_error_msg']!='None') {
+					document.getElementById('status_pop1').innerHTML = "Please check the below error message occured while downloading.<br><br>"+response['exception_error_msg'] ;
+
+				}
+
+				},
+			});
+			}, 1000 );
+
+		});
+
+});
+
+
+
+
+</script>
+  </script>
+
+<div class="container-fluid">
+	<center>
+		<h3>View / Download Submitted Question Papers</h3>
+	</center>
+	<br>
+	<form method="get">
+		<div class="row">
+			<div class="col-md-2">
+				{{ form.program_type }}
+				{{ form.program_type.errors }}
+			</div>
+			<div class="col-md-2">
+				{{ form.semester_name }}
+				{{ form.semester_name.errors }}
+			</div>
+			<div class="col-md-2">
+				{{ form.batch_name }}
+				{{ form.batch_name.errors }}
+			</div>
+			<div class="col-md-2">
+				{{ form.faculty_id }}
+				{{ form.faculty_id.errors }}
+			</div>
+			<div class="col-md-2">
+				{{ form.exam_type_name }}
+				{{ form.exam_type_name.errors }}
+			</div>
+			<div class="col-md-2">
+				{{ form.exam_slot }}
+				{{ form.exam_slot.errors }}
+			</div>
+
+		</div>
+		<div class="spacer10"></div>
+		<br>
+
+		<div class="row">
+			<div class="col-md-5">
+				{{form.date}}&nbsp;Choose the time stamp after which QP &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;submission details need to be seen.
+			</div>
+			<div class="col-md-4">
+				<input type="submit" value="Apply Filter" class="btn btn-primary btn-sm" id="filter_btn_id" name='filter-qp1' style="margin-left: 45px;width: 121px;">
+			</div>
+		</div>
+		<div>
+			{% render_table table %}
+		</div>
+		<br>
+
+	<p><b>Please note this grid shows only the SUBMITTED QUESTION PAPERS THAT HAVE BEEN ACCEPED Rejected or missing submissions won't be shown here.</b></p>
+	<p><b>File names for QP downloaded will have the format - &lt;SEMESTER NAME&gt;_&lt;BATCH NAME&gt;_&lt;COURSE_CODE&gt;_&lt;COURSE_NAME&gt;_&lt;EXAM_TYPE&gt;_&lt;EXAM_SLOT_NAME&gt;.</b></p>
+	<div>
+		<input type="checkbox" id="chckbox1" name="chckbox1" value="chckbox1" style="height: 22px;width: 23px;">
+		<label> <b>Override Faculty QP File with Instruction Cell File</b></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<input type="checkbox" id="chckbox2" name="chckbox2" value="chckbox2" style="height: 22px;width: 23px;">
+		<label> <b>Download both Faculty and Instruction Cell File
+		</b></label>
+	</div>
+	<br>
+	<p><b>If BOTH checkboxes are unchecked then the file uploaded by the faculty will download. If the faculty has not uploaded any file, no download will happen.</b></p>
+
+	<br>
+	 <input type="hidden" id="celery_job" name="celery_job" value="">
+	 <input type="hidden" id="doc_uuid" name="doc_uuid" value="">
+	 <input type="hidden" id="search_for_ajax" name="search_for_ajax" value="">
+	<center>
+      <input id="submit_button"  name='file_download' class="btn btn-primary btn-sm col-md-offset-4 col-md-4"  type="button" value="Download QP Exam Files">
+  </center>
+
+</form>
+
+
+
+</div>
+<p id="status_pop1" style="font-size:17px;font-weight: bold;"></p>
+{% endblock %}

@@ -1,0 +1,125 @@
+{% extends "admin/base_site.html" %}
+{% load static table_tags %}
+{% block extrahead %}
+{{block.super}}
+
+<link rel="stylesheet" type="text/css" href="{% static "qpm_static_content/css/jquery.dataTables.css" %}">
+<script type="text/javascript" src="{% static 'qpm_static_content/js/jquery.dataTables.min.js' %}"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css" />
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.6.3/jquery-ui-timepicker-addon.min.css" />
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.6.3/jquery-ui-timepicker-addon.min.js"></script>
+<style type="text/css">
+	#submissionstatustable_filter input { width: 347px }
+	.sorting {text-transform: none;}
+	.sorting_disabled {text-transform: none;background-color: white;}
+	#submissionstatustable {border-spacing: 0;border-collapse: collapse;}
+
+</style>
+
+{% endblock %}
+
+
+{% block content %}
+
+<script type="text/javascript">
+    $(document).ready(function(){
+
+		$("#dialog-confirm-send-email").hide()
+
+		$("#report_async_id_button").click(function(){ 
+
+			$( "#dialog-confirm-send-email" ).dialog({
+				resizable: false,
+				height: "auto",
+				width: 400,
+				modal: true,
+				buttons: {
+					"YES": function() {
+					  $( this ).dialog( "open" );
+					  $('#report_async_id').val("async_email");
+					  $("#sendemailasyncform").submit(); 
+					  $( this ).dialog( "close" );
+
+				},
+					NO: function() {
+					  $( this ).dialog( "close" );
+					}
+				}
+			});
+
+
+
+		});
+	});
+
+	</script>
+
+<div class="container-fluid">
+	<center>
+		<h3>View QP Submission Status. Send Reminder Emails, Accept Reject Submissions</h3>
+	</center>
+	<br>
+	<form method="get" id="sendemailasyncform">
+		<div class="row">
+			<div class="col-md-2">
+				{{ form.program_type }}
+				{{ form.program_type.errors }}
+			</div>
+			<div class="col-md-2">
+				{{ form.semester_name }}
+				{{ form.semester_name.errors }}
+			</div>
+			<div class="col-md-2">
+				{{ form.batch_name }}
+				{{ form.batch_name.errors }}
+			</div>
+			<div class="col-md-2">
+				{{ form.faculty_id }}
+				{{ form.faculty_id.errors }}
+			</div>
+			<div class="col-md-2">
+				{{ form.exam_type_name }}
+				{{ form.exam_type_name.errors }}
+			</div>
+			<div class="col-md-2">
+				{{ form.exam_slot }}
+				{{ form.exam_slot.errors }}
+			</div>
+		</div>
+		<br>
+		<input type="hidden" id="custId" name="qp_queryparams" value="{{ query_params }}">
+		<div class="row">
+			<div class="col-md-5">
+				<input type="submit" value="Apply Filter to View Submitted and Unsubmitted QPs" class="btn btn-primary btn-sm" id="filter_btn_id" name='filter-qp1' style="margin-left: 165px;">
+			</div>
+			<div class="col-md-6">
+				<input type="submit" value="Apply Filter to View Missing or Rejected Submissions" class="btn btn-primary btn-sm" id="filter_btn_id" name='filter-qp2' style="margin-left: 124px;">
+			</div>
+		</div>
+		<br>
+
+		<div>
+			{% render_table table %}
+		</div>
+		<div class="row">
+			<div class="col-md-6">
+				<input type = "button" value="Send Reminder emails to Faculty with Pending Submissions" class="btn btn-primary btn-sm" id='report_async_id_button' name="report_async_button" style="margin-left: 156px;">
+			</div>
+			<div class="col-md-6">
+				<input type = "submit" value = "Download CSV File" class="btn btn-primary btn-sm"
+				name="report_csv" style="width: 273px;margin-left: 74px;">
+			</div>
+		</div>
+		<input type="hidden" id="report_async_id" name="report_async" value="">
+	</form>
+</div>
+<div id="dialog-confirm-send-email">
+  <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>This will trigger an email to all the faculty who haven’t submitted their QPs yet. Are you sure you want to proceed?</p>
+</div>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends "user/base.html" %}
+{% load static table_tags %}
+
+{%block titleofcontent %} 
+View Question Paper Submission Status
+{% endblock titleofcontent %}
+
+{% block content %}
+
+<style type="text/css">
+table.table tr th{background-color:white !important; font-color:black !important;}
+</style>
+<br>
+<br>
+		<div style="padding-right: 60px;padding-left: 60px;" >
+			{% render_table table %}
+		</div>
+<br><br>
+
+
+
+{% endblock content %}

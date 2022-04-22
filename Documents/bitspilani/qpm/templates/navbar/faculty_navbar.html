@@ -1,0 +1,9 @@
+{% load static %}
+
+<ul class="nav navbar-nav">
+    <li><a href="{% url 'faculty:index' %}">Upload Question Paper</a></li>
+    <li><a href="{% url 'faculty:qp_submission_status' %}">View QP Submission Status</a></li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+    <li class="nav-item"><a class="nav-link" href="{% url 'shibboleth:wilp-logout' %}">Logout</a></li>
+</ul>

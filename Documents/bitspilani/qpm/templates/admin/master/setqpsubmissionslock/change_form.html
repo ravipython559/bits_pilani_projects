@@ -1,0 +1,119 @@
+{% extends "admin/change_form.html" %}
+{% load static %}
+
+{% block extrahead %}
+{{ block.super }}
+{{form}}
+<script type="text/javascript">
+	$(document).ready(function(){
+		var id_lock_flag = $("#id_lock_flag");
+		var id_lock_all_submissions_flag = $("#id_lock_all_submissions_flag");
+		var id_semester = $("#id_semester").val();
+		var id_batch = $("#id_batch").val();
+		var id_exam_type = $("#id_exam_type").val();
+		if(id_lock_flag.get(0).checked)
+			{
+				$.get( "{% url 'master:ajax:setqpsubmissionslockcheck' %}" ,
+				{ 'lock_flag': id_lock_flag.get(0).checked , 'id_semester': id_semester, 'id_batch': id_batch, 'id_exam_type': id_exam_type}).done(function( data ){
+					$('select[name=semester]').empty();
+					$.each(data['semesters'],function(i,value){
+              			$('select[name=semester]').append($('<option>',{value: value.id, text: value.semester_name}));
+					})
+					$('select[name=batch]').empty();
+					$.each(data['batches'],function(i,value){
+						$('select[name=batch]').append($('<option>',{value: value.id, text: value.batch_name}));
+
+					})
+					$('select[name=exam_type]').empty();
+					$.each(data['exam_types'],function(i,value){
+						$('select[name=exam_type]').append($('<option>',{value: value.id, text: value.exam_type}));
+
+					})
+					id_lock_all_submissions_flag.get(0).checked = false
+
+				})
+			}
+
+		if(id_lock_all_submissions_flag.get(0).checked){
+					$.get( "{% url 'master:ajax:setqpsubmissionslockcheck' %}" ,
+						{ 'lock_all_submissions_flag': id_lock_all_submissions_flag.get(0).checked }).done(function( data ){
+							$('select[name=semester]').empty();
+							$.each(data['semesters'],function(i,value){
+		              			$('select[name=semester]').append($('<option>',{value: value.id, text: value.semester_name}));
+							})
+							$('select[name=batch]').empty();
+							$.each(data['batches'],function(i,value){
+								$('select[name=batch]').append($('<option>',{value: value.id, text: value.batch_name}));
+
+							})
+							$('select[name=exam_type]').empty();
+							$.each(data['exam_types'],function(i,value){
+								$('select[name=exam_type]').append($('<option>',{value: value.id, text: value.exam_type}));
+
+							})
+							id_lock_flag.get(0).checked = false
+
+					})
+
+			}
+		id_lock_flag.change(function(){
+			if(id_lock_flag.get(0).checked)
+			{
+				$.get( "{% url 'master:ajax:setqpsubmissionslockcheck' %}" ,
+				{ 'lock_flag': id_lock_flag.get(0).checked }).done(function( data ){
+					$('select[name=semester]').empty();
+					$('select[name=semester]').append($('<option>',{value: '',text: '---------'}));
+					$.each(data['semesters'],function(i,value){
+              			$('select[name=semester]').append($('<option>',{value: value.id, text: value.semester_name}));
+					})
+					$('select[name=batch]').empty();
+					$('select[name=batch]').append($('<option>',{value: '',text: '---------'}));
+					$.each(data['batches'],function(i,value){
+						$('select[name=batch]').append($('<option>',{value: value.id, text: value.batch_name}));
+
+					})
+					$('select[name=exam_type]').empty();
+					$('select[name=exam_type]').append($('<option>',{value: '',text: '---------'}));
+					$.each(data['exam_types'],function(i,value){
+						$('select[name=exam_type]').append($('<option>',{value: value.id, text: value.exam_type}));
+
+					})
+					id_lock_all_submissions_flag.get(0).checked = false
+
+				})
+			}
+		})
+
+		id_lock_all_submissions_flag.change(function(){
+
+				if(id_lock_all_submissions_flag.get(0).checked){
+					$.get( "{% url 'master:ajax:setqpsubmissionslockcheck' %}" ,
+						{ 'lock_all_submissions_flag': id_lock_all_submissions_flag.get(0).checked }).done(function( data ){
+							$('select[name=semester]').empty();
+							$('select[name=semester]').append($('<option>',{value: '',text: '---------'}));
+							$.each(data['semesters'],function(i,value){
+		              			$('select[name=semester]').append($('<option>',{value: value.id, text: value.semester_name}));
+							})
+							$('select[name=batch]').empty();
+							$('select[name=batch]').append($('<option>',{value: '',text: '---------'}));
+							$.each(data['batches'],function(i,value){
+								$('select[name=batch]').append($('<option>',{value: value.id, text: value.batch_name}));
+
+							})
+							$('select[name=exam_type]').empty();
+							$('select[name=exam_type]').append($('<option>',{value: '',text: '---------'}));
+							$.each(data['exam_types'],function(i,value){
+								$('select[name=exam_type]').append($('<option>',{value: value.id, text: value.exam_type}));
+
+							})
+							id_lock_flag.get(0).checked = false
+
+					})
+
+			}
+
+		})
+
+	});
+</script>
+{% endblock %}

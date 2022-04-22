@@ -1,0 +1,400 @@
+{% extends "user/base.html" %}
+{% load tz %}
+{% load static %}
+
+{%block titleofcontent %} 
+<b>View / Upload Exam Paper File</b>
+{% endblock titleofcontent %}
+
+{% block content %}
+<script type="text/javascript">
+$(document).ready(function(){
+      $("#id_qp_path").hide();
+      $("#id_previous_file").hide();
+      $("#qp_alternate_path").hide();
+      $("#mes_qp_alternate_path").hide();
+      $("#id_submitted_by_faculty").hide();
+      semester = $('#id_semester').val()
+      batch  = $('#id_batch').val()
+      course = $('#id_course_code').val()
+      examtype = $('#id_exam_type').val()
+
+    function showing_errors(data) {
+
+            var previous_uploaded_data = JSON.parse(data["alredy_entry_present"]);
+            $("#readonly_program_examslot").html('<b>Program : </b>'+data['program']+'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'+'<b>Exam Slot : </b>'+data['slot_name']);
+            $('#id_exam_slot').val(data['exam_slot_id']);
+            $("#file_upload_button").prop("disabled",false);
+           if (data['lock_all_submissions_flag']){
+                  $("#id_lock_all_submissions_flag").show();
+                  $("#file_upload_button").prop("disabled",true);
+                  $("#id_lock_all_submissions_flag").html("The system is not open for QP Submission");
+           }
+
+           else if (data['check_for_program_qp_submissions_locks']) {
+
+                  $("#check_for_program_qp_submissions_locks").show();
+                  $("#file_upload_button").prop("disabled",true);
+                  $("#check_for_program_qp_submissions_locks").html("QP Submission or Update for the semester, batch and exam chosen is disabled. Please contact the Instruction cell or the Program coordinator");
+                      if (previous_uploaded_data.qp_alternate_path){
+                        $("#mes_qp_alternate_path").show();
+                        $("#qp_alternate_path").attr("href", previous_uploaded_data.qp_alternate_path)
+                        $("#qp_alternate_path").text(previous_uploaded_data.qp_alternate_path_name);
+                        $("#qp_alternate_path").show();  
+                      }else{
+                        $("#mes_qp_alternate_path").hide();
+                        $("#qp_alternate_path").hide(); 
+                      }
+
+                    if (data['submitted_by_faculty']){
+                      $("#id_submitted_by_faculty").text('Last Submission of QP done by - '+data['submitted_by_faculty']);
+                      $("#id_submitted_by_faculty").show();
+                    }else{
+                      $("#id_submitted_by_faculty").hide();
+                    }
+
+                if (previous_uploaded_data.qp_path){
+                      $("#id_previous_file").attr("href", previous_uploaded_data.qp_path)
+                      $("#id_previous_file").text(previous_uploaded_data.qp_path_name);
+                      $("#id_previous_file").show();  
+ 
+                }else{
+                      $("#id_previous_file").hide(); 
+                      // $("#id_submitted_by_faculty").hide();  
+                }
+                if (previous_uploaded_data.last_downloaded){
+
+                   $("#id_last_downloaded").show();
+                    $("#id_last_downloaded").html("The QP was downloaded and shared for exams on : "+'<b>'+previous_uploaded_data.last_downloaded+'</b>');
+                }else{
+                      $("#id_last_downloaded").hide();
+                }
+                if (previous_uploaded_data.last_submitted_datetime){
+                  $("#id_last_submitted_datetime").show();
+                  $("#id_last_submitted_datetime").html("The QP was last uploaded / updated on : "+'<b>'+previous_uploaded_data.last_submitted_datetime+'</b>');
+                }else{
+                      $("#id_last_submitted_datetime").hide();
+                }
+          }
+
+          else{
+                       $("#id_lock_all_submissions_flag").hide();
+                       $("#check_for_program_qp_submissions_locks").hide();
+                      if (data['submission_locked_flag']){
+                        $("#id_submission_locked_flag").show();
+                        $("#file_upload_button").prop("disabled",true);
+                        $("#id_submission_locked_flag").html("Submission of QP for the course chosen is locked. Please contact the Instruction Cell or the Program Coordinator");
+                      }else{
+                        $("#id_submission_locked_flag").hide();
+                      }
+                            if (previous_uploaded_data.qp_alternate_path){
+                              $("#mes_qp_alternate_path").show();
+                              $("#qp_alternate_path").attr("href", previous_uploaded_data.qp_alternate_path)
+                              $("#qp_alternate_path").text(previous_uploaded_data.qp_alternate_path_name);
+                              $("#qp_alternate_path").show();  
+                            }else{
+                              $("#mes_qp_alternate_path").hide();
+                              $("#qp_alternate_path").hide(); 
+                            }
+
+                            if (data['submitted_by_faculty']){
+                              $("#id_submitted_by_faculty").text('Last Submission of QP done by - '+data['submitted_by_faculty']);
+                              $("#id_submitted_by_faculty").show();
+                            }else{
+                              $("#id_submitted_by_faculty").hide();
+                            }
+
+                      if (previous_uploaded_data.qp_path){
+                            $("#id_previous_file").attr("href", previous_uploaded_data.qp_path)
+                            $("#id_previous_file").text(previous_uploaded_data.qp_path_name);
+                            $("#id_previous_file").show();
+                      }else{
+                           $("#id_previous_file").hide();
+                           // $("#id_submitted_by_faculty").hide();  
+                      }
+                      if (previous_uploaded_data.last_downloaded){
+
+                         $("#id_last_downloaded").show();
+                          $("#id_last_downloaded").html("The QP was downloaded and shared for exams on : "+'<b>'+previous_uploaded_data.last_downloaded+'</b>');
+                      }else{
+                            $("#id_last_downloaded").hide();
+                      }
+                      if (previous_uploaded_data.last_submitted_datetime){
+                        $("#id_last_submitted_datetime").show();
+                        $("#id_last_submitted_datetime").html("The QP was last uploaded / updated on : "+'<b>'+previous_uploaded_data.last_submitted_datetime+'</b>');
+                      }else{
+                            $("#id_last_submitted_datetime").hide();
+                      }
+            }
+            return true;
+      }
+      
+      $('select[name=semester]').change(function(){
+          $.getJSON( "{% url 'faculty:semester_drop_down' %}", 
+            { 
+              semester : $('#id_semester').val(),
+              // batch : $('#id_batch').val(),
+            } ).done(function( data ) {
+             $("#id_course_code").prop("disabled", false);
+
+                var batch_fetched_data = JSON.parse(data['batch']);
+                $('select[name=batch]').empty();
+                $('select[name=batch]').append($('<option>',{value: '',text: 'Choose Batch'}));
+                $.each(batch_fetched_data,function(i,value){
+
+                  $('select[name=batch]').append($('<option>',{value: value.id, text: value.batch_name}));
+                });
+
+
+              var course_fetched_data = JSON.parse(data['course_form']);
+              $('select[name=course_code]').empty();
+              $('select[name=course_code]').append($('<option>',{value: '',text: 'Choose Course'}));
+              $.each(course_fetched_data,function(i,value){
+                $('select[name=course_code]').append($('<option>',{value: value.course_code, text: value.course_code_name}));
+              });
+              
+              var examtype_fetched_data = JSON.parse(data['exam_type_form']);
+              $('select[name=exam_type]').empty();
+              $('select[name=exam_type]').append($('<option>',{value: '',text: 'Choose Exam Type'}));
+              $.each(examtype_fetched_data,function(i,value){
+                $('select[name=exam_type]').append($('<option>',{value: value.id, text: value.exam_type}));
+              });
+
+
+            });
+      });
+
+
+      $('select[name=batch]').change(function(){
+          $.getJSON( "{% url 'faculty:batch_drop_down' %}", 
+            { 
+              semester : $('#id_semester').val(),
+              batch : $('#id_batch').val(),
+            } ).done(function( data ) {
+             $("#id_course_code").prop("disabled", false);
+
+              var course_fetched_data = JSON.parse(data['course_form']);
+              $('select[name=course_code]').empty();
+              $('select[name=course_code]').append($('<option>',{value: '',text: 'Choose Course'}));
+              $.each(course_fetched_data,function(i,value){
+                $('select[name=course_code]').append($('<option>',{value: value.course_code, text: value.course_code_name}));
+              });
+            });
+      });
+
+
+      $('select[name=course_code]').change(function(){
+          $.getJSON( "{% url 'faculty:course_drop_down' %}", 
+            { 
+              semester : $('#id_semester').val(),
+              batch : $('#id_batch').val(),
+              course : $('#id_course_code').val()
+            } ).done(function( data ) {
+             $("#id_exam_type").prop("disabled", false);
+
+              var examtype_fetched_data = JSON.parse(data['exam_type_form']);
+              $('select[name=exam_type]').empty();
+              $('select[name=exam_type]').append($('<option>',{value: '',text: 'Choose Exam Type'}));
+              $.each(examtype_fetched_data,function(i,value){
+                $('select[name=exam_type]').append($('<option>',{value: value.id, text: value.exam_type}));
+              });
+            });
+      });
+
+
+
+      $('#id_exam_type').on('change', function() {
+        semester = $('#id_semester').val()
+        batch  = $('#id_batch').val()
+        course = $('#id_course_code').val()
+        examtype = $('#id_exam_type').val()
+
+          $.getJSON( "{% url 'faculty:get-program-slot' %}", 
+            { 
+              semester : semester,
+              batch : batch,
+              course_code : course,
+              examtype : examtype,
+            } ).done(function( data ) {
+              showing_errors(data)
+              $('.errorlist').hide();
+           });
+
+      });
+
+      if ((semester != '') && (batch != '') && (course != '') && (examtype != '')){
+          $.getJSON( "{% url 'faculty:get-program-slot' %}", 
+            { 
+              semester : semester,
+              batch : batch,
+              course_code : course,
+              examtype : examtype,
+            } ).done(function( data ) {
+              showing_errors(data)  
+           });
+     }
+
+     if ((semester == '') && (batch == '') && (course == '') && (examtype == '')){
+         $("#id_course_code").prop("disabled", true);
+         $("#id_exam_type").prop("disabled", true);
+         $("#id_last_submitted_datetime").hide();
+         $("#id_last_downloaded").hide();
+         $("#id_submission_locked_flag").hide()
+         $("#id_lock_all_submissions_flag").hide()
+         $("#check_for_program_qp_submissions_locks").hide()
+         $("#submit_button").prop("disabled",true);
+         $("#file_upload_button").prop("disabled",true);
+     }
+     
+
+    $('#id_qp_path').change(function() {
+      var file = $('#id_qp_path')[0].files[0].name;
+      var myarr = ['pdf', 'doc', 'docx', 'zip',];
+      var ext = file.split('.').pop().toLowerCase();
+      var arraycontainsvalue = (myarr.indexOf(ext) > -1);
+
+      if (arraycontainsvalue){
+        $("#front_end_file_validation").hide();
+        $('.errorlist').hide();
+        $("#submit_button").prop("disabled",false);
+      }else{
+        $("#front_end_file_validation").show();
+        $("#front_end_file_validation").html("Please upload only a MS Word, PDF or a zip file. Other file formats are NOT accepted");
+        $("#submit_button").prop("disabled",true);
+      }
+      $('#user_selected_file').text(file)
+    });
+
+    $("#submit_button").click(function(){  
+
+        if($("#id_qp_guidelines_flag").is(':checked'))
+         $("#check_qp_guidelines_flag").hide();
+        else
+          $("#check_qp_guidelines_flag").show();
+          $("#check_qp_guidelines_flag").html("Please check this box to confirm adherence to QP requirements and guidelines before submitting the QP");
+
+        if($("#id_qp_correct_flag").is(':checked'))
+          $("#check_qp_correct_flag").hide();
+        else
+          $("#check_qp_correct_flag").show();
+          $("#check_qp_correct_flag").html("Please check this box to confirm adherence to QP requirements and guidelines before submitting the QP");
+
+        if($("#id_qp_correct_flag").is(':checked') && $("#id_qp_guidelines_flag").is(':checked'))
+          $("#QP_upload_form").submit(); // Submit the form
+    });
+
+});
+
+</script>
+
+<form id="QP_upload_form" method="post" enctype="multipart/form-data" >
+{% csrf_token %}
+<br>
+<br>
+<div class="container-fluid">
+  <div class="row col-md-offset-1">
+        <h5><b>PLEASE NOTE</b></h5>
+        {{ form.non_field_errors }}
+        {{ form.source.errors }}
+        {{ form.source }}
+        <h5>You will be able to upload question papers for courses that have upcoming exams and the upload window for QP is open.</h5>
+
+        <h5>CHOOSE THE SEMESTER AND  / OR BATCH FOLLOWED THE COURSE AND THE EXAM TYPE.THEN YOU WILL GET THE OPTION TO UPLOAD THE QUESTION PAPER.</h5>
+
+        <h5>FOR CERTIFICATION EXAMS,CHOOSE BATCH AND NOT SEMESTER.</h5>
+
+        <h5>FOR CLUSTER AND SPECIFIC EXAMS CHOICE OF BOTH SEMESTER AND BATCH MAYBE REQUIRED.</h5>
+
+        <h5>FOR NON-SPECIFIC EXAMS CHOOSING OF SEMESTER MAYBE SUFFICIENT</h5>
+
+      <br>
+      <br>
+
+          <div class="col-sm-2">
+              {{ form.semester }}
+              {{ form.semester.errors }}
+          </div>
+          <div class="col-sm-2" >
+              {{ form.batch }}
+              {{ form.batch.errors }}
+          </div>
+          <div class="col-sm-3" >
+              {{ form.course_code }}
+              <p>&nbsp;&nbsp;&nbsp;&nbsp;Choose Semester and / or batch first</p>
+              {{ form.course_code.errors }}
+          </div>
+           <div class="col-sm-3" >
+              {{ form.exam_type }}
+              <p>&nbsp;&nbsp;&nbsp;Choose Semester and / or batch and Course first</p>
+              {{ form.exam_type.errors }}
+
+          </div>
+
+              {{ form.exam_slot.errors }}
+              {{ form.exam_slot }}
+
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row col-md-offset-1">
+        <br>
+        <h5 id="readonly_program_examslot"></h5>
+        <h5>If your Question Paper is a single file, please upload in MS Word or PDF format ONLY.</h5>
+        <h5>If you have multiple files to be uploaded, please create a zip file and upload.</h5>
+        <br>
+        <br>
+        <div class="row">
+          <div class="col-sm-5">
+              {{ form.qp_path }}
+              {{ form.qp_path.errors }}
+              <p id="front_end_file_validation" style="color: #ba2121;padding:10px 10px;"></p>
+              <button id="file_upload_button" type="button" class="btn btn-primary btn-sm col-md-8" style="background: #211d70;" onclick="document.getElementById('id_qp_path').click()"><b>Browse and Choose Exam Paper File</b></button>
+              <br>
+              <br>
+              <h5 id ="id_submitted_by_faculty"></h5>
+              <h5 id="user_selected_file" style="color: green;padding:10px"></h5>
+              <h5><a id ="id_previous_file" href="#" target="_blank"></a></h5>
+
+              <h5 id ="mes_qp_alternate_path"><b>QP File uploaded by Instruction Cell : </b><a id ="qp_alternate_path" href="#" target="_blank"></a></h5>
+
+          </div>
+          <div class="col-sm-5" >
+
+              <h5 id="id_lock_all_submissions_flag" style="color: #ba2121"></h5>
+              <h5 id="check_for_program_qp_submissions_locks" style="color: #ba2121"></h5>
+              <h5 id="id_submission_locked_flag" style="color: #ba2121"></h5>
+              <h5 id="id_last_submitted_datetime"></h5>
+              <h5 id="id_last_downloaded"></h5>
+
+          </div>
+        </div>
+        <br>
+        <p id="checkbox_validation" style="color: #ba2121"></p>
+        <h5>
+                {{ form.qp_guidelines_flag.errors }}
+                <p id="check_qp_guidelines_flag" style="color: #ba2121;"></p>
+                {{ form.qp_guidelines_flag }}
+         I confirm I have ebsured that the choosen question paper file has no errors and is cleared for the exam.</h5>
+        <h5> 
+                {{ form.qp_correct_flag.errors }}
+                <p id="check_qp_correct_flag" style="color: #ba2121;"></p>
+                {{ form.qp_correct_flag }}
+
+        I confirm that the QP conforms to all the QP guidelines set by WILP for the exam concerned.</h5>
+  </div>
+  <br>
+  <br>
+  <center>
+      <input id="submit_button" class="btn btn-primary btn-sm col-md-offset-4 col-md-4"  type="button" value="Submit QP for Conduct of Exam" style="font-weight:bold;">
+  </center>
+
+
+
+</div>
+</form>
+<br>
+<br>
+
+
+{% endblock content %}

@@ -1,0 +1,59 @@
+{% extends "admin/change_form.html" %}
+{% load static %}
+
+{% block extrahead %}
+{{ block.super }}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css" />
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.6.3/jquery-ui-timepicker-addon.min.css" />
+
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.6.3/jquery-ui-timepicker-addon.min.js"></script>
+
+ 
+<script type="text/javascript">
+	$(document).ready(function(){
+
+
+  	 $('#id_slot_start_time').timepicker({
+         
+    });
+  	 $("#id_slot_start_time").attr("autocomplete", "off");
+
+
+		var $slot_date = $('#id_slot_date');
+		var $slot_day = $('#id_slot_day');
+
+		$slot_day.attr("disabled", true);
+		
+		function set_slot_day()
+		{
+			$.get( '{% url 'master:ajax:exam-slot' %}' ,
+				{ 'slot_date': $slot_date.val() }).done(function( data ){
+					if (!data['slot_day_value'])
+					{
+						$slot_day.val("");						
+					}
+					else{
+						$slot_day.val(data['slot_day_value']);
+					}
+				});				
+		}
+
+		$slot_date.focus(function(){ 
+			set_slot_day();
+		});
+
+		$slot_date.change(function(){ 
+			set_slot_day();
+		});
+
+		$("form").submit(function( event ) {
+			$slot_day.attr("disabled", false);
+		});
+	});
+</script>
+{% endblock %}

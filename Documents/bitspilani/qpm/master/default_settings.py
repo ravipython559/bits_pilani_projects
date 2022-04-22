@@ -1,0 +1,2 @@
+SEMESTER_NAME = '-'
+BATCH_NAME = '-'

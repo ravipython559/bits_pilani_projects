@@ -1,0 +1,220 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+{% block extrahead %}
+{{block.super}}
+
+<!--for django admin search icon-->
+<link rel="stylesheet" type="text/css" href="/static/admin/css/forms.css"/>
+<!--django admin pop funtionality-->
+<script type="text/javascript" src="/static/admin/js/jquery.init.js"></script>
+<script type="text/javascript" src="/static/admin/js/admin/RelatedObjectLookups.js"></script>
+<!--jquery cdn-->
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<!--popup-->
+<link rel="stylesheet" href="//code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
+<link rel="stylesheet" href="/resources/demos/style.css">
+
+{% endblock %}
+
+
+{% block content %}
+
+<script type="text/javascript">
+	
+
+
+		function get_course_name(sid){
+    $.ajax({
+        url: "{% url 'administrator:course_ajax' %}",
+        type : "GET",
+        dataType: "json",
+        cache: false,
+        data : {
+            'sid' : sid,
+        },
+        success: function(data) {
+            $('#id_course_code').val(data['course']);
+        },
+    });
+}
+
+
+    function dismissRelatedLookupPopup(win, chosenId) {
+        const name = win.name;
+        const elem = document.getElementById(name);
+        if (elem.classList.contains('vManyToManyRawIdAdminField') && elem.value) {
+            elem.value += ',' + chosenId;
+        } else {
+            document.getElementById(name).value = chosenId;
+        }
+        win.close();
+        get_course_name(chosenId);
+       
+    }
+
+$(document).ready(function(){
+
+	 $('#activedialog').hide();
+	 $('#deactivedialog').hide();
+
+	 if ($("#id_program_type").val()==='CERTIFICATION'){
+	 	$("#id_semester_name").prop('disabled', true);
+	 	$("#id_batch_name").prop('required',true);
+	 }
+
+	{% if modified_entries >= 0  and button == 'inactive_qp_flag_button' %}
+		$( "#deactivedialog" ).dialog({buttons: [
+			{
+			  text: "Ok",
+			  click: function() {
+				$( this ).dialog( "close" );
+			  }
+			}
+			]});
+	{% elif modified_entries >= 0  and button == 'active_qp_flag_button' %}
+		$( "#activedialog" ).dialog({buttons: [
+			{
+			  text: "Ok",
+			  click: function() {
+				$( this ).dialog( "close" );
+			  }
+			}
+			]});
+	{% endif %}
+
+     $("#id_program_type").on('change', function(){
+   
+   if ($(this).val()==='CERTIFICATION'){
+	$("select#id_semester_name")[0].selectedIndex = 0;
+	$("#id_semester_name").prop('disabled', true);
+   	$("#id_batch_name").prop('required',true);
+   }
+   else{
+
+   	$("#id_semester_name").prop('disabled', false);
+   	$("#id_semester_name").prop('required', true);
+   	$("#id_batch_name").prop('required',false);
+   	if ($("#id_batch_name").val()){
+		$("#id_semester_name").prop('required',false);
+	}
+	else{
+		$("#id_semester_name").prop('required',true);
+
+	}
+   	
+   }
+ })
+$("#id_semester_name").on('change', function(){
+	if ($(this).val()){
+		$("#id_batch_name").prop('required',false);
+	}
+	else{
+		$("#id_batch_name").prop('required',true);
+		
+	}
+   
+   })
+$("#id_batch_name").on('change', function(){
+	if ($(this).val()){
+		$("#id_semester_name").prop('required',false);
+	}
+	else{
+		$("#id_semester_name").prop('required',true);
+
+	}
+   
+   })
+
+ });
+
+
+	</script>
+
+<style type="text/css">
+		.ui-dialog-titlebar-close {
+    visibility: hidden;
+}
+</style>
+
+<div class="container-fluid">
+	<center>
+		<h3>Manage QP Submission Lock / Unlock Settings</h3>
+	</center>
+	<br>
+	<form method="post" id="manage_lock_unlock_setting">
+		{% csrf_token %}
+			<div class="row">
+				<div class="col-md-8">
+				<p><b>Note: Choosing Program Type, Semester and / or Batch is mandatory. Other filters are optional</b></p>
+			</div>
+		</div>
+		<div class="row" style="margin-top:30px;">
+
+			<div class="col-md-4">
+                <b>{{ form.program_type.label }}</b>
+				{{ form.program_type }}
+				{{ form.program_type.errors }}
+			</div>
+			<div class="col-md-4">
+                <b>{{ form.semester_name.label }}</b>
+				{{ form.semester_name }}
+				{{ form.semester_name.errors }}
+			</div>
+			<div class="col-md-4">
+                <b>{{ form.batch_name.label }}</b>
+				{{ form.batch_name }}
+				{{ form.batch_name.errors }}
+			</div>
+        </div>
+
+        <div class="row" style="margin-top:50px;">
+			<div class="col-md-4">
+                <b>{{ form.exam_type.label }}</b>
+				{{ form.exam_type }}
+				{{ form.exam_type.errors }}
+			</div>
+			<div class="col-md-4">
+                <b>{{ form.exam_slot.label }}</b>
+				{{ form.exam_slot }}
+				{{ form.exam_slot.errors }}
+			</div>
+			
+		</div>
+
+        <div class="row" style="margin-top:50px;">
+            <div class="col-md-6">
+                <b>{{ form.course_code.label }}&nbsp;&nbsp;&nbsp;</b>
+				{{ form.course_code }}
+				{{ form.course_code.errors }}
+				<a href="/master-admin/master/qpsubmission/?_to_field=id" class="related-lookup" id="lookup_id_course_code"></a>
+			</div>
+        </div>
+
+		<div id="activedialog">
+		  <p>A total of {{ modified_entries }} entries have been activated. If QP is not submitted, the faculty can submit QP for these entries.</p>
+		</div>
+		<div id="deactivedialog">
+		  <p>A total of {{ modified_entries }} entries have been deactivated.</p>
+		</div>
+
+		<div class="row text-center" style="margin-top:50px;">
+			<div class="col-md-6">
+				<input type = "submit" style="width:50%;" value="Inactivate Exam and QP Flags" class="btn btn-primary btn-sm" id='inactive_qp_flag' name="inactive_qp_flag_button">
+                <br>
+                <br>
+                <p style="padding-left:25%; padding-right:25%;text-align: left;">If exam and QP flags are set as INACTIVE, no further changes and viewing of QPs will be allowed for courses satisfying the selected criteria</p>
+			</div>
+			<div class="col-md-6">
+				<input type = "submit" style="width:50%;" value = "Activate Exam and QP Flags" class="btn btn-primary btn-sm"
+				name="active_qp_flag_button">
+                <br>
+                <br>
+                <p style="padding-left:25%; padding-right:25%;text-align: left;">If exam and QP flags are set as ACTIVE, Viewing and Downloads of QPs will be allowed for courses satisfying the selected criteria</p>
+			</div>
+		</div>
+	</form>
+</div>
+
+{% endblock %}

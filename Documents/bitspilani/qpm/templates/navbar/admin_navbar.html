@@ -1,0 +1,16 @@
+{% load i18n static %}
+
+<ul class="nav navbar-nav">
+	<li>
+		<a href="{% url 'administrator:qp_submission_status_view'%}" role="button"aria-expanded="false">View QP Submission Status </a>
+	</li>
+	<li>
+		<a href="{% url 'admin:index' %}"role="button" aria-haspopup="true" aria-expanded="false">Manage Master Data and QP Submission Settings</a>
+	</li>
+	<li><a href="{% url 'administrator:qp_submissions_download_view'%}" role="button" >Download QP </a></li>
+	<li><a href="{% url 'administrator:manage_qp_lock_unlock' %}" role="button" >Set Active / Inactive Flag</a></li>
+</ul>
+
+<ul class="nav navbar-nav navbar-right">
+	<li><a  href="{% url 'shibboleth:wilp-logout' %}">Logout</a></li>
+</ul>

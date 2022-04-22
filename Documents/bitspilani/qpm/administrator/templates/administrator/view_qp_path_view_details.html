@@ -1,0 +1,410 @@
+{% extends "admin/base_site.html" %}
+{% load static table_tags %}
+{% block extrahead %}
+{{block.super}}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css" />
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.6.3/jquery-ui-timepicker-addon.min.css" />
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.6.3/jquery-ui-timepicker-addon.min.js"></script>
+
+
+{% endblock %}
+
+
+{% block content %}
+	<script type="text/javascript">
+       $(document).ready(function(){
+		$("#dialog-confirm-accept").hide();
+
+		$("#dialog-confirm-reject").hide();
+		$("#dialog-confirm-Update-alternate-qp-and-accept").hide();
+		$("#dialog-confirm-Update-alternate-qp-and-reject").hide();
+		$("#dialog-confirm-only-update-file").hide();
+		$("#check_for_comments").hide();
+		$("#id_alternate_qp_path").hide();
+
+		$("#accept_reject_Btn").prop("disabled",true);
+		$('textarea[name="rejection_comments"]').prop('disabled', true);
+
+			$(document).on('click', 'input[type="checkbox"]', function() { 
+			    $('input[type="checkbox"]').not(this).prop('checked', false); 
+
+			});
+
+			if('{{query.qp_path}}'){
+				$("#file_upload_button").prop("disabled",true);
+			}else{
+				$("#file_upload_button").prop("disabled",false);
+			}	
+
+			// onload check accpted or rejected checkbox
+			if($("#id_acceptance_flag").prop('checked') == true){
+					$("#file_upload_button").prop("disabled",false);
+				}
+				else if($("#id_rejected_flag").prop('checked') == true){
+					$("#file_upload_button").prop("disabled",false);
+				}
+
+			// initial values of checkbox check
+			if('{{query.rejected_flag}}' == "True"){
+					$("#accept_reject_Btn").prop("disabled",false);
+					$("#file_upload_button").prop("disabled",false);
+					$('textarea[name="rejection_comments"]').prop('disabled', false);
+			}
+		
+			if('{{query.acceptance_flag}}' == "True"){
+					$("#accept_reject_Btn").prop("disabled",true);
+			}
+
+			if($("#id_rejected_flag").prop('checked') == true){
+				$("#accept_reject_Btn").prop("disabled",false);
+				$('textarea[name="rejection_comments"]').prop('disabled', false);
+
+			}
+			$('input[type="checkbox"]').change(function() {
+				if($("#id_acceptance_flag").prop('checked') == true){
+					$("#file_upload_button").prop("disabled",false);
+				    $("#accept_reject_Btn").prop("disabled",false);
+				    $('textarea[name="rejection_comments"]').prop('disabled', true);
+				}else if($("#id_rejected_flag").prop('checked') == true){
+					$("#file_upload_button").prop("disabled",false);
+					$("#accept_reject_Btn").prop("disabled",false);
+					$('textarea[name="rejection_comments"]').prop('disabled', false);
+
+				}else{
+					$("#accept_reject_Btn").prop("disabled",true);
+					$('textarea[name="rejection_comments"]').prop('disabled', true);
+					$("#file_upload_button").prop("disabled",true);
+				}
+			});
+
+		$("#accept_reject_Btn").click(function(){ 
+		  	$("#check_for_comments").hide();
+		    accept = $('#id_acceptance_flag').prop('checked');
+		    reject = $('#id_rejected_flag').prop('checked');
+		    file = $('#id_alternate_qp_path').get(0).files.length === 0
+		    console.log("QQQ",accept,reject,file)
+
+		    if (($('#check_status_accepted').val()=="True" && $('#id_alternate_qp_path').get(0).files.length != 0)){
+				$( "#dialog-confirm-only-update-file" ).dialog({
+					resizable: false,
+					height: "auto",
+					width: 400,
+					modal: true,
+					buttons: {
+						"YES": function() {
+						  $( this ).dialog( "open" );
+						  $("#QP_accept_reject_form").submit();
+						  $( this ).dialog( "close" );
+
+					},
+						NO: function() {
+						  $( this ).dialog( "close" );
+						}
+					}
+				});
+		    }
+		    else if(reject == true && !$("#id_rejection_comments").val()){
+				$("#check_for_comments").show();
+				$("#check_for_comments").html("Please provide appropriate rejection comments.");
+
+		    }
+		    else if ($('#id_alternate_qp_path').get(0).files.length != 0 && accept == true){
+				$( "#dialog-confirm-Update-alternate-qp-and-accept" ).dialog({
+					resizable: false,
+					height: "auto",
+					width: 400,
+					modal: true,
+					buttons: {
+						"YES": function() {
+						  $( this ).dialog( "open" );
+						  $("#QP_accept_reject_form").submit(); 
+						  $( this ).dialog( "close" );
+
+					},
+						NO: function() {
+						  $( this ).dialog( "close" );
+						}
+					}
+				});
+			}
+			else if ($('#id_alternate_qp_path').get(0).files.length != 0 && reject == true){
+				$( "#dialog-confirm-Update-alternate-qp-and-reject" ).dialog({
+					resizable: false,
+					height: "auto",
+					width: 400,
+					modal: true,
+					buttons: {
+						"YES": function() {
+						  $( this ).dialog( "open" );
+						  $("#QP_accept_reject_form").submit(); 
+						  $( this ).dialog( "close" );
+
+					},
+						NO: function() {
+						  $( this ).dialog( "close" );
+						}
+					}
+				});
+			}
+		    else if (accept){
+				$( "#dialog-confirm-accept" ).dialog({
+					resizable: false,
+					height: "auto",
+					width: 400,
+					modal: true,
+					buttons: {
+						"YES": function() {
+						  $( this ).dialog( "open" );
+						  $("#QP_accept_reject_form").submit(); 
+						  $( this ).dialog( "close" );
+
+					},
+						NO: function() {
+						  $( this ).dialog( "close" );
+						}
+					}
+				});
+			}
+		    else if (reject){
+				$( "#dialog-confirm-reject" ).dialog({
+					resizable: false,
+					height: "auto",
+					width: 400,
+					modal: true,
+					buttons: {
+						"YES": function() {
+						  $( this ).dialog( "open" );
+						  $("#QP_accept_reject_form").submit(); 
+						  $( this ).dialog( "close" );
+
+					},
+						NO: function() {
+						  $( this ).dialog( "close" );
+						}
+					}
+				});
+			}else if($('#id_alternate_qp_path').get(0).files.length != 0){
+
+				$( "#dialog-confirm-only-update-file" ).dialog({
+					resizable: false,
+					height: "auto",
+					width: 400,
+					modal: true,
+					buttons: {
+						"YES": function() {
+						  $( this ).dialog( "open" );
+						  $("#QP_accept_reject_form").submit(); 
+						  $( this ).dialog( "close" );
+
+					},
+						NO: function() {
+						  $( this ).dialog( "close" );
+						}
+					}
+				});
+			}
+		});
+
+
+	    $('#id_alternate_qp_path').change(function() {
+	      var file = $('#id_alternate_qp_path')[0].files[0].name;
+	      var myarr = ['pdf', 'doc', 'docx', 'zip',];
+	      var ext = file.split('.').pop().toLowerCase();
+	      var arraycontainsvalue = (myarr.indexOf(ext) > -1);
+	      if (arraycontainsvalue){
+	        $("#front_end_file_validation").hide();
+	        $('.errorlist').hide();
+	        $("#accept_reject_Btn").prop("disabled",false);
+	      }else{
+	        $("#front_end_file_validation").show();
+	        $("#front_end_file_validation").html("Please upload only a MS Word, PDF or a zip file. Other file formats are NOT accepted");
+	        $("#accept_reject_Btn").prop("disabled",true);
+	      }
+
+		if($('#id_alternate_qp_path')[0].files[0].size >5242880){
+				$("#front_end_file_validation").show();
+				$("#front_end_file_validation").html("Please upload the file size below 5 MB");
+				$("#accept_reject_Btn").prop("disabled",true);
+	      	}
+	      $('#user_selected_file').text(file)
+	    });
+	});
+
+	</script>
+<style>
+h5 {
+  text-transform: none;
+}
+
+</style>
+<br>
+<div class="container-fluid">
+	<center>
+		<h3><b>Review Question Paper Submitted</b></h3>
+	</center>
+	<br>
+	<br>
+		<div class="row">
+		<div class="col-md-3">
+			<h5><b>Semester : </b>{{query.semester}}</h5>
+		</div>
+		<div class="col-md-3">
+			<h5><b>Batch : </b>{{query.batch}}</h5>
+		</div>
+		<div class="col-md-3">
+			<h5><b>Course Code : </b>{{query.course_code}}</h5>
+		</div>
+		<div class="col-md-3">
+			<h5><b>Course Name : </b>{{query.course_name}}</h5>
+		</div>
+
+	</div>
+
+</div>
+<br>
+<br>
+<div class="container-fluid">
+	<br>
+		<div class="row">
+		<div class="col-md-4">
+			<h5><b>Faculty ID : </b>{{query.faculty_email_id}}</h5>
+		</div>
+		<div class="col-md-2">
+		</div>
+		<div class="col-md-4">
+			<h5><b>Faculty Name : </b>{{faculty_name}}</h5>
+		</div>
+
+	</div>
+
+</div>
+<br>
+<br>
+<div class="container-fluid">
+	<br>
+		<div class="row">
+		<div class="col-md-12">
+			{% if query.qp_path %}
+				<h5><b>Question Paper File : </b><a href="{{qp_path}}" target="_blank">{{qp_path_name}}</a></h5>
+			{% else %}
+				<h5><b>Question Paper File : </b></h5>
+			{% endif %}
+		</div>
+
+	</div>
+</div>
+
+<div class="container-fluid">
+	<br>
+		<div class="row">
+		<div class="col-md-8">
+			{% if query.submitted_by_faculty %}
+				<h5><b>Qp submitted by : </b>{{query.submitted_by_faculty}}</h5>
+			{% else %}
+				<h5><b>Qp submitted by : </b>
+			{% endif %}
+		</div>
+		<div class="col-md-4">
+			<h5><b>Submitted On : </b>{{query.last_submitted_datetime}}</h5>
+		</div>
+
+	</div>
+
+</div>
+<form id="QP_accept_reject_form" method="post" enctype="multipart/form-data">
+<br>
+<br>
+<div class="container-fluid">
+	
+	<br>
+	<div class="row">
+		<div class="col-md-2">
+			<h5><b>Upload new QP File (by Instruction Cell)  </b></h5>
+
+		</div>
+		<div class="col-md-5">
+              {{ form.alternate_qp_path.errors }}
+              <button id="file_upload_button" type="button" class="btn btn-primary btn-sm col-md-8" style="background: #211d70;" onclick="document.getElementById('id_alternate_qp_path').click()"><b>Browse</b></button>
+              {{ form.alternate_qp_path }}
+              <br>
+              <br>
+              <p id="front_end_file_validation" style="color: #ba2121;padding:10px 10px;"></p>
+				<h5 id="user_selected_file" style="color: green;padding:10px"></h5>
+		</div>
+
+		<div class="col-md-4">
+         	<h5><a href="{{qp_alternate_path}}" target="_blank">{{qp_alternate_path_name}}</a></h5>
+		</div>
+
+
+	</div>
+
+</div>
+
+
+<br>
+<br>
+
+
+	{% csrf_token %}
+	<div class="container-fluid">
+		<br>
+			<div class="row">
+			<div class="col-md-3">
+				{{ form.acceptance_flag.errors }}
+				<h5>{{form.acceptance_flag}}  <b>Accept QP File Submitted</b></h5>
+
+			</div>
+			<div class="col-md-3">
+				{{ form.rejected_flag.errors }}
+				<h5>{{form.rejected_flag}}  <b>Request for Revision / Review</b></h5>
+			</div>
+			<div class="col-md-5">
+			{{ form.non_field_errors }}
+	        {{ form.source.errors }}
+	        {{ form.source }}
+				{{ form.rejection_comments.errors }}
+				<p id="check_for_comments" style="color: #ba2121;"></p>
+				{{form.rejection_comments}} 
+			</div>
+		</div>
+
+	</div>
+	<br>
+	<br>
+	<input type="hidden"  name="qp_id" value="{{query.id}}">
+	  <center>
+	      <input id="accept_reject_Btn" class="btn btn-primary col-md-offset-4 col-md-4"  type="button" value="Update QP Submission Status">
+	  </center>
+</form>
+<input type="hidden" id="check_status_accepted" name="check_status_accepted" value="{{query.acceptance_flag}}">
+<input type="hidden" id="check_status_rejected" name="check_status_rejected" value="{{query.rejected_flag}}">
+
+
+<div id="dialog-confirm-accept" title="Accept">
+  <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>You are about to ACCEPT the QP submission. Are you sure you want to proceed. Please note that after acceptance, the faculty will not be able to change to QP file.</p>
+</div>
+
+<div id="dialog-confirm-Update-alternate-qp-and-accept" title="Accept and Revised QP Submission">
+  <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>You are about to ACCEPT the QP submission as well as upload a revised QP from Instruction Cell. Are you sure you want to proceed. Please note that after acceptance, the faculty will not be able to change to QP file.</p>
+</div>
+
+<div id="dialog-confirm-reject" title="Reject">
+  <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>You are about to REJECT the QP submission. Are you sure you want to proceed.</p>
+</div>
+
+<div id="dialog-confirm-Update-alternate-qp-and-reject" title="Reject and Revised QP Submission">
+  <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>You are about to REJECT the QP submission as well as upload a revised QP from Instruction Cell. Are you sure you want to proceed.</p>
+</div>
+
+<div id="dialog-confirm-only-update-file" title="Revised QP Submission">
+  <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>You are about to upload a revised QP from Instruction Cell. Are you sure you want to proceed.</p>
+</div>
+
+{% endblock %}

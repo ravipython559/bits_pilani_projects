@@ -1,0 +1,16 @@
+{% load i18n static %}
+{% load check_for_coordinator %}
+
+<ul class="nav navbar-nav">
+	<li>
+		<a href="{% url 'coordinator:qp_submission_status_view'%}" role="button"aria-expanded="false">View QP Submission Status (Coordinator View)</a>
+	</li>
+
+	{% check_coordinator_assigned_as_faculty request.user.email %}
+
+
+</ul>
+
+<ul class="nav navbar-nav navbar-right">
+	<li><a  href="{% url 'shibboleth:wilp-logout' %}">Logout</a></li>
+</ul>
