@@ -1,0 +1,60 @@
+{% extends "admin/base_site.html" %}
+{% load static table_tags %}
+
+{% block extrastatic %}
+<style type="text/css">
+	select#id_semester,select#id_program{
+		margin-left: 10px;display: inline;
+	}
+</style>
+{% endblock extrastatic %}
+{% block extrahead %}
+{{block.super}}
+<script type="text/javascript">
+    $(document).ready(function() {
+      var csv_submit = 'report_csv';
+
+      $('#stud-reg-form').submit(function(e) {
+        var submit = $(this.id).context.activeElement.name;
+        $(this).attr('action', "{% url 'administrator:admin_router:stud-reg-view' %}");
+        if (submit == csv_submit)
+        {
+          $(this).attr('action', "{% url 'administrator:admin_csv:stud-reg-list-csv' %}");
+          var search = $('input[type=search]').val();
+          $('#id_search').val(search);
+
+        }
+      });
+    });
+</script>
+
+{% endblock extrahead %}
+
+
+
+{% block content %}
+	<form method = "get" id= "stud-reg-form">
+		<div class="row col-md-offset-1 ">
+			<div class="col-md-4">
+				{{ form.program }}
+				{{ form.program.errors }}
+			</div>
+			<div class="col-md-4">
+				{{ form.semester }}
+				{{ form.semester.errors }}
+			</div>
+			<div class="col-md-2">
+				{{form.search}}
+				<input type = "submit", value = "Filter" class="btn btn-sm btn-primary" id = "filter_btn_id">
+			</div>
+		</div>
+		<br><br>
+		{% render_table table %}
+
+		<center>
+			<input type = "submit", value = "Export as CSV" class="btn btn-primary" 
+			name="report_csv">
+		</center>
+	</form>
+
+{% endblock %}

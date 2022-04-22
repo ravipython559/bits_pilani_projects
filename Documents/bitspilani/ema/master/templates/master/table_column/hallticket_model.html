@@ -1,0 +1,35 @@
+{% load static %}
+<table class="table table-bordered">
+	<thead>
+		<tr>
+			<th>Exam Type</th>
+			<th>Course Code</th>
+			<th>Exam Slot</th>
+			<th>Exam Venue</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% if ht %}
+			{% for x in ht %}
+				<tr>
+					<td>{{x.exam_type}}</td>
+					<td>{{x.course.course_code}}</td>
+					<td>{{x.exam_slot}}</td>
+					<td>{{x.exam_venue}}</td>
+				</tr>
+			{% endfor %}
+		{% else %}
+			{% for x in sr %}
+				{% for e in ce %}
+				<tr>
+					<td>{{e.exam_type}}</td>
+					<td>{{x.course_code}}</td>
+					<td>-</td>
+					<td>-</td>
+				</tr>
+				{% endfor %}
+			{% endfor %}
+		{% endif %}
+			
+	</tbody>
+</table>

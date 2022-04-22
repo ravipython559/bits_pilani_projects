@@ -1,0 +1,9 @@
+<input type="hidden" name="{{ widget.name }}"{% if widget.value != None %} value="{{ widget.value|stringformat:'s' }}"{% endif %}{% include "django/forms/widgets/attrs.html" %}>
+<span>
+	{% if widget.display_name != None %} {{ widget.display_name|stringformat:'s' }} {% endif %}	
+	{% for name, value in widget.attrs.items %}
+		{% if name == 'display_name' %}
+			{{ value|stringformat:'s' }}
+		{% endif%}
+	{% endfor %}
+</span>

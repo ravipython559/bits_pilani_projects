@@ -1,0 +1,100 @@
+/*Overwrite base admin css properties*/
+th{
+    padding: 8px;
+}
+td{
+    padding: 8px;
+}
+/*Overwrite base admin css properties ends*/
+
+.header  {
+  background-color: white;
+}
+
+body{
+  background-color: #eee;
+}
+
+#myNavbar {
+    font-weight: bold;
+    color: #656565;
+    background-color: white;
+}
+
+#myNavbar ul li{
+    list-style-type: unset;
+}
+
+#myNavbar a:hover {
+    color: #211d70;
+    text-decoration: underline;
+}
+
+.navImg{
+  width: 100%;
+}
+
+.navbar {
+      margin-bottom: 50px;
+      border-radius: 0;
+      min-height: 0px;
+}
+
+.navbar-nav > li > a {
+    line-height: 14px;
+    font-size: 15px;
+}
+
+.navbar-default .navbar-nav>li>a{
+    text-decoration: none;
+    color: #337ab7;
+    padding-right: 20px;
+    padding-left: 20px;
+}
+
+div.breadcrumbs {
+    padding-top: 20px;
+}
+
+#header a:link, #header a:visited {
+    color: #211d70;
+}
+
+.module h2, .module caption, .inline-group h2{
+    background: #211d70;;
+}
+
+div.breadcrumbs{
+    background: #211d70;
+}
+
+.button, input[type="submit"], input[type="button"], .submit-row input, a.button {
+    background: #211d70;
+}
+
+.button.default, input[type="submit"].default, .submit-row input.default{
+    background: #211d70;
+}
+
+.object-tools a:link, .object-tools a:visited {
+    background: #211d70;
+}
+
+.breadcrumbs{
+    display: none;
+}
+
+caption{
+  caption-side: top !important;
+}
+
+/*delete button*/
+.submit-row a.deletelink{
+  height: 35px !important;
+}
+
+
+/*css fixes*/
+a.button.cancel-link {
+    height: 35px!important;
+}

@@ -1,0 +1,34 @@
+{% load static %}
+<div class="col-md-4">
+	{{form.exam_venue}}
+</div>
+
+<div class="col-md-3">
+	{{form.course}}
+</div>
+<script type="text/javascript">
+	$(document).ready(function() {
+		var course_value = $("#{{form.course.auto_id}}").val();
+	
+		$("#{{form.exam_venue.auto_id}}").change(function(e, course_code){
+
+			$.get(
+				"{% url 'master:ajax:exam-attendance' %}",
+				{
+					'exam_venue':$(this).val(),
+					'location':$("#{{form.location.auto_id}}").val(),
+
+				}
+			).done(
+				function(data) {
+					$('#attenda').html(data['context']);
+					if(course_code)
+					{
+						$("#{{form.course.auto_id}}").val(course_code);
+					}
+				}
+			);
+
+		});
+	});
+</script>

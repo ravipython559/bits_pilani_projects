@@ -1,0 +1,26 @@
+{% load i18n static %}
+
+<ul class="nav navbar-nav">
+	<li class="dropdown">
+		<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Administration <span class="caret"></span></a>
+		<ul class="dropdown-menu">
+			<li><a href="{% url 'coordinator:coordinator_router:attendance-data'%}">Enter Exam Attendance</a></li>
+			<li><a href="{% url 'coordinator:coordinator_router:course-exam-schedule'%}">View Course Exam Schedules</a></li>
+		</ul>
+	</li>
+	<li class="dropdown">
+		<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Reports and Extracts<span class="caret"></span></a>
+		<ul class="dropdown-menu">
+			<li><a href="{% url 'coordinator:coordinator_router:stud-reg-view'%}">View Student registrations</a></li>
+			<li><a href="{% url 'coordinator:coordinator_router:hall-ticket-attend'%}">View Hall Ticket Issue Status</a></li>
+			<li><a href="{% url 'coordinator:coordinator_router:student-attendance-data'%}">View Student Attendance Sheet</a></li>
+			<li><a href="{% url 'coordinator:coordinator_router:student-count-by-venue-by-slot'%}">DMR For Exam Attendance by Venue by Slot</a></li>
+			<li><a href="{% url 'coordinator:coordinator_router:student-attendance-count-by-course-by-venue'%}">Actual Attendance Counts by Course by Venue</a></li>
+			<li><a href="{% url 'coordinator:coordinator_router:session-wise-absence-data'%}">Absense Data report - Section-wise</a></li>
+		</ul>
+	</li>
+</ul>
+
+<ul class="nav navbar-nav navbar-right">
+	<li><a  href="{% url 'shibboleth:wilp-logout' %}">Logout</a></li>
+</ul>

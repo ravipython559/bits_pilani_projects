@@ -1,0 +1,42 @@
+{% extends "admin/base_site.html" %}
+{% load table_tags %}
+{% load static%}
+{% load widget_tweaks %}
+
+
+
+{%block titleofcontent %} 
+    
+{% endblock titleofcontent %}
+
+{% block content %}
+	<br>
+   <div class="container-fluid">
+		<center>
+		  <form class="form-inline" id="emi_form" action="" method="get">
+		    <div class="row">
+		      <div class="col-md-3">
+				<b>{{form.semester.label_tag}}</b>{{form.semester}}
+		      </div>
+
+		      <div class="col-md-3">
+				<b>{{form.exam_type.label_tag}}</b>{{form.exam_type}}
+		      </div>
+
+		       <div class="col-md-5">
+				<b>{{form.exam_slot.label_tag}}</b>{{form.exam_slot}}
+		      </div>
+
+		      <div class="col-md-1 text-left">
+		        <input class="btn btn-sm btn-primary" type="submit" value="List" name="list">
+		      </div>
+		    </div><br>
+
+		    {% render_table table %}
+
+		    </div>
+		  </form>
+		</center>
+</div><br><br>
+
+{% endblock %}

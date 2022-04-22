@@ -1,0 +1,105 @@
+{% extends "admin/change_form.html" %}
+{% load static %}
+
+{% block extrahead %}
+	{{ block.super }}
+	<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>jQuery UI Dialog - Modal confirmation</title>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <link rel="stylesheet" href="/resources/demos/style.css">
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+	<script type="text/javascript">
+        $(document).ready(function(){
+		var myVar = "global";
+		$("#dialog-confirm").hide()
+		var studentid = $("#id_student_id").val()
+        $(".file-upload a").attr('href', '/administrator/ajax/photo-view-admin?studentid=' +studentid);
+
+		function update_student_photo()
+		{
+		          var student_id = $("#id_student_id").val()
+		          var fileInput = document.getElementById('id_student_photo');
+                  var file = fileInput.files[0];
+                  var form_data = new FormData();
+                  form_data.append('file', file);
+                  form_data.append('student_id', student_id);
+
+               $.ajax({
+                     enctype: 'multipart/form-data',
+                     type: "post",
+                     url: '{% url 'master:ajax:update-student-photo' %}' ,
+                     dataType:"json",
+                     data : form_data,
+                     headers:{"X-CSRFToken": "{{csrf_token}}"},
+                     contentType: false,
+                     processData: false,
+                     cache : false,
+             });
+		}
+
+
+	 $('.submit-row').click(function(){
+		var student_id = $("#id_student_id").val()
+		var photo=$("#id_student_photo").val().split(".")
+		if($("#id_student_photo").val()==""){
+		}
+		else if(photo[1].toLowerCase()!='jpg' && photo[1].toLowerCase()!='png'){
+		}
+		else{
+		 $.ajax({
+           type: "post",
+           url: '{% url 'master:ajax:photo-already-exist' %}' ,
+           async: false,
+           data: {"csrfmiddlewaretoken" : "{{csrf_token}}" , "student_id": student_id},
+           success: function( data )
+        		{
+                  window.x=data["context"]
+                  localStorage.setItem("key", data["context"]);
+        		  if(data["context"]=="Yes"){
+        		  $( "#dialog-confirm" ).dialog({
+                  resizable: false,
+                  height: "auto",
+                  width: 400,
+                  modal: true,
+                  buttons: {
+                    "Update": function() {
+                      $( this ).dialog( "open" );
+                      update_student_photo()
+                      $( this ).dialog( "close" );
+                      var current_location=$(location).prop('url', "admin:master-admin")[0].href
+                      previous_page = current_location.split('uploadstudentphoto')
+                      window.location.replace(previous_page[0]+'uploadstudentphoto')
+                    },
+                    Cancel: function() {
+                      $( this ).dialog( "close" );
+                    }
+                  }
+                 });
+                }
+           }
+        });
+        }
+    if(localStorage.getItem("key")=="Yes"){
+       localStorage.removeItem("key");
+       return false;
+    }
+    else{
+    localStorage.removeItem("key");
+       return true;
+    }
+    });
+	});
+
+	</script>
+	<body>
+
+<div id="dialog-confirm" title="Photo Already Exist">
+  <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>Do You Want to Update Your Photo. Are you sure?</p>
+</div>
+
+</body>
+{% endblock %}

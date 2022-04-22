@@ -1,0 +1,35 @@
+{% extends 'student/hall-ticket-details.html' %}
+{% load widget_tweaks %}
+{% load static %}
+{% load static student_tags %}
+
+{% block extrastatic %}
+	{{ block.super }}
+	<script type="text/javascript">
+		$(document).ready(function(){
+			$('#face_detection').hide();
+			$('#crop').hide();
+		});
+		
+	</script>
+
+{% endblock %}
+
+{%block titleofcontent %}{% endblock titleofcontent %}
+
+{% block table_content %}
+<tbody>
+	{{ formset.management_form }}
+	{% for form in formset %}
+		{% inclusion_hall_ticket_form_display form form.exam_type.value form.exam_slot.value form.location.value form.exam_venue.value %}
+	{% endfor %}
+</tbody>
+{% endblock table_content %}
+
+{% block process_table %}
+
+<p style='color: red;text-align: center;'>{{error_msg}}</p>
+	<input class="btn btn-primary col-md-offset-3 col-md-4" type="submit" name="revert" value="Revert Back" >
+	<input class="btn btn-primary col-md-4" type="submit" name="save-hall-ticket" value="Generate and Print Hall Ticket" >
+{% endblock process_table %}
+

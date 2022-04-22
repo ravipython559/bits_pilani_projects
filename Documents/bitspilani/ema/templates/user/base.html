@@ -1,0 +1,108 @@
+{% load static %}
+{% load bootstrap3 %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>BITS | Exam Management Application | {% block title %}{% endblock title %}</title>
+    <meta charset="utf-8">
+    <link rel="icon" href="{% static "ema_static_content/img/BITSFavicon.ico" %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" type="text/css" href="{% static "ema_static_content/css/site_base_css.css" %}">
+    <link rel="stylesheet" type="text/css" href="{% static "ema_static_content/css/admin_base_css.css" %}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    {% bootstrap_css %}
+    {% bootstrap_javascript jquery='full' %}
+    
+    {% block extrastatic %}
+
+    {% endblock extrastatic %}
+    <style>
+      #id_content{font-size:12px;}
+    </style>
+  </head>
+
+  <!-- Header section starts here... -->
+  <body>
+
+    <div class="header">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-5 col-xs-6">
+          <a href="#">
+            <img class="img-responsive" src="{% static "ema_static_content/img/BITSLogo.gif" %}" width="350" height="100">
+          </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  <!-- Header section ends here... -->
+
+    <img class="img-responsive navImg" src="{% static "ema_static_content/img/navBlueHorizon.png" %}">
+
+
+  <!-- Navigation section starts here... -->
+  <nav class="navbar transparent navbar-default navbar-static-top hr">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" 
+        data-target="#myNavbar">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+      </div>
+     <div class="collapse navbar-collapse" id="myNavbar"> 
+        {% block navlinks %}      
+        {% if user.remoteuser.user_type.user_role == 'STUDENT' %}
+            {% include 'navbar/student_navbar.html' %}
+        {% else %}
+            {% include 'navbar/faculty_navbar.html' %}
+        {% endif %}
+      {% endblock navlinks %}
+      </div> <!-- /.navbar-collapse -->
+    </div> <!-- /.container-fluid -->
+  </nav>
+  <!-- Navigation section ends here... -->
+
+    <h3 class="text-center">  <!-- Title of the content -->
+      {%block titleofcontent %} 
+        Enter title for your content 
+      {% endblock titleofcontent %}
+    </h3>
+    
+    <!-- Container section starts here... -->
+
+    <div class="content" id="id_content">
+        {% block content %}
+          ***Main content goes here...***
+        {% endblock content %}
+    
+    </div>
+  
+  </body>
+
+  <!-- Container section ends here... -->
+
+ <!-- Footer section starts here... -->
+  <footer class="footer1">
+      <img class="img-responsive" src="{% static "ema_static_content/img/footerHorizon.gif" %}">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-xs-8 col-sm-4 col-md-3">
+            <p class="h6" style="line-height: 1.4em;">
+                  Copyright &copy; <b>BITS Pilani</b><br>
+                  Vidya Vihar Campus<br>
+                  Pilani, Rajasthan - 333031<br>
+                  INDIA
+            </p>
+          </div>
+          <div class="col-sm-offset-5 col-md-offset-6 col-xs-4 col-sm-4 col-md-3 ">
+            <img class="img-responsive text-right" src="{% static "ema_static_content/img/companyBranding.gif" %}"> 
+          </div>
+        </div>
+      </div>
+  </footer>
+  <!-- Footer section ends here... -->
+
+</html>

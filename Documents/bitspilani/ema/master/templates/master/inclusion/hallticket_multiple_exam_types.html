@@ -1,0 +1,8 @@
+HALL TICKET FOR {{evaluation_type|upper}}&nbsp;
+	{% for exam_type_info in examtype_tuple %} {{exam_type_info.1|upper}}
+	{% if examtype_tuple_len > 1 %}
+		{%if forloop.first%}
+			,
+		{% endif %}
+	{% endif %}
+	{% endfor %}

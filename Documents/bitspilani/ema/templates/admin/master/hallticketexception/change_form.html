@@ -1,0 +1,83 @@
+{% extends "admin/change_form.html" %}
+{% load static %}
+
+{% block extrahead %}
+	{{ block.super }}
+	<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>jQuery UI Dialog - Modal confirmation</title>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <link rel="stylesheet" href="/resources/demos/style.css">
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+	<script type="text/javascript">
+        $(document).ready(function(){
+
+        var current_location=$(location).prop('url', "admin:master-admin")[0].href
+        if(current_location.includes("hallticketexception/add/"))
+        {
+            $("#id_semester").prop( "disabled", false );
+        }
+        if(current_location.includes("/change"))
+        {
+         var student_id = $('#id_student_id').val();
+             $.ajax({
+                  type: "post",
+                  url: '{% url 'master:ajax:hall-ticket-exception' %}' ,
+                  async: false,
+                  data: {"csrfmiddlewaretoken" : "{{csrf_token}}", student_id : student_id},
+                   success: function( data )
+                    {
+                      if(data['context'] == 'non-certification')
+                      {
+                         $("#id_semester").prop( "disabled", false );
+                      }
+                      else
+                      {
+                      $("#id_semester").prop( "disabled", true );
+                      $("#id_semester").val(null);
+                      $('#add_id_semester').removeAttr('href');
+                      $(".related-widget-wrapper").append("<p>Since it is a certification program semester cannot be selected</p>")
+                      }
+               }
+            });
+        }
+
+    // On change of student id field
+     $('#id_student_id').on('input', function() {
+            var student_id = $('#id_student_id').val();
+            $.ajax({
+                  type: "post",
+                  url: '{% url 'master:ajax:hall-ticket-exception' %}' ,
+                  async: false,
+                  data: {"csrfmiddlewaretoken" : "{{csrf_token}}", student_id : student_id},
+                   success: function( data )
+                    {
+                      if(data['context'] == 'non-certification')
+                      {
+                         $("#id_semester").prop( "disabled", false );
+                         $("p").remove();
+                         $('#add_id_semester').attr('href', '/master-admin/master/semester/add/?_to_field=id&_popup=1');
+                      }
+                       else
+                      {
+                      $("#id_semester").prop( "disabled", true );
+                      $("#id_semester").val(null);
+                      $('#add_id_semester').removeAttr('href');
+                      if(document.querySelector('.related-widget-wrapper p') === null)
+                        {
+                            $(".related-widget-wrapper").append("<p>Since it is a certification program semester cannot be selected</p>")
+                        }
+                      }
+               }
+            });
+     });
+	});
+
+	</script>
+	<body>
+
+</body>
+{% endblock %}

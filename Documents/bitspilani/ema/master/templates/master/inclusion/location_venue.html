@@ -1,0 +1,29 @@
+{% load static %}
+<div class="col-md-3">
+	{{ form.location }}
+	{{ form.location.errors }}
+</div>
+<div class="col-md-2">
+	{{form.exam_venue}}
+</div>
+<div class="col-md-2">
+	{{form.exam_type}}
+</div>
+<div class="col-md-3">
+	{{form.exam_slot}}
+</div>
+
+
+<script>
+
+	    $("#{{form.location.auto_id}}").change(function(){
+			$.get(
+				"{% url 'master:ajax:hall-ticket-issue-status' %}",
+				{
+					{% for x in form %}'{{x.name}}':$('#{{x.auto_id}}').val(),{% endfor %}
+				}
+			).done(function(data) {$('#examstatus').html(data['context']);});
+		});
+
+</script>
+

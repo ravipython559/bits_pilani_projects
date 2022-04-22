@@ -1,0 +1,195 @@
+{% extends "easy_pdf/base.html" %}
+{% load static %}
+{% load thumbnail %}
+{%load static student_tags%}
+{% load static master.master_tags %}
+
+
+{% block extra_style %}
+<style type="text/css">
+	@page {
+		size: {{ pagesize|default:"A4" }};
+		margin-left: 1.5cm;
+		margin-right: 1.5cm;
+		margin-top: 1.5cm;
+		margin-bottom: 1.5cm;
+	}
+	@frame header {
+        -pdf-frame-content: page-header;
+        margin-top: 3cm;
+        margin-right: 4cm;
+        margin-bottom: 4cm;
+        margin-left: 3cm;
+    }
+</style>
+{% endblock %}
+
+{%block page_header%}
+<table>
+	<tr>
+		{% with hall_ticket_data|first as record_data %}
+		<td width="50%">{{record_data.created_on|date:"d/m/Y"}}</td>
+		<td>{% display_hallticket_exam_types ht_tuple=exam_type_values %}</td>
+		{% endwith %}
+	</tr>
+</table>
+
+{%endblock%}
+
+{% block content %}
+<hr>
+<table>
+	<tr>
+		<td align="right">
+			<img  src="{% static 'ema_static_content/img/BitsPilani.png' %}" alt="bits_logo" width="120" >
+		</td>
+		<td colspan="3">
+			<center>
+				<h1>Birla Institute of Technology & Science, Pilani(Raj.)</h1>
+				<h2>Work Integrated Learning Programmes Division</h2>
+
+				{% with hall_ticket_data|first as record_data %}
+				<h3> {% if record_data.semester.semester_name != semester_default %}{{record_data.semester.semester_name}} {% endif %}</h3>
+				<h1>{% display_hallticket_exam_types ht_tuple=exam_type_values %}</h1>
+				{% endwith %}
+			</center>
+		</td>
+	</tr>
+</table>	
+
+<hr>  
+<br>
+<div>
+<table style="font-weight: bold;">
+	<tr>
+		<td colspan="4">
+			<table>
+				<tr>
+					<td width="30%">ID No</td>
+					<td width="5%">:</td>
+					<td width="50%">{{student.student_id}}</td>
+				</tr>
+				<tr>
+					<td>Name</td>
+					<td>:</td>
+					<td>{{student.student_name}}</td>
+				</tr>
+				<tr>
+					<td>Degree</td>
+					<td>:</td>
+					<td>{{program.program_name}}</td>
+				</tr>
+				<tr>
+					<td>Download Date & Time</td>
+					<td>:</td>
+					<td>{% with hall_ticket_data|first as record_data %}
+						{{record_data.created_on|date:"d/m/Y - g:i:s A"}}
+						{% endwith %}
+					</td>
+				</tr>
+			</table>
+		</td>
+		<td></td>
+		<td>
+		 {% if student.photo|is_image %}
+	          <img src='{{ student.photo.avatar.url }}' alt='student image' class="img-responsive center-block" />
+	        {% endif %}
+        </td>
+    </tr>
+	
+</table>
+</div>
+<br><br>
+<table style="text-align:center; border: 1px solid black; 
+border-collapse: collapse;padding:2px" width="100%">
+<tr>
+	<th width="10%">Course Code</th>
+	<th width="17%">Course Name</th>
+	<th width="20%">Exam Type</th>
+	<th width="23%">Exam Date and Slot</th>
+	<th width="30%">Exam Venue</th>
+</tr>
+
+{%for hall_ticket in hall_ticket_data%}
+	<tr>
+		<td>{{hall_ticket.course.course_code|upper}}</td>
+		<td>{% get_course_name_long_text  hall_ticket.course.course_name %}</td>
+		<td>{{hall_ticket.exam_type.exam_type|upper}} </td>
+		<td>{{hall_ticket.exam_slot.slot_date|upper}},{{hall_ticket.exam_slot.slot_day|upper}},
+                    {{hall_ticket.exam_slot.slot_name|upper}}
+                </td>
+		<td>{{hall_ticket.exam_venue.venue_short_name|upper}} {{hall_ticket.exam_venue.venue_address|upper}}</td>
+	</tr>
+
+{%endfor%}
+</table>
+<br>
+
+<table width = "100%" style="font-weight: bold;" >
+	{% if sloot.exm_slot_fn and sloot.exm_slot_an %}
+		<tr>
+			<td width="20%">Exam Timings</td>
+			<td>{{sloot.exm_slot_fn|upper}}</td>
+			
+			<td>{{sloot.exm_slot_an|upper}}</td>
+		</tr>
+	{% else %}
+		<tr>
+			<td width="20%">Exam Timings</td>
+			<td>FORENOON (FN) SESSION: 10:00 AM TO 12:15 PM IST</td>
+			<td>AFTERNOON (AN) SESSION: 2:00 PM TO 4:15 PM IST</td>
+		</tr>
+	{% endif %}	
+
+</table>
+<br>
+<table style="border: 1px solid black; 
+border-collapse: collapse;padding:2px" width="100%">
+	<tr>
+		<td>
+			<h4>Instructions</h4>
+			<ol>
+				<li>This hall ticket is valid only for the examinations mentioned in the table above.</li>
+
+				<li>Please check all the information given in this hall ticket carefully. If there is any discrepancy in your course package or identification information, please contact WILP Registration Cell at <a href="mailto:registration@wilp.bits-pilani.ac.in" target="_top">registration@wilp.bits-pilani.ac.in</a> immediately. Always quote your BITS ID No. and name in all email transactions.
+				</li>
+
+
+				<li>You must keep this hall ticket during the examination along with one of the government issued photo identity card like Aadhaar, Passport, PAN or Driving License. You will NOT be permitted to appear in examinations without the hall ticket.</li>
+
+				<li>You are required to have a Laptop / Desktop with an embedded Camera / separate Web Camera unit for appearing for the online proctored examinations. Please note that this is mandatory. Note that in case you do not have a Web Camera, you will not be able to take the exam. You will NOT be permitted to attempt the exam using a Mobile Phone.</li>
+
+
+				<li>Please check the course number and course title that appear on the question paper and ensure it is the same as per hall ticket.</li>
+
+
+				<li>For online proctored examinations, you should login using the link at the scheduled time and submit your Photo & ID Proof for the cross verification by the proctors. Please note that for ID Proof, you have to present only the downloaded Hall Ticket. Please don't present any other ID card as your ID Proof in the system.</li>
+
+
+				<li>The Mid-Semester (EC2) and Comprehensive Examinations (EC3) this Semester are OPEN LAPTOP and OPEN BOOK type. For OPEN BOOK / OPEN LAPTOP exams you are allowed to use only a laptop / desktop, a mobile phone and a scientific calculator while taking the exam. These devices and a writing pad may be kept in close proximity during the examination. Use of any other device would be considered as adopting unfair means.</li>
+
+				<li>Refer to the Instructions & Test Guidelines for taking Examinations through Online Proctored Examination Platform, Candidate Manual for Online Proctored Examination, FAQ's on Online Proctored Examination & Minimum Requirements for taking Exams through Online Proctored Examination Platform documents mailed by WILP Team for taking the exam. You can also refer to exam announcement made on the eLearn portal.</li>
+
+
+				<li>You can submit your answers either by typing in their answers in the Text box provided for the question (or) Scan and upload the handwritten answers on A4 size papers onto the Wheebox system. Answers submitted in any other form will not be considered valid for evaluation.</li>
+
+				<li>Proctor (Invigilator) will be your first point of contact for all your support requirements during the exam. You can chat with Proctor through the Chat Window during the exam. In case you are facing any exceptional issues in uploading the hand-written answer scripts using QR code during the exam, please bring it to the attention of the Proctor. Proctor will offer you an alternative submission option within the Wheebox examination platform.<br><strong>Please note that any exam answer scripts shared through email will be considered as invalid and it will not be considered for evaluation.</strong></li>
+				<li>The below activities are <strong>strictly NOT permitted</strong> during the exam:</li>
+				<ul>
+					<li>Using Bluetooth / Earphone.</li>
+					<li>Someone standing / sitting near the student.</li>
+					<li>Student talking with someone.</li>
+					<li>Mobile Phone usage is strictly not allowed other than contacting the Exam Helpline number or attending the call from Exam tech support team for resolving the issues faced during the exam or for scanning and uploading the hand written answers on the online examination platform.</li>
+					<li>Moving away from Camera and thereby from the Proctor’s supervision.</li>
+					<li>Face not visible to the proctor (In such case, student should readjust the focus of the Camera to make their face visible to the proctor).</li>
+					<li>Use of Dual Monitors / Additional Screens / Extended Monitors.</li>
+					<li>Internet searches and referring to other websites.</li>
+				</ul>
+
+				<li>Use of any unfair means or malpractice would result in severe disciplinary action as per the rules of examination committee and may even lead to discontinuation from the programme.</li>
+			</ol>
+		</td>
+	</tr>
+</table>
+
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends "admin/base_site.html" %}
+{% load static master.master_tags %}
+{% load static table_tags %}
+{% block extrahead %}
+{{block.super}}
+ <link rel="stylesheet" type="text/css" href="{% static "ema_static_content/css/jquery.dataTables.css" %}">
+
+<script type="text/javascript" src="{% static 'ema_static_content/js/jquery-ui.min.js' %}"></script>
+
+<script type="text/javascript" src="{% static 'ema_static_content/js/jquery.dataTables.min.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+	<form method="get" id="student-attendance-form">
+	
+		<table class="table table-bordered" id="table-content-pos" style="overflow-x: auto; display: block; white-space: nowrap;">
+			<tr>
+				<th>Centre/Ec3 Makeup</th>
+				{% for obj in exam_slots %}
+
+					<th>{{ obj.slot_name }}</th>
+
+				{% endfor %}
+				<th>Grand Total</th>
+			</tr>
+			{% for venue in venues %}
+				<tr>
+					<td>{{venue.venue_short_name}}</td>
+					{% for obj in exam_slots %}
+						<td>{% get_student_count_by_venue_by_slot result venue.id obj.id %}</td>
+					{% endfor %}
+					<td>{% get_student_count_by_venue_by_slot result venue.id 'TOTAL' %}</td>
+				</tr>
+			{% endfor %}
+
+		</table>
+		<br>
+		<center>
+			<input type = "submit" value = "Download as CSV" class="btn btn-primary"
+			name="report_csv">
+			<br>
+		</center>
+	</form>
+</div>
+
+{% endblock %}

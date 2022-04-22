@@ -1,0 +1,26 @@
+{% extends "master/student-attend-view.html" %}
+{% load static master.master_tags %}
+
+{% block extrahead %}
+{{block.super}}
+{% block ajax_script%}
+<script type="text/javascript">
+	$(document).ready(function() {
+    $("#{{form.exam_type.auto_id}}").change(function(){
+
+				$.get(
+					"{% url 'coordinator:coordinator_ajax:student-attendance' %}",
+					{
+						'exam_type':$(this).val(),
+					}
+				).done(
+					function(data) {
+						$('#attenda').html(data['context']);
+					}
+				);
+	});
+	$("#{{form.exam_type.auto_id}}").trigger('change');
+} );
+</script>
+{% endblock ajax_script %}
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends "user/base.html" %}
+{% load tz %}
+{% load static %}
+
+
+
+{%block titleofcontent %}Exam Schedule For Registered Courses {% endblock titleofcontent %}
+
+{% block content %}
+<br>
+<table  class="table table-bordered table-striped" cellspacing="0" width="100%">
+		<thead>
+
+			<tr style="background-color: #c1caee">
+				<th>S.No</th>
+				<th>Course Code</th>
+				<th>Course Name</th>
+				<th>Exam Type</th>
+				<th>Day</th>
+				<th>Slot Name</th>
+				<th>Slot Start Time</th>
+				
+			</tr>
+		</thead>
+		<tbody>
+
+			
+		{% for form in exam_schedule %}
+
+			<tr>
+
+				<td>{{ forloop.counter }}</td>
+				<td>{{form.course_code}}</td>
+				{% if form.course_name %}
+					<td>{{form.course_name}}</td>
+				{%else%}
+					<td> </td>
+				{% endif %}
+
+				<td>{{form.exam_type}}</td>
+				<td>{{form.exam_slot.slot_day}} {{form.exam_slot.slot_date}}</td>
+				<td>{{form.exam_slot.slot_name}} </td>
+				<td>{{form.exam_slot.slot_start_time }}</td>
+
+			</tr>
+		{% endfor %}
+		</tbody>
+		
+	</table>
+<p><b>&nbsp;&nbsp;&nbsp;&nbsp;Note -The table above will show courses for which an exam is scheduled in the current semester.In case any course you are registered in is missing in the table above, please contact registration cell by opening a ticket in the Student Care helpdesk. It is also possible that the course is not listed above because the exam schedule for it is yet to be finalized.</b></p>
+
+{% endblock content %}

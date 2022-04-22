@@ -1,0 +1,42 @@
+{% load widget_tweaks %}
+{% load static %}
+
+<tr>
+	{{ form.course }}
+	{{ form.id }}
+	{{ form.student }}
+	{{ form.semester}}
+	{{ form.course_code|attr:"class:hidden" }}
+	{{ form.course_name|attr:"class:hidden" }}
+	{{ form.exam_type|attr:"class:hidden" }}
+	{{ form.exam_slot|attr:"class:hidden" }}
+	{{ form.location|attr:"class:hidden" }}
+	{{ form.exam_venue|attr:"class:hidden" }}
+
+	<td> 
+		<label for="{{ form.course_code.id_for_label }}"><strong>{{ form.course_code.value }}</strong></label>
+		 
+	</td>
+	<td> 
+		<label for="{{ form.course_name.id_for_label }}"><strong>{{ form.course_name.value }}</strong></label>
+		 
+	</td>
+	<td> 
+		<label for="{{ form.exam_type.id_for_label }}"><strong>{{exam_type}}</strong></label>
+		  
+	</td>
+	<td> 
+		<label for="{{ form.exam_slot.id_for_label }}"><strong>{{exam_slot}}</strong></label>
+		  
+	</td>
+	<td> 
+		<label for="{{ form.location.id_for_label }}"><strong>
+		{{location}}</strong></label>
+		 
+	</td>
+	<td> 
+		<label for="{{ form.exam_venue.id_for_label }}"><strong>{{exam_venue}}</strong></label>
+	</td>
+			
+</tr>
+

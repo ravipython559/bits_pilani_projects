@@ -1,0 +1,35 @@
+Requirement:
+	- Python 3.7
+	- Mysql Database.
+
+For DEBIAN systems:
+	-sudo apt-get install python3.7-dev libmysqlclient-dev
+	- sudo apt-get install python3 python-dev python3-dev \
+     build-essential libssl-dev libffi-dev \
+     libxml2-dev libxslt1-dev zlib1g-dev \
+     python-pip
+	-sudo apt-get install python3-pip
+	-sudo apt-get install git
+
+Git Configuration:
+	# contact admin for git private key. 
+	- git config --global user.name "<username>"
+	- git config --global user.email "<email>"
+
+Install virtualenv: 
+	- pip3 install pipenv
+
+Getting git repositories:
+	- git clone git@gitlab.com:bits-pilani/ema.git
+
+
+Execution:	
+	- cd ema
+	- pipenv shell 
+	- pipenv update
+	- python manage.py collectstatic
+	- python manage.py runscript default_queries #Important:Create default database records in Semester, Batch, ExamType, ExamSlot
+	- python manage.py runserver
+
+Development:
+	- cp ema/dev/dev_manage.py ./manage.py

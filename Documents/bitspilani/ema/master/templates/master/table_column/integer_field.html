@@ -1,0 +1,13 @@
+{% load static %}
+
+<input type="number" class="form-control" id="id_{{obj.pk}}_{{field}}" name="{{obj.pk}}_{{field}}" value="{{obj.attendance_count| default:0}}" min="0">
+
+<script>
+	if("{{bulk_prefix}}{{obj.pk}}" in window.{{global_js_variable}})
+	{
+		$('#id_{{obj.pk}}_{{field}}').val(window.{{global_js_variable}}['{{bulk_prefix}}{{obj.pk}}']);
+	}
+	$('#id_{{obj.pk}}_{{field}}').change(function(e) {
+		window.{{global_js_variable}}['{{bulk_prefix}}{{obj.pk}}'] = $(this).val();
+	});
+</script>

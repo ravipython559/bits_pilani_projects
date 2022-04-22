@@ -1,0 +1,129 @@
+{% extends "admin/base_site.html" %}
+{% load table_tags %}
+{% load static%}
+
+{% block extrahead %}
+	{{ block.super }}
+	{% include "master/inclusion/buffer.html" %}
+	{% include 'master/inclusion/modal_popup.html' %}
+{% endblock %}
+
+{% block content %}
+<style type="text/css">#id_course_list{width:100%;}</style>
+
+<div class="container-fluid">
+	<div class="">
+		<center>
+			<h4>Data Pull for Sources and Data Pull Logs</h4>
+		</center><br>
+	</div>
+</div>
+<br>
+
+
+<form method="post" id="sync-form">
+	
+
+	<!-- select semester -->
+	
+	<div id ="data_sync_form">
+		{% include "administrator/inclusions/ema_data_sync.html" with form=form %}
+	</div>
+	{% csrf_token %}
+	
+	<br>
+
+	<div class="row">
+		<div class="col-md-8 col-md-offset-2">
+			<div class="col-md-6">
+				<input class="btn btn-block btn-sm btn-primary" type="button" name="taxila" id="taxila"
+				value="Sync Data From Taxila">
+				<br>
+				<small>
+					This will enable pulling student registration data from Taxila. Pull will happen by semester. For pulling data for a particular course or list of courses enter the course code without spaces. multiple courses entered will be comma delimited. For Pulling data by semester and course, not more than 10 courses data can be pulled at a time.
+				</small>
+			</div>
+			<div class="col-md-6">
+				<input class="btn btn-block btn-sm btn-primary" type="button" name="canvas" id="canvas"
+				value="Sync Data From Canvas">
+				<br>
+				<small>
+					This will enable pulling student registration data from Canvas. Pull will happen by semester. For pulling data for a particular course or list of courses enter the course code without spaces. multiple courses entered will be comma delimited. For Pulling data by semester and course, not more than 10 courses data can be pulled at a time.
+				</small>
+			</div>
+		</div>
+	</div>
+</form>
+<form method="post" id="sync-form-elearn">
+<br><br>
+
+	<div class="col-md-4 col-md-offset-4">
+		<input class="btn btn-block btn-sm btn-primary" type="button" name="elearn" id="elearn" value="Sync Program Data From e-Learn">
+	</div>
+	<br><br><br><br>
+</form>
+<div>
+	<center>
+		<h4>Pull Log History</h4>
+	</center>
+	<br>
+	<div id="table_render">
+		{% include "administrator/inclusions/table_content_sync_data.html" with sync_log_table=sync_log_table %}
+	</div>
+	<br>
+</div>
+
+
+<script>
+	$(document).ready(function() {
+		$('#canvas, #taxila').click(function(e){
+			if ($(this).prop('id')=='taxila')
+				$('#sync-form').append('<input type="hidden" name="which_api" value="taxila">');
+			else if($(this).prop('id')=='canvas')
+				$('#sync-form').append('<input type="hidden" name="which_api" value="canvas">');
+			
+			$('#buffer').show();
+			$.post(
+				"{% url 'administrator:admin_router:sync-lms-api' %}", 
+				$('#sync-form').serialize(),
+				function(data){
+					console.log(data);
+				}
+			).done(function(data) {
+					$('#buffer').hide();
+					$('#data_sync_form').html(data['context']);
+					$('#table_render').html(data['table_render']);
+					$('.modal-body').html("<h4 class='text-center'>" + data['message'] +"</h4>");
+					$('#myModal').modal('show');
+				}
+			).fail(function() {
+					$('#buffer').hide();
+					$('.modal-body').html("<h4 class='text-center'>Failed To sync </h4>");
+					$('#myModal').modal('show');
+				});
+	});
+
+		$('#elearn').click(function(e){
+			$('#buffer').show();
+			$.post("{% url 'administrator:admin_router:sync-lms-api' %}",
+				{ 
+					'csrfmiddlewaretoken': '{{ csrf_token }}',
+					'which_api': 'elearn',
+				}
+			).done(function(data) {
+				$('#buffer').hide();
+				$('#table_render').html(data['table_render']);
+				$('.modal-body').html("<h4 class='text-center'>" + data['message'] +"</h4>");
+				$('#myModal').modal('show');
+			}).fail(function() {
+					$('#buffer').hide();
+					$('.modal-body').html("<h4 class='text-center'>Failed To sync </h4>");
+					$('#myModal').modal('show');
+			});
+		});
+	});	
+
+</script>
+
+{% endblock%}
+

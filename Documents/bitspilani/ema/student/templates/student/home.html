@@ -1,0 +1,188 @@
+{% extends "user/base.html" %}
+{% load static %}
+
+{% block extrastatic %}
+	{{ block.super }}
+
+	<script>
+		
+
+	$(document).ready(function(){
+
+
+		$("#error_msg").hide()
+		$("#loaders").hide()
+
+		var result;
+     $("#id_semester").change(function(){
+      
+  		$.ajax({
+
+  			type:"GET",
+        	url: "{% url 'student:index_ajax' %}",
+        	 data : {
+	      		'semester' : document.getElementById("id_semester").value,
+	    		},
+			beforeSend: function(){
+				$("#view-dates-btn").hide()
+				$("#loaders").show();
+				},
+        	
+        	success: function( data ) 
+        		{
+            
+            	$("#success_url").val(data.url);
+
+            	result = data.enabled;
+            	if (result){
+						$("#view-dates-btn").show()
+						$("#loaders").hide();            			
+						$("#error_msg").hide()
+						$("#error_msg_2").hide()
+						document.getElementById("view-dates-btn").disabled=false;
+											
+				}else
+				{
+					$("#view-dates-btn").show()
+					$("#loaders").hide(); 
+					$("#error_msg").show()
+					$("#error_msg_2").hide()
+					document.getElementById("view-dates-btn").disabled=true;
+
+				}
+
+        		}
+
+  		});
+
+     });
+   });
+
+
+	</script>
+
+{% endblock extrastatic%}
+
+{% block titleofcontent %}{% endblock titleofcontent %}
+
+{% block content %}
+<div class="container-fluid">
+	<div class="row panel">
+		<div class="col-md-3 col-md-offset-1">
+			<strong>Student ID: </strong> {{student.student_id}}
+		</div>
+
+		<div class="col-md-4">
+			<strong>Student Name: </strong> {{student.student_name}}
+		</div>
+
+		<div class="col-md-3 col-md-offset-1">
+			<strong>Batch: </strong> {{student.batch.batch_name}}
+		</div>
+	</div>
+
+	{% if form.non_field_errors %}
+	<div class='row panel'>
+		<div class="col-md-8 col-md-offset-2">{{ form.non_field_errors }}</div>
+	</div>
+	{% endif %}
+
+	<form class="form-inline" method="get">
+		<br>
+		<div class="row panel">
+			<div class="col-md-6 col-md-offset-4 {% if certification_exam_type %} {%else%} col-md-9 col-md-offset-3 {% endif %}">
+				<div class="form-group">
+					{% if certification_exam_type %}
+						<div>
+							<label>Certification Exam Type :</label> 
+							{{ certification_exam_type }}
+							<p class="hidden">{{form.semester}}</p>
+						</div>
+					{% else %}
+
+							<div class=" col-md-11 text-left">
+								{{ form.semester.label_tag }}
+							</div>
+							<div class=" col-md-1 text-right">
+								{{form.semester}}
+							</div>
+
+						{% if form.semester.errors %}
+							<br>
+						    {% for error in form.semester.errors %}
+						        <p class='text-danger col-md-4 col-md-offset-4'><strong>{{ error|escape }}</strong></p>
+						    {% endfor %}
+						{% endif %}
+					{% endif %}
+				</div>
+				<!-- This condition is used because for certification we don't have ajax call happening and cerification semester is not required  -->
+				{% if certification_exam_type %}
+					{% if cert_url %}
+						<input type="hidden" id="success_url" name="url" value={{cert_url}}>
+					{% else %}
+						<input type="hidden" id="success_url" name="url" value="student:hall-ticket">
+					{% endif %}
+				{% else %}
+					<input type="hidden" id="success_url" name="url" value="student:hall-ticket">
+				{% endif %}
+			</div>
+		</div>
+		<div class="row panel">
+			<div class="col-md-offset-5 col-md-3">
+				<p id ="loaders">Loading...</p>
+			</div>	
+
+			<div class="col-md-offset-3 col-md-5">	
+				{% if certification_exam_type %}
+				<button type="submit" class="btn btn-primary col-md-offset-1 col-md-11" name="view-courses" id="view-dates-btn" {% if ce %}disabled{% else %}{%endif%}>
+						Proceed to Choose Exam Type, Exam Slot and Venue
+				</button>
+				{% else %}
+				<button type="submit" class="btn btn-primary col-md-offset-1 col-md-11" name="view-courses" id="view-dates-btn"
+					{% if ce %}disabled{% elif no_hallticket_db %}disabled{% else %}{%endif%}>
+						Proceed to Choose Exam Type, Exam Slot and Venue
+				</button>
+				{% endif %}
+
+			</div>
+		</div>
+	</form>
+
+	<div class="row">
+		<div class="col-md-8 col-md-offset-2">
+			<h4 style="color:red">Please note that if you are making changes to a previously generated Hall Ticket, the prior hall ticket generated stands CANCELLED and will NOT be recognized by BITS for the exams. Only the latest hall ticket generated will be considered</h4>
+		</div>
+	</div><br>
+
+	{% if ce %}
+		<div class="row">
+			<div class="col-md-8 col-md-offset-2">
+					<div class="alert alert-danger">
+						<strong>There are no exam currently for which hall ticket viewing and generation is required</strong>
+					</div>	
+			</div>
+		</div>
+	{% endif %}
+
+	{% if ht %}
+		<div id="error_msg_2" class="row">
+			<div class="col-md-8 col-md-offset-2">
+					<div class="alert alert-danger">
+						<strong>No changes in hall ticket are allowed for the current exam. You can only view and download the hall ticket if already generated</strong>
+					</div>	
+			</div>
+		</div>
+	{% endif %}
+
+
+	<div id ="error_msg" class="row">
+			<div class="col-md-8 col-md-offset-2">
+					<div class="alert alert-danger">
+						<strong>You cannot generate hall ticket for the semester chosen as the window for the same is closed for you. Please contact the operations team or raise a ticket in the Studentcare Helpdesk</strong>
+					</div>	
+			</div>
+		</div>
+
+
+</div>
+{% endblock %}

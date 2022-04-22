@@ -1,0 +1,103 @@
+{% extends "admin/base_site.html" %}
+{% load static master.master_tags %}
+{% load static table_tags %}
+{% block extrahead %}
+{{block.super}}
+ <link rel="stylesheet" type="text/css" href="{% static "ema_static_content/css/jquery.dataTables.css" %}">
+
+<script type="text/javascript" src="{% static 'ema_static_content/js/jquery-ui.min.js' %}"></script>
+
+<script type="text/javascript" src="{% static 'ema_static_content/js/jquery.dataTables.min.js' %}"></script>
+<script type="text/javascript">
+   
+$(document).ready(function() {
+	$('#myTable').dataTable({
+			"scrollX": true,
+			"searching": false,
+			"lengthChange": false,
+			"ordering": false
+	    });
+	$("#{{form.exam_type.auto_id}}").change(function(){
+			es=$("#{{form.exam_slot.auto_id}}").val();
+			$.get(
+				"{% url 'master:ajax:exam-attendance-summary-report-course-wise' %}",
+				{
+					'exam_type':$(this).val(),
+				}
+			).done(
+				function(data) {
+					$('#attenda').html(data['context']);
+					$("#{{form.exam_slot.auto_id}}").val(es);
+				}
+			);
+		});
+	$("#{{form.exam_type.auto_id}}").trigger('change');
+});
+
+
+
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+	<form method="get" id="student_attendance_count_form">
+		<div class="row">
+			<div class="col-md-2" style="margin-left: 380px;">
+				{{ form.exam_type  }}
+				{{ form.exam_type.errors }}
+			</div>
+			<span id="attenda">
+				{% include "master/inclusion/loc_exam_attendance_summary_report.html" with form=form %}
+			</span>
+			<div class="col-md-2">
+				<input type="submit" value="Submit" class="btn btn-sm btn-primary" id="filter_btn_id" name='filter-ht'>
+			</div>
+		</div>
+		<br>
+		<table id="myTable" class="table table-bordered">
+			<thead>
+				<tr>
+					<th>SNo</th>
+					<th>Compcode</th>
+					<th>Course No.</th>
+					<th>Course Name</th>
+					{% for obj in venues %}
+
+						<th>{{obj.venue_short_name}}</th>
+
+					{% endfor %}
+					<th>Total</th>
+				</tr>
+			</thead>
+
+			<tbody>
+				{% for course in courses %}
+					<tr>
+						<td>{{forloop.counter}}</td>
+						{% if course.comp_code%}
+							<td>{{course.comp_code}}</td>
+						{% else %}
+							<td></td>
+						{% endif %}
+						<td>{{course.course_code}}</td>
+						<td>{{course.course_name}}</td>
+						{% for venue in venues %}
+						<td>{% get_students_attendace_count result course.id venue.id %}</td>
+						{% endfor %}
+						<td>{% get_students_attendace_count result course.id 'TOTAL' %}</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+
+		</table>
+		<br>
+		<center>
+			<input type = "submit" value = "Download as CSV" class="btn btn-primary"
+			name="report_csv">
+			<br>
+		</center>
+	</form>
+</div>
+
+{% endblock %}

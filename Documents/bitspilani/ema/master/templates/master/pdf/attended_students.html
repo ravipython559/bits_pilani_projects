@@ -1,0 +1,68 @@
+{% extends "easy_pdf/base.html" %}
+{% load static %}
+{% load thumbnail %}
+{%load static student_tags%}
+{% load static master.master_tags %}
+
+{% block content %}
+{% for k, v in ht.items %}
+	{% if v %}
+		<table>
+			<tr>
+				<td colspan="11">
+					
+					<center>
+						<h1>Birla Institute of Technology & Science, Pilani(Raj.)</h1>
+						<h1>Work Integrated Learning Programmes Division</h1>
+						<h1>{{v.0.exam_type.exam_type}} ({{v.0.semester.semester_name}}) {{v.0.exam_venue.location}} {{v.0.exam_venue.venue_short_name}}</h1>
+						<table>
+							<tr>
+							<td colspan="5">
+							<div class="d-inline-block">
+								<h1>{% if v.0.course.comp_code %}{{v.0.course.comp_code}}{% endif %}  {{v.0.course.course_code}}  {{v.0.course.course_name}}
+								</h1>
+							</div>
+							</td>
+							<td></td>
+							<td colspan="5">
+							<div class="d-inline-block">
+								<h1>{{v.0.exam_slot.slot_name}}  {{v.0.exam_slot.slot_day}}  {{v.0.exam_slot.slot_date}}</h1>
+							</div>
+							</td>
+							</tr>
+						</table>
+					</center>
+				</td>
+			</tr>
+		</table>
+
+		<br>
+
+		<table style="text-align:center; border: 1px solid black; 
+			border-collapse: collapse;padding:2px" width="100%">
+			<tr>
+				<th width="05%">SRNo</th>
+				<th width="25%">IDNO</th>
+				<th width="35%">Student Name</th>
+				<th width="40%">Signature</th>
+			</tr>
+
+			{% for obj in v %}
+				<tr>
+					<td width="05%">{{forloop.counter}}</td>
+					<td width="25%">{{obj.student.student_id}}</td>
+					<td width="35%">{{obj.student.student_name}}</td>
+					<td width="40%"></td>
+				</tr>
+			{% endfor %}
+				
+		</table>
+	{% endif %}
+	
+<div>
+	<pdf:nextpage /> 
+</div> 
+{%endfor%}
+
+{% endblock %}
+

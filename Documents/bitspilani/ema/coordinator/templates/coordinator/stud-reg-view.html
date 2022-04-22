@@ -1,0 +1,23 @@
+{% extends "master/stud-reg-view.html" %}
+{% load static table_tags %}
+
+{% block extrahead %}
+{{block.super}}
+<script type="text/javascript">
+    $(document).ready(function() {
+      var csv_submit = 'report_csv';
+
+      $('#stud-reg-form').submit(function(e) {
+        var submit = $(this.id).context.activeElement.name;
+        $(this).attr('action', "{% url 'coordinator:coordinator_router:stud-reg-view' %}");
+        if (submit == csv_submit)
+        {
+          $(this).attr('action', "{% url 'coordinator:coord_csv:stud-reg-list-csv' %}");
+          var search = $('input[type=search]').val();
+          $('#id_search').val(search);
+
+        }
+      });
+    });
+</script>
+{% endblock extrahead %}

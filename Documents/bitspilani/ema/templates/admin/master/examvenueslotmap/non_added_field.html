@@ -1,0 +1,20 @@
+{%load static%}
+
+{% for venue_slot in dummy_slot_list %}
+	<tr>
+		<td class="action-checkbox">
+		<a href="{% url 'master_admin:customize-add' venue_slot.exam_venue.pk %}" class="addlink" >CREATE</a>
+		</td>
+		<th class="field-location">
+			{{venue_slot.exam_venue.location}}
+		</th> 
+		<td class="field-venue_name">{{venue_slot.exam_venue.venue_short_name}}</td>
+		<td class="field-venue_address">{{venue_slot.exam_venue.venue_address}}</td>
+		<td class="field-pincode">{{venue_slot.exam_venue.pin_code}}</td>
+		<td class="field-exam_type_value">{% if venue_slot.exam_type.exam_type == '-' %}&nbsp;{%else%}venue_slot.exam_type{%endif%}</td>
+		<td class="field-exam_slot_value">{% if venue_slot.exam_slot.slot_name == '-' %}&nbsp;{%else%}venue_slot.exam_slot{%endif%}</td>
+		<td class="field-student_count_limit">{{venue_slot.exam_venue.student_count_limit}}</td>
+		<td class="field-is_active">{{venue_slot.exam_venue.is_active}}</td>
+	</tr>
+
+{% endfor %}

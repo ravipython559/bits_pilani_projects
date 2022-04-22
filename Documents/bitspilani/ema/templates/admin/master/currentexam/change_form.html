@@ -1,0 +1,52 @@
+{% extends "admin/change_form.html" %}
+{% load static %}
+
+{% block extrahead %}
+{{ block.super }}
+
+<script type="text/javascript">
+	$(document).ready(function(){
+		var $semester = $('#id_semester');
+		var $program = $('#id_program');
+		var $batch = $('#id_batch');
+
+		function batch_sem_enable_disable()
+		{
+			$.get( '{% url 'master:ajax:current-exam' %}' ,
+				{ 'pk': $program.val() }).done(function( data ){
+					if (!data['program'])
+					{
+						$semester.attr("disabled", true);
+						$batch.attr("disabled", true);
+						$semester.val(data['default_semester_pk']);
+						$batch.val(data['default_batch_pk']);
+					}
+					else if(data['certification']){
+						$semester.attr("disabled", true);
+						$batch.attr("disabled", false);
+						$semester.val(data['default_semester_pk']);
+					}
+					else if (data['non-specific']){
+						$semester.attr("disabled", false);
+						$batch.attr("disabled", false);
+						// $batch.val(data['default_batch_pk']);
+					}
+					else{
+						$semester.attr("disabled", false);
+						$batch.attr("disabled", false);
+					}
+				});
+				
+		}
+
+		batch_sem_enable_disable();
+		$program.change(function(){ 
+			batch_sem_enable_disable();
+		});
+		$("form").submit(function( event ) {
+			$semester.attr("disabled", false);
+			$batch.attr("disabled", false);
+		});
+	});
+</script>
+{% endblock %}

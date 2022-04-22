@@ -1,0 +1,53 @@
+{% extends "admin/base_site.html" %}
+{% load static master.master_tags %}
+
+{% block extrahead %}
+{{block.super}}
+ <link rel="stylesheet" type="text/css" href="{% static "ema_static_content/css/jquery.dataTables.css" %}">
+
+<script type="text/javascript" src="{% static 'ema_static_content/js/jquery-ui.min.js' %}"></script>
+
+<script type="text/javascript" src="{% static 'ema_static_content/js/jquery.dataTables.min.js' %}"></script>
+
+{% block ajax_script%}
+<script type="text/javascript">
+	$(document).ready(function() {
+    $("#{{form.exam_type.auto_id}}").change(function(){
+
+				$.get(
+					"{% url 'administrator:admin_ajax:student-attendance' %}",
+					{
+						'exam_type':$(this).val(),
+					}
+				).done(
+					function(data) {
+						$('#attenda').html(data['context']);
+					}
+				);
+	});
+    $("#{{form.exam_type.auto_id}}").trigger('change');
+} );
+</script>
+{% endblock ajax_script %}
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+	<form method="get" id="student-attendance-form">
+		<div class="row">
+			<div class="col-md-2">
+				{{ form.exam_type  }}
+				{{ form.exam_type.errors }}
+			</div>
+			<span id="attenda">
+				{% include "master/inclusion/loc_student_attendance.html" with form=form %}
+			</span>
+			<div class="col-md-2">
+				{{ form.search }}
+				<input type="submit" value="Generate PDF" class="btn btn-sm btn-primary" id="filter_btn_id" name='filter-ht' >
+			</div>
+		</div>
+	</form>
+</div>
+
+{% endblock %}

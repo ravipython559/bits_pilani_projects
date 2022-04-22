@@ -1,0 +1,17 @@
+{% load static %}
+{% load thumbnail %}
+{% load static master.master_tags %}
+<html>
+<head>
+  <title>{{title}}</title>
+</head>
+<body>
+<h2 class="text-center" style="color: rgb(12, 12, 112);">
+  <div class="container-fluid">
+	        {% if photo|is_image %}
+	          <img src='{{ photo.avatar.url }}' alt='{{title}}' class="img-responsive center-block" />
+	        {% endif %}
+  </div>
+</h2>
+</body>
+</html>

@@ -1,0 +1,78 @@
+{% extends "admin/change_form.html" %}
+{% load static %}
+
+{% block extrahead %}
+	{{ block.super }}
+	<script type="text/javascript">
+
+		$(document).ready(function(){
+			var $location = $('#id_location');
+			var $exam_venue = $('#id_exam_venue');
+			var $venue_address = $('#id_address');
+			var $pin_code = $('#id_pincode');
+			var $student_count_limit = $('#id_student_count_limit');
+
+			{% if exam_venue_preselected %}
+				$exam_venue.val('{{exam_venue_preselected.pk}}');
+				$location.val('{{exam_venue_preselected.location.pk}}');
+				$venue_address.val('{{exam_venue_preselected.venue_address}}');
+				$pin_code.val('{{exam_venue_preselected.pin_code}}');
+				$student_count_limit.val('{{exam_venue_preselected.student_count_limit}}');
+			{% endif %}
+
+			if(!$exam_venue.val()){
+				$exam_venue.empty(); 
+			}
+			
+			$location.change(function(e,ev){
+				if(!$('#id_location').val()){
+				$venue_address.val("");
+				$pin_code.val("");
+				$student_count_limit.val("");
+			}
+				$.get( 
+					'{% url 'master:ajax:exam-venue' %}' , 
+					{ 'pk': $(this).val() }).done(function( data ){ 
+						$exam_venue.empty();
+						html = $.parseHTML( data['context'] );
+						$(html).find('option').each(function()
+						{
+						    $exam_venue.append(this);
+						});
+						if(ev){
+							$exam_venue.val(ev);
+						}
+						else{
+							$exam_venue.val($("#target option:first").val());
+						}
+						
+					});
+			});
+
+			$exam_venue.change(function(){
+				$venue_address.val("");
+				$pin_code.val("");
+
+				$.get(
+					'{% url 'master:ajax:exam-venue-address' %}' , 
+					{ 'pk_venue': $(this).val() }).done(function( data ){ 
+						html = $.parseHTML( data['context'] );
+						$venue_address.val($(html).filter('#id_venue_address').get(0).value);
+						$pin_code.val($(html).filter('#id_pin_code').get(0).value);
+						$student_count_limit.val($(html).filter('#id_student_count_limit').get(0).value);
+
+					});
+			});
+
+			if($exam_venue.val()){
+				$('#id_location').trigger('change',$exam_venue.val());
+				{% if add %}
+				$exam_venue.trigger('change');
+				{% endif %}
+			}
+			else{
+				$('#id_location').trigger('change',null);
+			}
+		});
+	</script>
+{% endblock %}

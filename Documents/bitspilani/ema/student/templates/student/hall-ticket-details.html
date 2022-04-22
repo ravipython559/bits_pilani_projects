@@ -1,0 +1,425 @@
+{% extends 'user/base.html' %}
+{% load static %}
+{% load static student_tags %}
+
+
+{%block titleofcontent %}{% endblock titleofcontent %}
+{% block extrastatic %}
+
+	{{ block.super }}
+	{% include 'student/inclusion/image_cropper.html' with student=student %}
+	<script>
+
+		function exam_type_change(exam_type_id, exam_slot_id, course_code_id, course_id,location_id, exam_venue_id){
+			var exam_slot_value = $('#' + exam_slot_id).val();
+			var course_code = $('#' + course_code_id);
+			var exam_type = $('#' + exam_type_id);
+
+			$.get("{% url 'student:hall-ticket-exam-slot' %}",
+				{
+					'exam_type' : exam_type.val(),
+					'exam_slot_id': exam_slot_id,
+					'semester': '{{semester.pk}}',
+					'course_code': course_code.val(),
+					'course_id':course_id
+				}
+			).done(
+			function(data) {
+				var $exam_slot_option = $(data['form']).find('#' + exam_slot_id + ' option');
+				$("#" + exam_slot_id).empty().append($exam_slot_option);
+				var $course_option = $(data['form']).find('#' + course_id + ' option');
+				$("#" + course_id).val($course_option.val());
+				$('#'+ exam_slot_id).val(exam_slot_value);
+				$('#'+ exam_slot_id).trigger('change');
+				// }
+				// else{
+				// 	$('#' + exam_slot_id).val($("#target option:first").val());
+				// 	$("#" + exam_slot_id).trigger('change');
+				// }
+				}
+			);
+		}
+
+		function exam_slot_change(exam_slot_id, location_id, exam_venue_id,exam_type_id){
+			var location_value = $('#' + location_id).val();
+			var exam_slot = $('#' + exam_slot_id);
+			var exam_type = $('#' + exam_type_id);
+
+			$.get("{% url 'student:hall-ticket-location' %}", 
+				{
+					'exam_slot': exam_slot.val(), 
+					'location_id': location_id,
+					'semester': '{{semester.pk}}',
+					'exam_type': exam_type.val(),
+					'exam_venue_id': exam_venue_id
+				}
+			).done(
+			function(data) {
+				var $location_option = $(data['form']).find('#' + location_id + ' option');
+				// var $exam_venue_option = $(data['form']).find('#' + exam_venue_id + ' option');
+				$("#" + location_id).empty().append($location_option);
+				// $('#' + exam_venue_id).empty().append($exam_venue_option);
+				$('#'+ location_id).val(location_value);
+				$('#'+ location_id).trigger('change');
+				
+				}
+			);
+
+		}
+
+		function location_change(location_id, exam_venue_id, exam_slot_id, exam_type_id){
+			var exam_venue_value = $('#' + exam_venue_id).val();
+			var $location = $('#' + location_id);
+			var $exam_slot = $('#' + exam_slot_id);
+			var exam_type = $('#' + exam_type_id);
+
+			$.get("{% url 'student:hall-ticket-exam-venue' %}", 
+				{
+					'location':$location.val(), 
+					'exam_venue_id': exam_venue_id,
+					'semester': '{{semester.pk}}',
+					'exam_type': exam_type.val(),
+					'exam_slot': $exam_slot.val()
+				}
+			).done(
+			function(data) {
+
+				var $option = $(data['form']).find('#' + exam_venue_id + ' option');
+				$("#" + exam_venue_id).empty().append($option);
+				if(exam_venue_value)
+				{
+					$('#' + exam_venue_id).val(exam_venue_value);
+					// $('#'+ location_id).trigger('change');
+				}
+				// else
+				// {
+				// 	$('#' + exam_venue_id).val($("#target option:first").val());					
+				// }
+				}
+			);
+
+		}
+		$(document).ready(function(){
+			$('#face_detection').hide();
+
+			{% if success_url %}
+				// var newWin = window.open('{{success_url}}','_blank');
+				// if(!newWin || newWin.closed || typeof newWin.closed=='undefined')
+				// {
+				// 	if (!window.ActiveXObject) {
+				// 		var save = document.createElement('a');
+				// 		save.href = '{{success_url}}';
+				// 		save.target = '_blank';
+				// 		var filename = "hall-ticket.pdf"
+				// 		save.download = filename;
+				// 		if ( navigator.userAgent.toLowerCase().match(/(ipad|iphone|safari)/) && navigator.userAgent.search("Chrome") < 0) {
+				// 			var blob=new Blob([newWin], {type: 'application/pdf'});
+				// 			var href = window.URL.createObjectURL(blob);
+				// 			window.open(href, "_blank");
+				// 		}else{
+				// 			var evt = new MouseEvent('click', {
+				// 				'view': window,
+				// 				'bubbles': true,
+				// 				'cancelable': false
+				// 			});
+				// 			save.dispatchEvent(evt);
+				// 			(window.URL || window.webkitURL).revokeObjectURL(save.href);
+				// 		}
+				// 	}
+				// 	else if ( !! window.ActiveXObject && document.execCommand)     {
+				// 		var _window = window.open('{{success_url}}', '_blank');
+				// 		_window.document.close();
+				// 		_window.document.execCommand('SaveAs', true, "hall-ticket.pdf")
+				// 		_window.close();
+				// 	}
+
+				// }
+				// window.open('/student','_self');
+
+
+
+				/* Helper function */
+				function download_file(fileURL, fileName) {
+				    // for non-IE
+				    if (!window.ActiveXObject) {
+				        var save = document.createElement('a');
+				        save.href = fileURL;
+				        save.target = '_blank';
+				        var filename = fileURL.substring(fileURL.lastIndexOf('/')+1);
+				        save.download = fileName || filename;
+					       if ( navigator.userAgent.toLowerCase().match(/(ipad|iphone|safari)/) && navigator.userAgent.search("Chrome") < 0) {
+								document.location = save.href; 
+				// window event not working here
+							}else{
+						        var evt = new MouseEvent('click', {
+						            'view': window,
+						            'bubbles': true,
+						            'cancelable': false
+						        });
+						        save.dispatchEvent(evt);
+						        (window.URL || window.webkitURL).revokeObjectURL(save.href);
+							}	
+				    }
+
+				    // for IE < 11
+				    else if ( !! window.ActiveXObject && document.execCommand)     {
+				        var _window = window.open(fileURL, '_blank');
+				        _window.document.close();
+				        _window.document.execCommand('SaveAs', true, fileName || fileURL)
+				        _window.close();
+				    }
+				}
+				window.open('/student','_self');
+			download_file('{{success_url}}', 'hall-ticket.pdf')
+			{% endif %}
+
+			{% for form in formset %}
+				$exam_slot = $('#'+ '{{form.exam_slot.id_for_label}}');
+				$exam_location = $('#'+ '{{form.location.id_for_label}}');
+				$exam_venue = $('#'+ '{{form.exam_venue.id_for_label}}');
+
+				$('#'+ '{{form.exam_type.id_for_label}}').change(function(){
+					exam_type_change('{{form.exam_type.id_for_label}}','{{form.exam_slot.id_for_label}}','{{form.course_code.id_for_label}}', '{{form.course.id_for_label}}', '{{form.location.id_for_label}}','{{form.exam_venue.id_for_label}}');
+				});
+
+				$('#'+ '{{form.exam_slot.id_for_label}}').change(function(){
+					exam_slot_change('{{form.exam_slot.id_for_label}}', '{{form.location.id_for_label}}', '{{form.exam_venue.id_for_label}}', '{{form.exam_type.id_for_label}}');
+				});
+
+				$('#'+ '{{form.location.id_for_label}}').change(function(){
+					location_change('{{form.location.id_for_label}}', '{{form.exam_venue.id_for_label}}', '{{form.exam_slot.id_for_label}}', '{{form.exam_type.id_for_label}}');
+				});
+
+				$('#'+ '{{form.exam_type.id_for_label}}').trigger('change');
+
+				// $('#'+ '{{form.exam_slot.id_for_label}}').trigger('change');
+
+				// $('#'+ '{{form.location.id_for_label}}').trigger('change');
+
+				// $('#'+ '{{form.exam_venue.id_for_label}}').trigger('change');
+
+
+				{% empty %}
+					$('#preview').attr('disabled',true);
+
+			{% endfor %}
+
+			{% if incorrect_format %}
+				// $('#photo').attr('src',"{% static 'ema_static_content/img/image_icon.png' %}");
+				$('#error_msg').text('Incorrect Image format');
+				$('#preview').attr('disabled',true);
+			{% endif %}
+
+			{% if hide_crop %}
+				$('#crop').hide();
+			{% else %}
+				$('#error_msg').text('Image size not 150x150.');
+				$('#preview').attr('disabled',true);
+			{% endif %}
+
+
+			$('#preview').click(function(e){
+				total_form = $('#id_hallticket-TOTAL_FORMS').val();
+				count = 0;
+				var exam_slot_array =[];
+				var exam_venue_array =[];
+
+				for(var i=0;i<total_form;i++)
+				{
+					exam_slot_array.push($('#id_hallticket-'+i+'-exam_slot').val())
+					exam_venue_array.push($('#id_hallticket-'+i+'-exam_venue').val())
+				}
+				exam_slot_array = exam_slot_array.filter((x)=>x?x:null)  // filter out undefined values
+				exam_venue_array = exam_venue_array.filter((x)=>x?x:null)// filter out undefined values
+
+				const ExamSlotcount = exam_slot_arr =>exam_slot_arr.reduce((a, b) => ({ ...a,[b]: (a[b] || 0) + 1}), {})
+
+				const ExamSlotduplicate = dict =>Object.keys(dict).filter((a) => dict[a] > 1)
+
+				const ExamVenueCount = exam_venue_arr => exam_venue_arr.reduce((a,b) =>({...a,[b]:(a[b] || 0) + 1}), {})
+
+				const Count_Diff_ExamVenue = dict =>Object.keys(dict).length
+
+				$('.modal-body').html("<h4>You have chosen multiple venues or multiple locations for taking your exams. Are you sure you want to proceed?</h4>");
+					$('.modal-footer').html("<button id='preview_pop' class='btn btn-success' type='submit' name='preview'>Yes</button>\
+					<button type='button' class='btn btn-danger' data-dismiss='modal'>No</button>");
+
+				if((total_form == exam_slot_array.length) && parseInt(ExamSlotduplicate(ExamSlotcount(exam_slot_array)))){
+					$('.modal-body').html("<p>Dear Student,\
+					You have chosen the same exam slot for one of more courses, Hence your choice for the hall ticket are NOT saved. You may to either of the following -<br>\
+					<strong>Option 1:</strong> Take one exam in Regular & the other in Make up. You can change your choices and try to preview the hall ticket again<br>\
+					<strong>Option 2:</strong> If Option 1 is NOT possible, you can appear for them in Pilani ( Rajasthan). For this please choose an exam slot in Pilani (NAME WILL APPEAR WITH PILANI AS PREFIX) and location as Pilani</p>");
+					$('.modal-footer').html("<button type='button' class='btn btn-danger' data-dismiss='modal'>Ok</button>");
+					$('#myModal').modal('show');
+				}
+				else if ((total_form == exam_venue_array.length) && Count_Diff_ExamVenue(ExamVenueCount(exam_venue_array))  > 1){
+					$('#myModal').modal('show');
+				}
+				else{
+					$('#preview_pop').click();
+				}
+			});
+		
+
+		});
+	</script>
+	<script>
+		$(document).ready(function(){
+		  const fakeImag = document.querySelectorAll('.grayy');
+			for (var i = 0; i < fakeImag.length; i++) {
+				fakeImag[i].style.backgroundColor = "#E0E0E0";
+				var fakeImages = fakeImag[i].querySelectorAll(".form-control");
+				for (var j = 0; j < fakeImages.length; j++) {
+					fakeImages[j].style.backgroundColor = "#E0E0E0";
+				}
+			}
+
+		});
+	</script>
+<style type="text/css">
+	
+	.grayy{
+	pointer-events: none;
+	cursor: no-drop;
+	opacity: 0.9;
+	}
+
+</style>
+{% endblock extrastatic %}
+
+{% block content %}
+
+<div class="container-fluid">
+	<div id='student_details' class="row">
+			<div class="col-md-2">
+				<strong>Student ID: </strong> {{student.student_id}}
+			</div>
+			<div class="col-md-3">
+				<strong>Name: </strong> {{student.student_name}}
+			</div>
+			<div class="col-md-3">
+				<strong>Semester: </strong> {{semester}}
+			</div>
+			<div class="col-md-1">
+				<strong>Batch: </strong> {{student.batch}}
+			</div>
+			<!-- <div class="col-md-2">
+				<strong>Exam Type: </strong> {{exam_type}}
+			</div> -->
+			<div class="col-md-3"><strong>Photo:</strong>
+				<center>
+					<p id='face_detection'><strong style='color: red;text-align: center;'>Please crop again face not detected.</strong></p>
+					<img id="photo" height="150" width="150" src="{% if student.photo%}{% url 'student:photo-view' student.pk %}{%endif%}" >
+					<br>
+					<span id='error_msg' style="color: red;"></span>
+					<br>
+					<button id="crop">Crop</button>
+				</center>
+			</div>
+	</div>
+	<br><br>
+{% if not hide_crop %}
+<p id='crop_image_alert'>
+<strong style='color: red;text-align: center;'>The Image size is incorrect.Please use the crop option below the photo to resize.You will NOT be able to proceed without doing this activity.</strong>
+</p>
+{% endif %}
+<form id='hall_ticket_form' method="post" >
+	{{ formset.management_form }}
+	{{ formset.non_form_errors.as_ul }}
+	{{ formset.media }}
+	{% csrf_token %}
+	<p class="text-info">
+		Please choose the Exam Slot, the Exam Location and then the Venue where you would want to take the Exam
+	</p>
+	<table  class="table table-striped table-bordered" cellspacing="0" width="100%">
+		<thead>
+			<tr>
+				<th>Course Code</th>
+				<th>Course Name</th>
+				<th>Exam Type</th>
+				<th>Exam Slot</th>
+				<th>Exam Location</th>
+				<th>Exam Venue</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% block table_content %}
+				{% for form in formset %}
+				
+					<tr  class="{% check_to_disable_filed student.student_id form.course_code.value form.exam_type.value semester  %}">
+						{{ form.id }}
+						{{ form.course }}
+						{{ form.student }}
+						{{ form.semester}}
+						<td > 
+							<label for="{{ form.course_code.id_for_label }}"><strong>{{ form.course_code.value }}</strong></label>
+							{{ form.course_code }} 
+						</td>
+						<td > 
+							<label for="{{ form.course_name.id_for_label }}"><strong>{{ form.course_name.value }}</strong></label>
+							{{ form.course_name }} 
+						</td>
+						<td > {{ form.exam_type }} {{ form.exam_type.errors }}</td>
+						<td > {{ form.exam_slot }} {{ form.exam_slot.errors }}</td>
+						<td > {{ form.location }} {{ form.location.errors }}</td>
+						<td > {{ form.exam_venue }} {{ form.exam_venue.errors }}</td>
+					</tr>
+				{% endfor %}
+			{% endblock table_content %}
+		</tbody>
+	</table>
+	<p><b>NOTE – In case the options to choose Exam Type, Slot, Location and Venue are DISABLED, it is because you have already taken the exam for that course and, therefore, not eligible for taking it again. Please check “View Status of Exam Taken” option in the top menu to see details of exams already appeared for.</b></p>
+<br>
+
+{% block process_table %}
+<p style='color: red;text-align: center;'>{{error.message}}</p>
+<input id='preview' class="btn btn-primary col-md-offset-4 col-md-4" type="button" name="preview" value="Preview Hall Ticket" >
+{% include 'master/inclusion/modal_popup.html' %}
+{% endblock process_table %}
+
+<p class="row">
+	<h4><strong> Instructions to the Students </strong></h4>
+	<ol>
+		<h5><li>Please Ensure that ALL the courses you have registered for in the chosen semester appear in the grid above. In case of any mismatch, please raise a ticket <a href="https://wilpqueries.bits-pilani.ac.in/" target="_blank">here</a> under the Category – “Exam Queries (Hall Ticket Issues)"</li></h5>
+		<h5><li>Please note that you have to make choices for all the courses before you proceed. You can either choose to take the Regular Exam or the Make-up Exam for a course. You can change this till the time BITS locks further changes to hall tickets(NOT APPLICABLE FOR COLLABORATIVE PROGRAMS)</li></h5>
+		<h5><li>The system will NOT allow you to choose exams for the same slot. In case courses chosen by you have clashing exam slots, you can either choose to appear for one in regular and the other in make-up OR choose the take the exams in Pilani (Rajasthan)(NOT APPLICABLE FOR COLLABORATIVE PROGRAMS)</li></h5>
+	</ol>
+</p>
+<br>
+
+</form>
+</div>
+<!-- MODAL TO CROP THE IMAGE -->
+<div class="modal fade" id="modalCrop">
+  <div class="modal-dialog modal-lg">
+	<div class="modal-content">
+	  <div class="modal-header">
+		<button type="button" class="close crop_close" data-dismiss="modal" aria-label="Close">
+		  <span aria-hidden="true">&times;</span>
+		</button>
+		<h4 class="modal-title"><b>PHOTO CROP(Please ensure your face is fully fitted in the photo sizing window)</b></h4>
+	  </div>
+	  <div class="modal-body" style="padding-left:0">
+		<img src="" id="image" style="max-width: 100%;">
+	  </div>
+	  <div class="modal-footer">
+		<div class="btn-group pull-left" role="group">
+		  <button type="button" class="btn btn-default js-zoom-in">
+			<span class="fa fa-search-plus"></span>
+		  </button>
+		  <button type="button" class="btn btn-default js-zoom-out">
+			<span class="fa fa-search-minus"></span>
+		  </button>
+		  <button type="button" class="btn btn-default js-rotate-ac">
+			<span class="fa fa-rotate-left"></span>
+		  </button>
+		  <button type="button" class="btn btn-default js-rotate-c">
+			<span class="fa fa-rotate-right"></span>
+		  </button>
+		</div>
+		<button id='crop-and-upload' type="button" class="btn btn-primary js-crop-and-upload">Crop</button>
+	  </div>
+	</div>
+  </div>
+</div>
+{% endblock content %}

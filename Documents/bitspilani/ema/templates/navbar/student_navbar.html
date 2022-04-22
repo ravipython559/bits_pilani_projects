@@ -1,0 +1,10 @@
+{% load static %}
+
+<ul class="nav navbar-nav">
+    <li><a href="{% url 'student:index' %}">View and Generate Hall Ticket</a></li>
+    <li><a href="{% url 'student:online-exam-atandance-status' %}">View Status of Exam Taken</a></li>
+    <li><a href="{% url 'student:exam-schedule' %}">View Exam Schedule</a></li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+    <li class="nav-item"><a class="nav-link" href="{% url 'shibboleth:wilp-logout' %}">Logout</a></li>
+</ul>

@@ -1,0 +1,182 @@
+html {
+  height: 100%;
+}
+body {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  font-size: 12px;
+  background-color: #eee;
+  position: relative;
+  margin-top: 0;
+}
+
+h1 {
+    font-size: 34px;
+  }
+===============================================
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  /*color: #404040;*/
+}
+
+#myNavbar {
+    font-size: 14px;
+    font-weight: bold;
+    color: #656565;
+    background-color: white;
+}
+
+#myNavbar a:hover {
+    color: #211d70;
+    text-decoration: underline;
+}
+
+.btn-primary{
+    color: #fff;
+    background-color: rgb(2, 2, 77);
+    border-color: #122b40;
+   font-weight: bold;
+}
+
+.navImg{
+  width: 100%;
+}
+
+.navbar {
+      margin-bottom: 50px;
+      border-radius: 0;
+      min-height: 0px;
+    }
+
+.navbar-nav > li > a {
+    line-height: 14px;
+}
+
+.header  {
+  background-color: white;
+}
+#header {
+    padding: 0px;
+    overflow: visible;
+    font-size: 14px;
+    background: white;
+}
+
+
+footer {
+  bottom: 0;
+  position: absolute;
+  width: 100%;
+  background-color: white;
+}
+
+/*navbar*/
+.navbar-default .navbar-nav>li>a{
+    text-decoration: none;
+    color: #337ab7;
+    padding-right: 20px;
+    padding-left: 20px;
+}
+
+.navbar-default .navbar-nav>li>a:hover{
+    color: #211d70;
+}
+.navbar-nav > li {
+    list-style-type: none;
+  }
+.nav-width{
+  width:100vw;
+}
+#header{
+  background: transparent;
+margin-bottom: -50px;
+}
+.cancel-link {
+    background: #ccc;
+    height: 30px;
+}
+body{
+  min-height: 100%;
+  position: relative;
+}
+body:after {
+  content: '';
+  display: block;
+  height: 100px;
+}
+
+textarea {
+  resize: none;
+}
+
+.asteriskField{
+  color: red;
+  font-size:large;
+}
+
+#search_label{
+  font-size: x-large;
+  line-height: 1.4em;
+}
+
+.QList{
+  font-size: medium;
+}
+
+.ans_info{
+  color: black;
+  font-weight: bold;
+  font-size: small;
+  line-height: 1.3em;
+}
+
+.refs{
+  color: black;
+  font-weight: bold;
+  font-size: small;
+}
+
+.count{
+  color: black;
+  font-weight: bold;
+  font-size: x-small;
+}
+
+#avg{
+  line-height:2.1em;
+}
+
+ul.errorlist{
+  background : none;
+}
+
+td , th{
+  font-size: 11px;
+}
+
+#myNavbar a:link, #myNavbar a:visited {
+    color: #211d70;
+}
+
+ul.errorlist {
+  color: #ba2121;
+  padding: 0;
+}
+
+ul.errorlist li {
+  display: block;
+  font-size: 11px;
+}
+
+
+*===========utilities=============*/
+#page-title{text-align: center;}
+
+.full-btn{margin-top: 50px;width: 100%;}
+
+select.form-control{display: inline;margin-left: 10px;}
+
+.glyphicon-remove{color: red;}
+
+.meta{margin-left:10px; margin-right:90px; }

@@ -1,0 +1,287 @@
+{% extends "admin/base_site.html" %}
+{% load static master.master_tags %}
+
+{% block extrahead %}
+
+{{block.super}}
+ <link rel="stylesheet" type="text/css" href="{% static "ema_static_content/css/jquery.dataTables.css" %}">
+
+<script type="text/javascript" src="{% static 'ema_static_content/js/jquery-ui.min.js' %}"></script>
+
+<script type="text/javascript" src="{% static 'ema_static_content/js/jquery.dataTables.min.js' %}"></script>
+
+<!--django admin pop funtionality-->
+<script type="text/javascript" src="/static/admin/js/jquery.init.js"></script>
+<script type="text/javascript" src="/static/admin/js/admin/RelatedObjectLookups.js"></script>
+<!--jquery cdn-->
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<!--popup-->
+<link rel="stylesheet" href="//code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
+<link rel="stylesheet" href="/resources/demos/style.css">
+
+<script>
+    if ( window.history.replaceState ) {
+        window.history.replaceState( null, null, window.location.href );
+    }
+</script>
+<style type="text/css">
+	.required::after {
+    color: #e32;
+    content: ' *';
+    display:inline;
+}
+</style>
+
+{% block ajax_script%}
+<script type="text/javascript">
+
+	$(document).ready(function() {
+		$('#activedialog').hide();
+		$("#error_message").hide();
+
+		{% if entries >= 0 %}
+			$( "#activedialog" ).dialog({buttons: [
+				{
+				  text: "Ok",
+				  click: function() {
+				  	$("#id_program").val(null);
+				  	$("#id_batch").val(null);
+					$("#id_program_type").val(null);
+					$("#id_semester").val(null);
+					$('#id_evaluation_type').val(null);
+					$( this ).dialog( "close" );
+				  }
+				}
+			]});
+		{% endif %}
+		
+
+		$("#{{form.program_type.auto_id}}").change(function(){
+			var program_type_cert = $('#id_program_type').val();
+			if (program_type_cert == 'CERTIFICATION'){
+				$('#id_semester').prop('disabled', true);
+				$("#id_batch").prop('required',true);
+				$("#id_program_type").prop('required',false);
+				$("#id_semester").prop('required',false);
+				$("#id_semester").val("")
+			}
+			else{
+				$('#id_semester').prop('disabled', false);
+				$("#id_batch").prop('required',false);
+				$("#id_program_type").prop('required',true);
+				$("#id_semester").prop('required',true);
+			}
+			es=$("#{{form.program.auto_id}}").val();
+			$.get(
+				"{% url 'master:ajax:program-fetch' %}",
+				{
+					'program_type':$(this).val(),
+				}
+			).done(
+				function(data) {
+
+					$('#attenda').html(data['context']);
+					$("#{{form.program.auto_id}}").val(es);
+					 $("#id_program").attr("disabled", false);
+				}
+			);
+		});
+
+		$("#id_evaluation_type").on('change', function(){
+		var eval_type = $(this).val();
+			$.get(
+				"{% url 'master:ajax:examtype-fetch' %}",
+				{
+					'ev_type':$(this).val(),
+				}
+			).done(
+				function(data) {
+					$("#id_exam_type").prop("disabled", false);
+					$("#id_exam_type").html(data);
+				}
+			);
+
+		});
+
+		$('input.example').on('change', function() {
+    		$('input.example').not(this).prop('checked', false);  
+		});
+
+		$('#enable').click(function () {
+		    var program_type = $('#id_program_type').val();
+		    var program = $('#id_program').val();
+		    var semester = $('#id_semester').val();
+		    var batch = $('#id_batch').val();
+		    var eval_type = $('#id_evaluation_type').val();
+
+
+
+		    if (program_type){
+		    	if (program_type == 'CERTIFICATION'){
+	    			if (batch && eval_type){
+	    				$("#error_message").hide();
+	    				$('#enabled').val('yes')
+
+	    			}
+	    			else{
+	    				$("#error_message").show();
+	    			}
+		    	}
+		    	else{
+		    		if (semester && eval_type){
+		    			$("#error_message").hide();
+			    		$('#enabled').val('yes')
+
+		    		}
+		    		else{
+		    			$("#error_message").show();
+		    		}
+		    	}
+		    }
+		    else{
+		    	$("#error_message").show();
+		    }
+
+		});
+
+		$('#disable').click(function () {
+
+			var program_type = $('#id_program_type').val();
+		    var program = $('#id_program').val();
+		    var semester = $('#id_semester').val();
+		    var batch = $('#id_batch').val();
+		    var eval_type = $('#id_evaluation_type').val();
+
+		    if (program_type){
+		    	if (program_type == 'CERTIFICATION'){
+	    			if (batch && eval_type){
+	    				$("#error_message").hide();
+	    				$('#disabled').val('yes')
+
+	    			}
+	    			else{
+	    				$("#error_message").show();
+	    			}
+		    	}
+		    	else{
+		    		if (semester && eval_type){
+		    			$("#error_message").hide();
+			    		$('#disabled').val('yes')
+
+		    		}
+		    		else{
+		    			$("#error_message").show();
+		    		}
+		    	}
+		    }
+		    else{
+		    	$("#error_message").show();
+		    }
+
+		});
+
+	});
+
+</script>
+{% endblock ajax_script %}
+{% endblock %}
+
+{% block content %}
+<p id='error_message' style="color:#FF0000";><strong COLOR="RED">Please choose a Program Type and Evaluation Type. Semester(for non specific, specific and cluster programs) or Batch (for certification programs) choice is mandatory</strong></p>
+<center><h4><b>Select Options to Activate or Inactivate Flags for Exam and Hall Ticket Changes</b></h4></center>
+<br>
+<!--<p>&nbsp;&nbsp;&nbsp;&nbsp;<b>Choosing Program Type and Evaluation Type is Mandatory. Choosing Semester is Mandatory for Non specific, Specific and Cluster programs. Choosing Batch is Mandatory for Certification programs</b></p>-->
+<div class="container-fluid" >
+	<form method="post" id="bulk-activate-deactivate-form">
+		{% csrf_token %}
+		<div class="row">
+			<div class="col-md-4">
+				<b class="required">{{ form.program_type.label }}</b>
+				{{ form.program_type }}
+
+			</div>
+			<span id="attenda">
+				{% include "master/inclusion/bulk_act_deact_program.html" with form=form %}
+			</span>
+		</div>
+		<br>
+		<br>
+		<br>
+		<div class="row" style="margin-top:25px">
+			<div class="col-md-2 text-center">
+				<b class="required">Semester</b>
+				{{ form.semester }}<br>
+				<small><b>{{ form.semester.help_text }}</b></small>
+
+			</div>
+			<div class="col-md-3 ">
+				<b class="required">{{ form.evaluation_type.label }}</b>
+				{{ form.evaluation_type }}
+
+			</div>
+
+			<div class="col-md-2 text-center">
+				<b>{{ form.exam_type.label }}</b>
+				<small><br><b>{{ form.exam_type.help_text }}</b></small>
+
+			</div>
+
+			<div class="col-md-2">	
+				{{ form.exam_type }}
+			</div>
+			
+			<div class="col-md-3 text-center">
+				<b class="required">{{ form.batch.label }}</b>
+				{{ form.batch }}
+				<small><br><b>{{ form.batch.help_text }}</b></small>
+			</div>
+		</div>
+		<br>
+		<br>
+		<div class="row">
+			<div class="col-md-6" >
+				<input type="checkbox" id="chckbox1" class='example' name="chckbox1" value="chckbox1" style="height: 22px;width: 23px;">
+				<label> <b>Enable All Hall Ticket Changes</b></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				</label>
+			</div>
+			<div class="col-md-6">
+				<input type="checkbox" id="chckbox2" class='example' name="chckbox2" value="chckbox2" style="height: 22px;width: 23px;">
+				<label> <b>Allow Hall Ticket Changes for NOT generated Hall tickets only</b></label>
+			</div>
+		</div>
+		<br>
+		<div class="row">
+			<div class="col-md-8 col-md-offset-2">
+				<div class="col-md-6" >
+					{{ form.search }}
+					<input class="btn btn-block btn-sm btn-primary" type="submit" name="enable1" id="enable"
+					value="Enable or Activate" >
+					<br>
+					<small><b>
+						Clicking on this will make exams CURRENT / ACTIVE for the chosen filters AND ENABLE or DISABLE changes in hall ticket if the options (checkboxes) are ticked or NOT ticked<br>
+						For a program and semester combination exams of only ONE evaluation type (EC2,EC3) can be active. While bulk activation, active exams of other evaluation type will be deactivated.
+					</b></small>
+				</div>
+				<div class="col-md-6">
+					{{ form.search }}
+					<input type="hidden" id='disabled' name = 'disabled' value=''>
+					<input class="btn btn-block btn-sm btn-primary" type="submit" name="disable1" id="disable"
+					value="Disable or Deactivate">
+					<br>
+					<small><b>
+						Clicking on this will DEACTIVATE the exams for the chosen filters. Note that for disabling an exam, the checkboxes above are not considered
+					</b></small>
+				</div>
+			</div>
+		</div>
+
+		<div id="activedialog">
+		  <p> {{entries}} rows in current exam table reviewed or updated.</p>
+		</div>
+
+	</form>
+</div>
+
+{% endblock %}

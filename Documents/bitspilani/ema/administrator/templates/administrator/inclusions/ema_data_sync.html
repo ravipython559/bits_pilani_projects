@@ -1,0 +1,20 @@
+
+{% csrf_token %}
+<div class="row">
+		<div class="col-md-8 col-md-offset-2">
+			{% if api_failed %}
+			<h5> failed to sync: {{api_error_msg}} </h5>
+			{% endif %}
+			Semester: {{form.semester}}{{form.semester.errors}}
+		</div>
+</div>
+
+<br>
+	<!-- course list multiselect -->
+<div class="row">
+	<div class="col-md-8 col-md-offset-2">
+		Course List: {{form.course_list}} {{form.course_list.help_text}}{{form.course_list.errors}}
+	</div>
+</div>
+
+<br>

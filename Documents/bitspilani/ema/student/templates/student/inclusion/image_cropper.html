@@ -1,0 +1,104 @@
+{% load static %}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropper/4.1.0/cropper.min.css" integrity="sha384-1VfZiqfttWFAik24jwbdqaniO80W9+8V2rEZXA1d+DfDm1c3PE74ex1WqauW1giz" crossorigin="anonymous" />
+
+<link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropper/4.1.0/cropper.min.js" integrity="sha384-KZrReNyBQWJLUX/At5zvz6cTBQq7j/q8KJR5goS7XfTMcOIy3jL5Eq+uhZferA1U" crossorigin="anonymous"></script>
+<script type="text/javascript">
+	$(document).ready(function(){
+	
+		$('#crop').click(function(){
+			$("#image").attr("src", $("#photo").attr("src"));
+			$("#modalCrop").modal("show");
+		});
+
+	/* SCRIPTS TO HANDLE THE CROPPER BOX */
+		var $image = $("#image");
+		var cropBoxData;
+		var canvasData;
+		$("#modalCrop").on("shown.bs.modal", function () {
+			$image.cropper({
+				viewMode: 1,
+				aspectRatio: 1/1,
+				minCropBoxWidth: 100,
+				minCropBoxHeight: 100,
+				cropBoxResizable: false,
+				zoomable: true,
+				zoomOnWheel: true,
+				// ready: function () {
+				// 	$image.cropper("setCanvasData", canvasData);
+				// 	$image.cropper("setCropBoxData", cropBoxData);
+				// }
+			});
+		}).on("hidden.bs.modal", function () {
+			cropBoxData = $image.cropper("getCropBoxData");
+			canvasData = $image.cropper("getCanvasData");
+			$image.cropper("destroy");			
+		}).on("hide.bs.modal", function () {
+			a=1;
+		});
+
+		$(".js-zoom-in").click(function () {
+			$image.cropper("zoom", 0.1);
+		});
+
+		$(".js-zoom-out").click(function () {
+			$image.cropper("zoom", -0.1);
+		});
+		$(".js-rotate-c").click(function () {
+			$image.cropper("rotate", 90);
+		});
+
+		$(".js-rotate-ac").click(function () {
+			$image.cropper("rotate", -90);
+		});
+
+		/* SCRIPT TO COLLECT THE DATA AND POST TO THE SERVER */
+		$(".js-crop-and-upload").click(function () {
+			var cropData = $image.cropper("getData");
+
+			var form_data = new FormData();
+			form_data.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+			form_data.append('x', cropData["x"]);
+			form_data.append('y', cropData["y"]);
+			form_data.append('height', cropData["height"]);
+			form_data.append('width', cropData["width"]);
+			form_data.append('rotate', cropData["rotate"]);
+			$("#modalCrop").modal("hide");
+
+			console.log(form_data);
+			photo_edit(form_data);
+		});
+		
+		function photo_edit(form_data) {
+			$.ajax({
+				url: "{% url 'student:photo-update' student.pk %}",
+				type: 'POST',
+				enctype: 'multipart/form-data',
+				data: form_data,
+				success: function(response) {
+					console.log(response);
+					if (response['success']){
+						$('#photo').attr('src',response['image_url']);
+						$('#error_msg').text('');
+						$('#crop').hide();
+						$('#preview').attr('disabled',false);
+						$('#crop_image_alert').hide();
+						$('#face_detection').hide();
+					}
+					else
+					{
+						$('#face_detection').show();
+					}
+
+				},
+				cache: false,
+				contentType: false,
+				processData: false,
+			});
+		}
+	});
+	
+	
+</script>

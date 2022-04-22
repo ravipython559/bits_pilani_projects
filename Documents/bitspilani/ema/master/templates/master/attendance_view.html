@@ -1,0 +1,95 @@
+{% extends "admin/base_site.html" %}
+{% load static master.master_tags %}
+{% load table_tags %}
+
+{% block extrahead %}
+	{{block.super}}
+	<link rel="stylesheet" type="text/css" href="{% static 'ema_static_content/css/jquery.dataTables.css' %}">
+	<script type="text/javascript" src="{% static 'ema_static_content/js/jquery-ui.min.js' %}"></script>
+	<script type="text/javascript" src="{% static 'ema_static_content/js/jquery.dataTables.min.js' %}"></script>
+	<script>
+		var {{global_js_variable}} = {};
+
+		$(document).ready(function() {
+
+			var exam_venue_value = $("#{{form.exam_venue.auto_id}}").val();
+			var course_value = $("#{{form.course.auto_id}}").val();
+
+			$("#{{form.location.auto_id}}").change(function(e,ev){
+
+				$.get(
+					"{% url 'master:ajax:exam-attendance' %}",
+					{
+						'location':$("#{{form.location.auto_id}}").val(),
+					}
+				).done(
+					function(data) {
+						$('#attenda').html(data['context']);
+						if(ev)
+						{
+							$("#{{form.exam_venue.auto_id}}").val(ev);
+						}
+						$("#{{form.exam_venue.auto_id}}").trigger('change',course_value);
+					}
+				);
+
+			});
+			$('#id_attendance_form').submit(function(e) {
+
+				{% for field in form %}
+					var {{field.auto_id}} = '<input type="hidden" name="{{field.html_name}}" value="';
+					{{field.auto_id}} += $('#{{field.auto_id}}').val();
+					{{field.auto_id}} += '" />';
+					$(this).append({{field.auto_id}});
+				{% endfor %}
+
+				$.each(window.{{global_js_variable}}, function( index, value ) {
+					if (typeof value !== "undefined" && value != null)
+					{
+						$('#id_attendance_form').append('<input type="hidden" name="'+ index +'" value="'+ value +'" />');
+					}
+				});
+				return true;
+			});
+			$("#{{form.location.auto_id}}").trigger('change',exam_venue_value);
+
+		});
+	</script>
+{% endblock %}
+
+
+{% block content %}
+<form method="get">
+
+	<div class="row">
+		<div class="col-md-4">
+			{{form.location}}{{form.errors}}
+		</div>
+
+		<span id="attenda">
+			{% include "master/inclusion/loc_exam_course.html" with form=form %}
+		</span>
+
+		<div class="col-md-1">
+			<input
+				class="btn btn-sm btn-primary"
+				type="submit"
+				name="filter-et"
+				value="Filter"
+				id="filter_id"
+			>
+		</div>
+	</div>
+</form>
+<br>
+
+	{% render_table table %}
+	<form method="post" id='id_attendance_form'>
+		{% csrf_token %}
+		<div class="row">
+			<div class="col-md-offset-4 col-md-4">
+				<input class="btn btn-primary" type="submit" name="attendance" id="id_attendance" value="Update Exam Attendance Numbers">
+			</div>
+		</div>
+	</form>
+{% endblock %}

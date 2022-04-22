@@ -1,0 +1,103 @@
+{% extends "user/base.html" %}
+{% load tz %}
+{% load static %}
+
+
+
+{%block titleofcontent %}View Status of Exam Taken{% endblock titleofcontent %}
+
+{% block content %}
+<br>
+
+<table  class="table table-bordered table-striped" cellspacing="0" width="100%">
+		<thead>
+
+			<tr style="background-color: #c1caee">
+				<th>Course Code</th>
+				<th>Course Name</th>
+				<th>Exam Type</th>
+				<th>Exam Date</th>
+				<th>Total Questions</th>
+				<th>Attempted</th>
+				<th>Blank</th>
+				<th>Image Uploaded</th>
+				<th>Test Start Time</th>
+				<th>Test End Time</th>
+				<th>Submission Type</th>
+				<th>Make Up Exam Allowed</th>
+			</tr>
+		</thead>
+		<tbody>
+
+
+		{% for form in onlineexamatandance %}
+			<tr>
+				<td>{{form.course_code}}</td>
+				{% if form.course_name %}
+					<td>{{form.course_name}}</td>
+				{%else%}
+					<td> </td>
+				{% endif %}
+
+				<td>{{form.exam_type}}</td>
+				{% if form.exam_date %}
+					<td>{{ form.exam_date|localtime|date:'d-m-Y'}}</td>
+				{% else %}
+					<td> </td>
+				{% endif %}
+
+				{% if form.total_questions %}
+					<td>{{form.total_questions}}</td>
+				{% else %}
+					<td> </td>
+				{% endif %}
+
+				{% if form.total_attempted %}
+					<td>{{form.total_attempted}}</td>
+				{% else %}
+					<td> </td>
+				{% endif %}
+
+				{% if form.total_blank %}
+					<td>{{form.total_blank}}</td>
+				{% else %}
+					<td> </td>
+				{% endif %}
+
+				{% if form.image_uploaded %}
+					<td>{{form.image_uploaded}}</td>
+				{% else %}
+					<td> </td>
+				{% endif %}
+
+				{% if form.test_start_time %}
+					<td>{{form.test_start_time}}</td>
+				{% else %}
+					<td> </td>
+				{% endif %}
+
+				{% if form.test_end_time %}
+					<td>{{form.test_end_time}}</td>
+				{% else %}
+					<td> </td>
+				{% endif %}
+
+				{% if form.submission_type %}
+					<td>{{form.submission_type}}</td>
+				{% else %}
+					<td> </td>
+				{% endif %}
+
+				{% if form.makeup_allowed  %}
+					<td>Yes</td>
+				{% else %}
+					<td>No</td>
+				{% endif %}
+
+			</tr>
+		{% endfor %}
+		</tbody>
+	</table>
+<p><b>&nbsp;&nbsp;&nbsp;&nbsp;Note -Please note that if the makeup exam is NOT allowed, you will not be able to choose makeup slots for the course and exam concerned. In case of further queries please contact WILP Operations team</b></p>
+
+{% endblock content %}

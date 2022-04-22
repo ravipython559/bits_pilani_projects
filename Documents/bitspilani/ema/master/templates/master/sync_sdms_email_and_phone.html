@@ -1,0 +1,110 @@
+{% extends "admin/base_site.html" %}
+{% load static master.master_tags %}
+
+{% block extrahead %}
+{{block.super}}
+ <link rel="stylesheet" type="text/css" href="{% static "ema_static_content/css/jquery.dataTables.css" %}">
+
+<script type="text/javascript" src="{% static 'ema_static_content/js/jquery-ui.min.js' %}"></script>
+
+<script type="text/javascript" src="{% static 'ema_static_content/js/jquery.dataTables.min.js' %}"></script>
+
+{% block ajax_script%}
+<script type="text/javascript">
+	$(document).ready(function () {
+	  
+		$('#id_program').change(function () {
+			selectVal = $('#id_program').val();
+	   
+	    	if (selectVal == '') {
+	       		$('#filter_btn_id').prop("disabled", true);
+	    	}
+	    	else {
+
+	    		$('#id_program_type').val('');
+	      		$('#filter_btn_id').prop("disabled", false);
+	    	}
+  		})
+	  
+		$('#id_program_type').change(function () {
+			selectVal = $('#id_program_type').val();
+	   
+	    	if (selectVal == '') {
+	       		$('#filter_btn_id').prop("disabled", true);
+	    	}
+	    	else {
+	    		$('#id_program').val('');
+	      		$('#filter_btn_id').prop("disabled", false);
+	    	}
+  		})
+
+  		$('#filter_btn_id').click(function(){
+  			alert("Sync with SDMS Initiated. The sync will happend in the background. Please check the data later");
+
+  		})
+  
+	});
+</script>
+{% endblock ajax_script %}
+{% endblock %}
+
+{% block content %}
+<h3 style="text-align:center">Sync Student Data with SDMS (Personal Phone and Personal email ID only)</h3>
+<div class="container-fluid">
+	<form method="get" id="student-attendance-form">
+		<div class="row">
+			<div class="col-md-1"></div>
+			<div class="col-md-5">
+				<h4>Select Programs (for syncing program-wise)</h4>
+			</div>
+			<div class="col-md-6">
+				<h4>Select Program Type (for syncing for all programs of a program type)</h4>
+			</div>
+		</div>
+		<div class="spacer10"></div>
+		<div class="row">
+			<div class="col-md-1"></div>
+			<div class="col-md-5">
+				{{ form.program  }}
+				{{ form.program.errors }}
+			</div>
+			<div class="col-md-5">
+				{{ form.program_type  }}
+				{{ form.program_type.errors }}
+			</div>
+		</div>
+		<div class="spacer10"></div>
+		{% if 'student-miss-check' in request.GET %}
+			<div class="row">
+				<div class="col-md-1"></div>
+				<input class="form-check-input" type="checkbox" value="std_check" id="std1" name="student-miss-check" checked style="margin-left: 30px; width: 20px; height: 20px;">
+				&nbsp;<label><h4>sync for students with missing information only </h4></label>
+			</div>
+		{% else %}
+			<div class="row">
+				<div class="col-md-1"></div>
+				<input class="form-check-input" type="checkbox" value="std_check" id="std1" name="student-miss-check" style="margin-left: 30px; width: 20px; height: 20px;">
+				&nbsp;<label><h4>sync for students with missing information only </h4></label>
+			</div>
+		{% endif %}
+		<br>
+		{% if request.GET.program or request.GET.program_type %}
+			<div class="row">	
+				<div style="text-align:center">
+					{{ form.search }}
+					<input type="submit" value="Sync Phone and Email Data with SDMS" class="btn btn-lg btn-primary" id="filter_btn_id" name='sync'>
+				</div>
+			</div>
+		{% else %}
+			<div class="row">	
+				<div style="text-align:center">
+					{{ form.search }}
+					<input type="submit" value="Sync Phone and Email Data with SDMS" class="btn btn-lg btn-primary" id="filter_btn_id" name='sync' disabled>
+				</div>
+			</div>
+		{% endif %}
+	</form>
+</div>
+
+{% endblock %}
+

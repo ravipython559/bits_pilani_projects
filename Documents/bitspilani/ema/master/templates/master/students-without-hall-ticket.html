@@ -1,0 +1,242 @@
+{% extends "admin/base_site.html" %}
+{% load static master.master_tags %}
+{% load static%}
+
+
+{% block content %}
+
+<!-- with minutes -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css" />
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+
+
+<style type="text/css">
+	body {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+</style>
+<script type="text/javascript">
+  $( function() {
+
+		$('#id_program').change(function(){
+		var data=[];
+		var $el=$("#id_program");
+		$el.find('option:selected').each(function(){
+		   data.push({text:$(this).text().slice(0,4)});
+
+		});
+		var c='';
+		for (i = 0; i < data.length; i++)
+		{
+		c = c +"   "+ data[i]['text']
+		}
+		
+		document.getElementById("chips-input").value =c;
+		localStorage.setItem("x",document.getElementById("chips-input").value );
+		
+		   });
+		 if($( "#id_program option:selected" ).text()){
+		 document.getElementById("chips-input").value=localStorage.getItem('x');
+		}
+		 
+		$('#id_exam_slot').change(function(){
+			var data=[];
+			var $el=$("#id_exam_slot");
+			$el.find('option:selected').each(function(){
+			 data.push({text:$(this).text()});
+			});
+			var c='';
+			for (i = 0; i < data.length; i++)
+			{
+			c = c +"   "+ data[i]['text']
+			}
+
+			document.getElementById("chips-input2").value =c;
+			localStorage.setItem("y",document.getElementById("chips-input2").value );
+
+			});
+			if($( "#id_exam_slot option:selected" ).text()){
+			document.getElementById("chips-input2").value=localStorage.getItem('y');
+			}
+
+	 });
+
+</script>
+
+<script type="text/javascript">
+
+	function myFunction(page_num) {
+	    // When the user select the multiple programs
+	 	programs_ids=$('#id_program').val();
+	 	frst_program_id=$('#id_program').val()[0];
+	 	var program_id_url="";
+
+	 	exam_slots_ids = $('#id_exam_slot').val();
+	 	frst_exam_slot_id = $('#id_exam_slot').val()[0];
+		var exam_slot_url = "";
+
+
+	 	$.each(programs_ids.splice(1), function( index, value ) {
+	 	p = "&program=" + encodeURIComponent(value);
+	  	program_id_url=program_id_url+p;
+	    });
+
+		$.each(exam_slots_ids.splice(1), function( index, value ) {
+		p = "&exam_slot=" + encodeURIComponent(value);
+		exam_slot_url=exam_slot_url+p;
+		});
+
+	    var search =  document.getElementById("seearh_ma").value;
+
+	  var url = "{{ request.path }}"+"?program=" + encodeURIComponent(frst_program_id) + program_id_url + 
+	     									"&search=" + encodeURIComponent(search)+
+   											"&page=" + encodeURIComponent(page_num)+
+	   										"&exam_slot=" + encodeURIComponent(frst_exam_slot_id) + exam_slot_url ;
+
+	  window.location.href = url;
+	}
+
+
+
+</script>
+
+
+<style type="text/css">
+a:hover {
+ cursor:pointer;
+}
+
+
+</style>
+
+<div class="container-fluid">
+
+	<center>
+		<h4><b>View Students Without Hall Ticket</b></h4>
+		<br>
+	</center>
+	<form method="get" id="hall-tickt-form">
+		<div class="row">
+
+			<div class="col-md-6">
+				<strong><p style=margin-left:20px>Choose one or more Programs (Please select at least one program and filter)</p></strong>
+
+			<input class="form-control" style=" font-weight:bold;margin-left:10px " type="text" id="chips-input"  placeholder="Choose one or more Programs" readonly>
+
+	           {{ form.program }}
+            </div>
+
+			<div class="col-md-1">
+
+			</div>
+
+			<div class="col-md-6">
+                <strong><p style=margin-left:20px>Choose Exam Slots for which the list is to be generated(The report will be generated only after the exam slots are chosen)</p></strong>
+                <input class="form-control" style=" font-weight:bold;margin-left:10px " type="text" id="chips-input2"  placeholder="Choose one or more Exam Slots" readonly>
+				{{ form.exam_slot }}
+				  <input type="hidden" id="search" name="search" value="">
+			</div>
+
+		</div>
+		<br>
+
+		<center>
+			<input type="submit" value="Generate Table for Students with Missing Hall Ticket Entries" class="btn btn-sm btn-primary" id="filter_btn_id" name='filter-ht'>
+	    </center>
+	    <br>
+
+
+
+		{% if request.GET.program or request.GET.exam_slot %}
+		    <div style="float:right;">
+				<div class="input-group">
+					<span class="input-group-addon filter_icon">
+						<i class="glyphicon glyphicon-search"></i>
+					</span>
+					<input type="search" name="search" id="seearh_ma" class="form-control input-sm input" value="{{serch}}" placeholder="Search by Student ID, Student Name, Course ID, Course Name" aria-controls="hallticketissuestatustable" style="width:369px;">
+				</div>
+			</div>
+
+			<table width="100%" class="table table-bordered">
+				<thead>
+					<th>STUDENT ID/ STUDENT NAME</th>
+					<th>COURSE CODE/ COURSE NAME</th>
+					<th>EXAM TYPE</th>
+					<th>EXAM SLOT</th>
+				</thead>
+				{% for data in table %}
+					<tr>
+						<td>
+							{{data.student_reg}}
+						</td>
+						<td>
+							{% get_course_student_registration data.course_code %}
+						</td>
+						<td>
+							{% get_exam_type_student_registration data request.GET %}
+						</td>
+						<td>
+
+							{% get_exam_slot_student_registration data request.GET %}
+						</td>
+					</tr>
+
+				{% endfor %}
+
+			</table>
+
+		<div class="row">
+		  <div class="col-xs-1.4" style="float:left;overflow: hidden;">
+					<div class="dataTables_info form-control">
+						Total {{total_no}}
+					</div>
+		  </div>
+		{% else %}	
+		{% endif %}
+		<br>
+	</div>
+
+
+
+
+  <div class="col-xs-5" style="float:right;">
+		{% if table.has_other_pages %}
+			<ul class="pagination">
+			{% if table.has_previous %}
+			  <li>
+			  	<a onclick="myFunction('{{table.previous_page_number}}')">Prev</a>
+			  </li>
+			{% endif %}
+
+			{% for i in table.paginator.page_range %}
+			    {% if table.number == i %}
+			        <li class="page-item active" aria-current="page">
+			      <span class="page-link">
+			        {{ i }}
+			        <span class="sr-only">(current)</span>
+			      </span>
+			    </li>
+			    {% elif i > table.number|add:'-5' and i < table.number|add:'5' %}
+			         <li class="page-item"><a class="page-link" onclick="myFunction('{{i}}')">{{ i }}</a></li>
+			    {% endif %}
+			{% endfor %}
+
+			{% if table.has_next %}
+			  <li><a onclick="myFunction('{{table.next_page_number}}')">Next</a></li>
+
+			{% endif %}
+			</ul>
+		{% endif %}
+  </div>
+
+</div>
+			{% if request.GET.program or request.GET.exam_slot%}
+			<center>
+				<input type = "submit" value = "Download Wheebox Data File" class="btn btn-primary" name="wheebox_extract">
+			</center>
+		{% endif %}
+</form>
+
+{% endblock %}
