@@ -1,0 +1,21 @@
+{% extends 'bits_base_admin.html' %}
+{% load static %}
+{% load table_tags %}
+{% load widget_tweaks %}
+
+{% block title %}
+  {{ block.super }} Ad-Hoc Payments EMI Report (Zest)
+{% endblock %}
+
+{%block titleOfContent %}
+  Ad-Hoc Payments EMI Report (Zest)
+{% endblock %}
+
+{% block container %}
+  <br>
+  <div class="container-fluid">
+    <center>
+        {% render_table table %}
+    </center>
+  </div>
+{% endblock %}

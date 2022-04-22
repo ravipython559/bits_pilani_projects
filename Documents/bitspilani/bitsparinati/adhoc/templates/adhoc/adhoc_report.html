@@ -1,0 +1,21 @@
+{% extends 'adhoc/pay_adhoc_fee.html' %}
+{% load static %}
+{% load table_tags %}
+{% load widget_tweaks %}
+
+{% block title %}
+  {{ block.super }} Semester Loan Applications Report
+{% endblock %}
+
+{%block titleOfContent %}
+  Semester EMI Loan Applications Report
+{% endblock %}
+
+{% block container %}
+  <br>
+  <div class="container-fluid">
+    <center>
+        {% render_table table %}
+    </center>
+  </div>
+{% endblock %}

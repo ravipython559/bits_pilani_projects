@@ -1,0 +1,109 @@
+{% extends "easy_pdf/base.html" %}
+{% load static %}
+{% load i18n %}
+{% load widget_tweaks %}
+{% load admission_filter %}
+{% load thumbnail %}
+
+<head>
+  <link href="{% static "assets/css/bootstrap.min.css" %}" rel="stylesheet">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head>
+
+
+{% block content %}
+<style>
+  @page {
+    margin: 2cm;
+    @frame footer {
+      -pdf-frame-content: footerContent;
+      bottom: 2cm;
+      margin-left: 14cm;
+      margin-right: 1cm;
+      margin-top: 8cm; 
+      height: 10cm;
+    }
+  } 
+</style>
+<div style="font-family:'Times New Roman';">
+<div style="padding-bottom:25px; text-align:right;">
+    <img 
+    src="{% static "assets/images/BIts_Logo-01.png" %}" 
+      alt="BITS Pilani logo" width=400>
+ </div>
+ <br>
+ <div style="text-align:right">
+   <b>{{cs.selected_rejected_on|date:'F d, Y'}}</b>
+ </div>
+    <p>
+      <b>Ref: Adm/{{pgFeeAdm.admit_sem_des}}/WIPRO/{{cs.application.student_application_id}}</b>
+    </p>
+    <p>
+       <font size="4" ><b> Dear {{ cs.application.full_name }},</b></font><br>
+       <font size="4" ><b> BITS Student ID - {{ cs.student_id|default:'' }}</b></font>
+    </p>
+      <div style="clear:right;">
+    <h2 style="text-align:center;  font-size:20px"><b>Congratulations!</b></h2> 
+    </div>
+      <p>
+        With reference to your Application, we would like to inform you that you have been offered provisional admission to the programme<strong> {{program_name}} </strong>conducted by our Institute in collaboration with 
+        <b>Wipro Technologies Limited</b>.
+      </p>
+      <p>
+        This unique method of education demands simultaneous obligation to meet the high academic standards of this Institute with the work demands of your sponsoring employer. This being a collaborative programme, it is mandatory that you remain an employee of your sponsoring organization till you complete the programme. You will cease to be a student of this programme if you do not remain an employee of your sponsoring organization.
+      </p>
+      <p>
+        Please note that the above is a provisional offer of admission and is subject to verification of eligibility and acceptance of documents mentioned in the application form.
+      </p>
+      <p>
+        Please print this letter and handover a duly signed copy of it to the
+        <b>BITS Centre Coordinator</b> of your location. This will be considered as acceptance of the offer of provisional admission.
+      </p>
+     
+      Best Wishes,
+      <br>
+      <img src="{% static "organization/images/oracle_dean_sign.jpg"%}" width=100 height=30>
+      <br>
+      Dean, WILP
+<hr>
+
+{% if cs.application|get_course_list %}
+    
+<p style="text-align:center"><b>To be filled and duly signed by the applicant without detaching the above part of this letter.</b></p>
+<p>I {{ cs.application.full_name }} herewith accept the admission offer as per above stated conditions and also confirm my Registration for Semester 1 of my program offered in the
+{{ pgFeeAdm.admit_sem_des }} of BITS calendar for the four courses as given below:</p>
+      <table align="center" style="text-align:center; border: 1px solid black; 
+        border-collapse: collapse;padding:2px" width="80%" >
+        <tr>
+          <th width="20%" style="text-align:center;">Course No.</th>
+          <th width="50%" style="text-align:center;">Course Title</th>
+          <th width="10%" style="text-align:center;">Units</th>
+        </tr>
+        <tbody>
+        {%for course in courseL%}
+        <tr>
+          <td> {{course.course_id}}</td>
+          <td> {{course.course_name}}</td>
+          <td> {{course.course_unit}}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    <br>
+    <br>
+
+{% endif %} 
+<br>
+<br>
+<br>
+<br>
+<br>
+<table>
+<tr>
+<td><b>Place & Date</b></td>
+<td style="text-align:right"><b>(Applicant's Signature)</b></td>
+</tr>
+</table>
+
+</div>
+{% endblock %}

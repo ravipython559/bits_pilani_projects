@@ -1,0 +1,8 @@
+{% load static %}
+{% load admission_filter %}
+  
+{% for x in bits_urls %}
+  
+  <a href={{x.link}} TARGET="{{x.target}}">{{x.url}}</a> &nbsp|&nbsp
+
+{% endfor %}

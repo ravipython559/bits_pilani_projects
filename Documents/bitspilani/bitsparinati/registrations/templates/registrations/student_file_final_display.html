@@ -1,0 +1,57 @@
+{% extends 'bits_BaseTemp.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% load admission_filter %}
+
+{% block title %}
+  {{ block.super }} - Uploaded Documents
+{% endblock %}
+
+{% block staticContent %}
+  <style type="text/css">
+    .table{ width: 60% }
+  </style>
+{% endblock %}
+
+
+{% block navigationLinks %}
+  <li><a href="{% url 'registrationForm:applicantData'%}">Home</a></li>
+  <li><a href="{% url 'registrationForm:applicantView'%}" TARGET="_blank">Download Application PDF</a></li>
+  <li><a href={% url 'auth_logout'%}>Log Out</a></li>
+{% endblock %}
+
+
+{% block titleOfContent %}
+  Uploaded Documents
+{% endblock %}
+
+
+{% block container %}
+  <div class="container table-responsive">
+    <center>
+    <table class="table table-bordered table-hover">
+      <tr>
+        <th class="custom">Document  Name</th>
+        <th class="custom">Document Uploaded</th>
+      </tr>
+
+      {% for x in documents %}
+      <tr>
+        <td>{{ x.doc_type }}
+        {% if x.mandatory%}
+          <span style="color:red">*</span>
+        {% endif %}
+        </td>
+        <td>{% if x.doc_link %}
+          <a href="{% url 'registrationForm:document-view' x.doc_link %}" target="_blank">{{ x.doc_name }}</a>
+          {%else%}-
+          {%endif%}
+        </td>
+      </tr>
+      {% endfor %}
+      
+    </table>
+    </center>
+  </div>
+  <br>
+{% endblock %}

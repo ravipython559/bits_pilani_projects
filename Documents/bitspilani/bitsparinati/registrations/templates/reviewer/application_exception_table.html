@@ -1,0 +1,44 @@
+{% extends 'reviewer/bits_base_reviewer.html' %}
+
+{% load static %}
+{% load widget_tweaks %}
+{% load admission_filter %}
+{% load super_reviewer_filter %}
+{% load table_tags %}
+
+{% block title %} App-List with Internal Program Transfers {% endblock %}
+
+{% block staticContent %}
+  <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css">
+
+  <script>
+  $(document).ready(function(){
+    $('#form').submit(function(e){
+      $('#pt_search_box').val($('input[type=search]').val());
+    });
+
+  });
+  </script>
+{% endblock %}
+
+{%block titleOfContent %} 
+	Applicant List with Internal Program Transfers
+{% endblock %}
+
+{% block container %}
+<div class="container">
+  <br>
+    {% render_table table %}
+  <br>
+
+  <div class="text-center">
+	  <form action="" method="get" id="form"> 
+	      <input class="btn btn-sm btn-primary" name="report_xls" type="submit" 
+	        value="Download Excel" id="xls" style="width:15%">
+	      <input  type="hidden" name="pt_search_box" id='pt_search_box'>
+	  </form>
+  </div>
+</div>
+<br>
+{% endblock %}

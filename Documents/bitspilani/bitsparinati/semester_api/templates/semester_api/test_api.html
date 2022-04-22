@@ -1,0 +1,110 @@
+<head>
+	<meta charset="utf-8"/>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script>
+		function zest_call(student_id,email,pincode,basket_amount,mobile,key)
+		{
+			if (student_id != null){
+				var url ="https://admission-uat.x.codeargo.com/registration-api/zest-create-view/";
+				alert("Data: " + student_id);
+				$.post(url, 
+				{
+					'student_id':student_id,
+					'email': email,
+					'pincode':pincode,
+					'basket_amount':basket_amount,
+					'mobile':mobile,
+					'key':key,
+				})
+				.done(function(data){
+					window.location.href = data['return_url'];
+				})
+				.fail(function(data){
+					alert(data['return_url'])
+				});
+			}
+			else alert("check value");
+		} 
+
+		function zest_delete_call(student_id)
+		{
+			if (student_id != null){
+				var url ="https://admission-uat.x.codeargo.com/registration-api/emi-delete/";
+				alert("Data: " + student_id);
+				$.post(url, 
+					{
+					'student_id':student_id,
+				})
+				.done(function(data){
+					alert("eroorrrr in done");
+					alert(data['msg']);
+				})
+				.fail(function(data){
+					alert("eroorrrr in fail");
+					alert(data['msg']);
+				});
+			}
+		}
+
+		$( document ).ready(function(){
+			var url ="https://admission-uat.x.codeargo.com/registration-api/emi-status-ajax/"
+			$.post(url, 
+				{'student_id':'dummy124',
+				})
+				.done(function (data) { 
+					alert(data['zest_inprogress']);
+					alert(data['zest_complete']);
+					if(data['zest_inprogress'] || data['zest_complete'])
+					{
+						$('#emi').attr('disabled','disabled');
+						alert("This script was written to disable a button on page load.")
+					}
+
+					if (data['is_in_delete_status'])
+						$('#id_delete').attr('disabled',false);
+					else
+						$('#id_delete').attr('disabled', true);
+				});
+
+
+			$('#test').click(function() {
+				var student_id = $('#student_id').val();
+				var email = $('#email').val();
+				var amount = $('#amount').val();
+				var mobile = $('#mobile').val();
+				var redirect_url = $('#redirect_url').val();
+				var order_id = $('#order_id').val()
+				$.post("{% url 'semester_api:paytm-create-view' %}",
+					{
+						'student_id':student_id,
+						'email':email,
+						'amount':amount,
+						'mobile':mobile,
+						'redirect_url': redirect_url,
+						'order_id': order_id
+					}).done(function(data){
+						window.location.href = data['return_url'];
+					})
+			});
+		});
+
+
+
+		</script>
+</head>
+
+<body>
+	<input type = "button" value="EMI" id="emi" 
+	onclick="zest_call('dummy124','aksdlpdbits@gmail.com','333031','15000','+919983976060','ab1234')">
+	<input type = "button" value="DELETE EMI" id="id_delete" onclick="zest_delete_call('dummy124')">
+	<br>
+	<br>
+	<br>
+	<label>student_id:<input type="text" id="student_id" name="student_id" ><br><br></label>
+	<label>email: <input type="text" id="email" name="email"><br><br></label>
+	<label>amount: <input type="text" id="amount" name="amount"><br><br></label>
+	<label>mobile: <input type="text" id="mobile" name="mobile"><br><br></label>
+	<label>redirect_url: <input type="text" id="redirect_url" name="redirect_url"><br><br></label>
+	<label>order_id: <input type="text" id="order_id" name="order_id"><br><br></label>
+	<input type = "button" id="test" value='paytm'>
+</body>

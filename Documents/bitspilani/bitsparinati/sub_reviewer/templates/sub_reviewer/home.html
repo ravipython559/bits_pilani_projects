@@ -1,0 +1,184 @@
+{% extends 'reviewer/bits_base_reviewer.html' %}
+{% load static %}
+{% load table_tags %}
+{% load widget_tweaks %}
+{% load admission_filter %}
+{% load super_reviewer_filter %}
+
+{% block title %}Applicant List for Review{% endblock %}
+{% block nav-links %}
+  {% include 'sub_reviewer/nav/sub_reviewer_nav.html' %} 
+{% endblock %} 
+
+{% block staticContent %}
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
+ 
+    <script type="text/javascript">
+    $(document).ready(function(){
+
+      $('select[name=pg_type]').change(function(){
+        $.getJSON( "{% url 'bits_admin_payment:get-prog' %}", 
+          { 
+            pg_type : $('#id_pg_type').val() 
+          } ).done(function( data ) {
+            var fetched_data = JSON.parse(data['pg']);
+            $('select[name=programs]').empty();
+            $('select[name=programs]').append($('<option>',{value: '',text: 'Choose Program'}));
+            $.each(fetched_data,function(i,value){
+              $('select[name=programs]').append($('<option>',{value: value.pk, text: value.full_pg}));
+            });
+          });
+      });
+        $("#csv, #Educsv, #WExpcsv").click(function(){
+          var search=$('input[type=search]').val();
+           $("#texens").val(search);
+           var pg=$("#id_programs").val();
+           var st=$("#id_status").val();
+           var pgt=$("#id_pg_type").val();
+           $("#prog").val(pg);
+           $("#stat").val(st);
+           $("#pg_type").val(pgt);
+          });
+
+        $("#regeneate").click(function(e){
+          var pg=$("#id_programs").val();
+
+          if (!pg)
+          {
+            $('#popup').html('This operation cannot be done on all programs at a time. Please choose a program and filter the list and redo this operation');
+            $('#popup').dialog({
+            width: 500,
+            resizable:false,
+            buttons: {
+              "OK": function(){
+               $(this).dialog("close");
+               },
+            }});
+            return false;
+          }
+          $("#reg-prog").val(pg);
+          e.preventDefault();
+          $('#popup').html('The offer letters for all applicants shown in the list above will be regenerated. Please click on Ok to reconfirm. Cancel to abort');
+          $("#popup").dialog({
+          modal: true,
+          width: 500,
+          resizable:false,
+          buttons: {
+            "OK": function(){
+             $("#regen_form").submit();
+             $(this).dialog("close");
+             return true;
+             },
+            "Cancel": function(){
+             $(this).dialog("close");
+             },
+           }
+          });
+
+        });
+
+    });
+
+      jQuery.extend( jQuery.fn.dataTableExt.oSort, {
+        "date-uk-pre": function ( a ) {
+      
+        var ukDatea = a.split('-');
+        var year_time_array = ukDatea[2].split(" ");
+        var h_m_array = year_time_array[1].split(":");
+        var a_p = year_time_array[2];
+        var a_p_num; 
+        if(a_p =='a.m.')
+          a_p_num = 0;
+        else
+          a_p_num = 1;
+
+        return (year_time_array[0] + ukDatea[1] + ukDatea[0] + a_p_num + h_m_array[0] + h_m_array[1]) * 1;
+    },
+
+    "date-uk-asc": function ( a, b ) {
+        return ((a < b) ? -1 : ((a > b) ? 1 : 0));
+    },
+
+    "date-uk-desc": function ( a, b ) {
+        return ((a < b) ? 1 : ((a > b) ? -1 : 0));
+    }
+    } );
+
+    function popD(x) {
+        $('#popup').html(x);
+        $('#popup').dialog({
+        modal: true,
+        width: 500,
+        resizable:false,
+        buttons: {
+        "OK": function(){
+         $(this).dialog("close");
+         },
+        }});
+
+        }
+    </script>
+    <style type="text/css">
+    #id_programs {
+      width:70%;
+    }
+    #id_status{
+      width:60%;
+    }
+    #esc_comm{
+    cursor:pointer;
+    text-decoration:underline
+    }
+    </style>
+{% endblock %}
+
+{%block titleOfContent %} 
+    Applicant List
+{% endblock %}
+
+{% block container %}
+<br>
+<div class="container-fluid">
+<center>
+ <form action="{% url 'sub_reviewer:review_applicant_data' %}" 
+    method="get" id="myform">         
+    <div class="row container">
+      <div class="col-md-3">
+        <label><b>Program Type :</b></label>&nbsp&nbsp{{form2.pg_type}}
+      </div>
+      <div class="col-md-3">
+        <label><b>Program :</b></label>&nbsp&nbsp{{form2.programs}}
+      </div>
+
+      <div class="col-md-3">
+        <label><b>Application Status :</b></label>&nbsp&nbsp{{form2.status}}
+      </div>
+
+      <div class="col-md-2 text-left">
+        <input class="btn btn-sm btn-primary" type="submit" value="List" 
+            style="width: 70%">
+      </div>
+    </div>     
+</form>
+</center>
+<br>
+{% render_table table %}
+<br>
+  <div class = "text-center">
+    <form action="{% url 'sub_reviewer:createRCSV' %}" method="get">
+        {% csrf_token %}
+        <input class="btn btn-sm btn-primary" name="AppCSV" type="submit" value="Download CSV" id="csv" >
+        <input class="btn btn-sm btn-primary" name="EduCSV" type="submit" value="Download Educations CSV" id="Educsv" style="width:20%" >
+        <input class="btn btn-sm btn-primary" name="WExpCSV" type="submit" value="Download Work Experience CSV" id="WExpcsv" style="width:20%" >
+
+        <input type="hidden" id="texens" name="user" value="texens" />
+        <input type="hidden" id="prog" name="prog" value="texens" />
+        <input type="hidden" id="stat" name="stat" value="texens" />
+        <input type="hidden" id="pg_type" name="pg_type" />
+    </form> 
+  </div>
+
+<span style="font-weight:bold; font-size:14px;" id="popup"></span>
+<br>
+{% endblock %}

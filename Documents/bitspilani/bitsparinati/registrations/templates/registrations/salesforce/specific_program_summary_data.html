@@ -1,0 +1,41 @@
+{% extends 'bits_base_admin.html' %}
+{% load static %}
+{% load table_tags %}
+
+{% block title %} {{title}} {% endblock %}
+
+{% block staticContent %}
+  <link rel="stylesheet" href="/static/assets/css/jquery-ui.css">
+	<style type="text/css">
+		.margin{
+			margin: 10px;
+		}
+	</style>
+
+{% endblock %}
+
+{%block titleOfContent %} 
+    {{title}}
+{% endblock %}
+
+{% block container %}
+
+<form method="get">
+<div class="container">
+    <div class="row">
+     <div class="col-md-6 text-right">
+      	 <label><b>Program :</b></label>&nbsp&nbsp{{form.program}}
+      </div>
+    <div class="col-md-6 text-center">
+        <input type="submit" name="filter" value="Filter" id = "id_fliter" class="btn btn-primary btn-sm">
+    </div>
+    </div>
+</div>
+    <br>
+    <div class="container">
+        {% render_table table %}
+    </div>
+</form>
+
+
+{% endblock %}

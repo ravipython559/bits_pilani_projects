@@ -1,0 +1,72 @@
+{% extends 'payment_reviewer/bits_base_payment_reviewer.html' %}
+{% load static %}
+{% load i18n %}
+{% load widget_tweaks %}
+{% load table_tags %}
+
+{% block staticContent %}
+  <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css">
+
+<script type="text/javascript">
+	$(document).ready(function(){
+		
+		$('select[name=pg_type]').change(function(){
+			$.getJSON( "{% url 'bits_admin_payment:get-prog' %}", 
+			  { 
+				pg_type : $('#id_pg_type').val() 
+			  } ).done(function( data ) {
+				var fetched_data = JSON.parse(data['pg']);
+				$('select[name=programs]').empty();
+				$('select[name=programs]').append($('<option>',{value: '',text: 'Choose Program'}));
+				$.each(fetched_data,function(i,value){
+				  $('select[name=programs]').append($('<option>',{value: value.pk, text: value.full_pg}));
+				});
+			  });
+		});
+
+	});
+</script>
+<style type="text/css">
+	.table-container{
+		width: 80%;
+		margin: auto;
+		font-size: 1.1rem;
+	}
+</style>
+{% endblock %}
+
+{%block titleOfContent %} 
+	{{ title }}
+{% endblock %}
+
+{% block container %}
+<div class="container">
+	<br>
+  	<div class="container-fluid">
+	    <form action="{% url 'payment_reviewer:program-admissions-report' %}" method="get" id="myform">
+		    {% csrf_token %}
+		    <table>
+		      <tr>
+		        
+		        <td style="width:30%;font-weight:bold;">Program :{{form_data.programs}}</td>
+		    
+		        <td style="width:30%;font-weight:bold;">Program Type :{{form_data.pg_type}}</td>
+
+		        <td style="width:30%;font-weight:bold;">Batch :{{form_data.admit_batch}}</td>
+		        
+		        <td style="padding:10px">
+		        <input class="btn btn-xs btn-primary" type="submit" value="List" style="width:100px">
+		        </td>
+		      </tr>
+		    </table>
+		</form>
+	</div>
+    <br>
+	<div class="table-container">
+		{% render_table table %}
+	</div>
+  	<br>
+	<br>
+</div>
+{% endblock %}

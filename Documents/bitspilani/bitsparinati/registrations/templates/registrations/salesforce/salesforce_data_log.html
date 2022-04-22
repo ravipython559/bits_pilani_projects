@@ -1,0 +1,52 @@
+{% extends 'bits_base_admin.html' %}
+{% load static %}
+{% load table_tags %}
+
+{% block title %} {{title}} {% endblock %}
+
+{% block staticContent %}
+	<style type="text/css">
+		.margin{
+			margin: 10px;
+		}
+	</style>
+{% endblock %}
+
+{%block titleOfContent %} 
+    {{title}}
+{% endblock %}
+
+{% block container %}
+	<div class="container-fluid margin">
+		<div class="row">
+			<form method="get">
+				<div class=" col-md-7 text-right">
+					{{form.status.label}} : {{form.status}}
+				</div>
+				<div class="col-md-1 text-right">
+					<input type="submit" name="filter" value="Filter" id = "id_fliter" class="btn btn-primary btn-sm pull-left">
+				</div>
+			</form>		
+		</div>
+
+		<div class='row'>
+			{% render_table table %}
+		</div>
+	</div>
+	<input type="button" name="retry" value="Retry Pending Data Files" id = "id_retry" class="btn btn-primary btn-large" style="margin-left: 660px;">
+	<script>
+		$( "#id_retry" ).click(function() {
+			/* start  progress or buffer image rendering  look for prior eg how to do*/
+		
+			$.get(
+				"{% url 'registrationForm:saleforce:salesforce-data-retry'%}",
+			).done(
+				function(data) {
+					alert(data['message']); /* use proper alert box*/
+				}
+			);
+			
+			/* stop  progress or buffer image rendering  */
+		});
+	</script>
+{% endblock %}

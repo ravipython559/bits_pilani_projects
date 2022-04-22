@@ -1,0 +1,26 @@
+<html>
+<body>
+<p>
+Dear <strong>Shantanu,</strong>
+</p>
+
+<p><b>{{error_code}}</b></p>
+<br>
+<br>
+<p>
+Best Regards,
+</p>
+
+<p>
+<b>Admission Cell</b><br>
+<b>Work Integrated Learning Programmes</b><br>
+<b>Birla Institute of Technology & Science, Pilani</b><br>
+Visit: <a href="http://www.bits-pilani.ac.in/wilp">
+www.bits-pilani.ac.in/wilp
+</a><br>
+Write: <a href="mailto:admission@wilp.bits-pilani.ac.in"
+target="_top">admission@wilp.bits-pilani.ac.in</a><br>
+Call: +91-80-48767777<br>
+</p>
+</body>
+</html>

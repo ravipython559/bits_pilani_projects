@@ -1,0 +1,183 @@
+{% extends "admin/base.html" %}
+
+{% load static %}
+{% load i18n %}
+
+{% block title %}{{ title }} | {{ site_title|default:_('Bits site admin') }}{% endblock %}
+
+{% block extrahead %}
+<img src="{% static "assets/images/BIts_Logo-01.png" %}" id="headercontrol_imgu" alt="BITS Pilani logo" class="logoFunc" >
+<link rel="icon" href="{% static "assets/images/BITSFavicon.png" %}">
+<h2 class="appCentre" ><i>Application Centre</i></h2>
+<br>
+<div>
+  <img class="img-responsive navImg" src="{% static "assets/images/navUp2.png" %}">
+</div>
+{% endblock %}
+
+{% block extrastyle %}
+<link rel="stylesheet" type="text/css" href="{% static "assets/css/style.css"%}">
+<link href="{% static "assets/css/bootstrap.min.css"%}" rel="stylesheet">
+<link href="{% static "assets/css/ie10-viewport-bug-workaround.css"%}" rel="stylesheet">
+    <!-- Custom styles for this template -->
+<link href="{% static "assets/css/signin.css"%}" rel="stylesheet">
+<script src="{% static "assets/js/ie-emulation-modes-warning.js"%}"></script>
+<script src="{% static "assets/js/jquerynew.min.js"%}"></script>
+<script src="{% static "assets/js/bootstrap.min.js"%}"></script>
+
+<style type="text/css">
+#header {
+    padding: 0px;
+    overflow: visible;
+    font-size: 14px;
+}
+
+ul li{
+  list-style-type: none;
+}
+
+#myNavbar .nav .dropdown-toggle {
+	color: #447e9b;
+}
+
+.navbar-nav > li > a {
+  line-height: 7px;
+}
+
+.navImg{
+  width:100%;
+}
+</style>
+
+{% endblock %}
+
+{% block usertools %}
+
+<nav class="navbar transparent navbar-default navbar-static-top hr">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" 
+        data-target="#myNavbar">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+          </div>
+         <div class="collapse navbar-collapse" id="myNavbar">
+          <ul class="nav navbar-nav navbar-right" >
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" 
+            aria-expanded="false">Manage Payment Data<span class="caret"></span></a>
+            <ul class="dropdown-menu dropdown-menu-left" role="menu">
+              <li><a href="{% url 'bits_admin:paymentData'%}">
+              Download Payment Data</a></li>
+              <li><a href="{% url 'bits_admin_payment:upload-manual-payments-home' %}">Upload Manual Payment File</a></li>
+              <li><a href="{% url 'bits_admin_payment:upload-gateway-payments-home' %}">
+              Upload Payment Gateway File</a></li>
+              <li><a href="{% url 'bits_admin_payment:hist-manual-payments-home' %}">View Historical Manual Gateway Data</a></li>
+              <li><a href="{% url 'bits_admin_payment:hist-gateway-payments-home' %}">View Historical Payment Gateway Data</a></li>
+            </ul>
+          </li>
+
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" 
+            aria-expanded="false">Manage User and Applicant Data
+            <span class="caret"></span></a>
+            <ul class="dropdown-menu dropdown-menu-right" role="menu">
+              <li><a href="{% url 'bits_admin:applicantData' %}">View/Download Applicant Data</a></li>
+              <li><a href="{% url 'bits_admin:userdataview' %}">View/Download User Data</a></li>
+              <li><a href="{% url 'bits_admin:passport_photo' %}">Student Photo Download</a></li>
+              <li><a href="{% url 'bits_admin:nc-list' %}">View Newly Admitted Students</a></li>
+              <li><a href="{% url 'bits_admin:app-archive-data' %}">Archive Applicant Data</a></li>
+              <li><a href="{% url 'bits_admin:archive-data-view' %}">View Archived Applications</a></li>
+              <li><a href="{% url 'bits_admin_payment:deferred-docs-app' %}">View Deferred Documents Missing</a></li>
+              <li><a href="{% url 'bits_admin_payment:deferred-docs-app' %}">View Deferred Document Submissions</a></li>
+              <li><a href="{% url 'bits_admin:followup-mail-logs' %}">Follow Up Mail Logs</a></li>
+              <li><a href="{% url 'bits_admin_payment:view-elective-selections' %}">
+              View Elective Selections by Students</a></li>
+              <li><a href="{% url 'bits_admin_payment:pre-sel-rej-app' %}">
+              View Applicants for Pre-Selection</a></li>
+            </ul>
+          </li>
+
+          <li>
+            <a href="{% url 'admin:index' %}registrations/">Manage Master Data</a>
+          </li>
+
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" 
+            aria-expanded="false">Reports
+            <span class="caret"></span></a>
+            <ul class="dropdown-menu dropdown-menu-right" role="menu">
+              <li><a href="{% url 'bits_admin:dmr-non-spec'%}">
+              DMR Report - Program wise - NonSpecific Programs
+              </a></li>
+              <li><a href="{% url 'bits_admin:dmr-daily-non-spec'%}">
+              DMR Report - Daily Movement - NonSpecific Programs
+              </a></li>
+              <li><a href="{% url 'bits_admin:dmr-daily-cluster'%}">
+              DMR Report - Daily Movement - Cluster Programs</a></li>
+              <li><a href="{% url 'bits_admin:dmr-daily-certification'%}">
+              DMR Report - Daily Movement - Certification Programs</a></li>
+              <li><a href="{% url 'bits_admin:dmr-daily-specific'%}">
+              DMR Report - Daily Movement - Specific Programs</a></li>
+              <li><a href="{% url 'bits_admin:dmr-spec'%}">
+              DMR Report - Program wise - Specific Programs</a></li>
+              <li><a href="{% url 'bits_admin:dmr-cluster'%}">
+              DMR Report - Program wise - Cluster Programs</a></li>
+              <li><a href="#" style="color:#bfb5b5">Program Summary Report</a></li>
+              <li><a href="{% url 'bits_admin:milestone-report'%}">Milestones Date Report</a></li>
+              <li><a href="{% url 'bits_admin:waiver-report'%}">
+              Fee Waiver Report</a></li>
+              <li><a href="{% url 'bits_admin:prog-change-report'%}">Program Change Report</a></li>
+              <li><a href="{% url 'bits_admin_payment:app-exp'%}">Applicant List with Internal Program Transfers</a></li>
+              <li><a href="{% url 'bits_admin:prog-loc-report-cluster'%}">Program Location Report (Cluster)</a></li>
+              <li><a href="{% url 'bits_admin:prog-loc-report-specific'%}">Program Location Report (Specific)</a></li>
+              <li><a href="{% url 'bits_admin:student-course-report'%}">Student Course Registration Report</a></li>
+              <li><a href="{% url 'bits_admin_payment:emi-report' %}">Student EMI Loan Applications Report (Zest)</a></li>
+              <li><a href="{% url 'bits_admin_payment:adhoc-report' %}">
+              Ad-Hoc Payments EMI Report (Zest)</a></li>
+              <li><a href="{% url 'bits_admin_payment:program-admissions-report' %}">Program Admissions Report</a></li>
+              <li><a href="{% url 'bits_admin:inbound' %}">Call Log Details</a></li>
+              <li><a href="{% url 'bits_admin_payment:emi-report-eduv' %}">Student EMI Loan Applications Report (Eduvanz)</a></li>
+              <li><a href="{% url 'bits_admin_payment:adhoc-eduv-report' %}">Ad-Hoc Payments EMI Report (Eduvanz)</a></li>
+              <li><a href="{% url 'bits_admin_payment:adhoc-propelld-report' %}">Ad-Hoc Payments EMI Report (Propelld)</a></li>
+              <li><a href="{% url 'bits_admin_payment:emi-report-propelld' %}">Student EMI Loan Applications Report (Propelld)</a></li>
+              <li><a href="{% url 'bits_admin_payment:emi-report-ezcred' %}">Student EMI Loan Applications Report (ABFL-Ezcred)</a></li>
+                <li><a href="{% url 'registrationForm:saleforce:specific_report' %}">Specific Program Summary Data (sent to Salesforce)</a></li>
+             
+            </ul>
+          </li>
+
+
+          <li>
+            <a href="{% url 'auth_logout'%}">Logout</a>
+          </li>          
+          </ul>
+          </div> <!-- /.navbar-collapse -->
+      </div> <!-- /.container-fluid -->
+
+      <div>
+      <img class="img-responsive navImg" src="{% static "assets/images/navDown2.png" %}">
+      </div>
+  </nav>
+{% endblock %}
+
+    <h3 class="text-center">  <!-- change -->
+      {%block titleOfContent %} 
+        Enter title for your content 
+      {% endblock %}
+    </h3>
+
+{% block footer %}
+
+	<div class="footerWrapper" style="margin-top: 186px;padding-top: 0px;width: 100%;">
+		<div class="cpInfoFixWrapper">
+			<div class="cpInfoFix">
+			<p class="info">
+			Admissions Office, BITS, Pilani - 333 031 (Rajasthan) India.<br>
+			Call us on: +91-80-48767777</p>
+			</div>
+		</div>
+	</div>
+{% endblock %}

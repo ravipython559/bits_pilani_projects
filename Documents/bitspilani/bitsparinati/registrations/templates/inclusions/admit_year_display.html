@@ -1,0 +1,8 @@
+{% load static %}
+{% if pfa_admit.admit_sem_cohort == 1 %}
+{{ pfa_admit.admit_year}}-{{ pfa_admit.admit_year|add:"1"|stringformat:"d"|slice:"2:"}} Sem1
+{% elif pfa_admit.admit_sem_cohort == 2 %}
+{{ pfa_admit.admit_year}}-{{ pfa_admit.admit_year|add:"1"|stringformat:"d"|slice:"2:"}} Sem2
+{% else %}
+{{ pfa_admit.admit_year}}-{{ pfa_admit.admit_year|add:"1"|stringformat:"d"|slice:"2:"}}
+{%endif%}

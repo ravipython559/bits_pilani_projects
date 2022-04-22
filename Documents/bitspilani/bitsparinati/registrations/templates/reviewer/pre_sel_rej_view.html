@@ -1,0 +1,67 @@
+{% extends 'reviewer/bits_base_reviewer.html' %}
+{% load static %}
+{% load table_tags %}
+{% load widget_tweaks %}
+
+{% block title %}
+  {{ block.super }} Pre-Selection / Rejection
+{% endblock %}
+
+{% block staticContent %}
+  <style type="text/css">
+    #id_programs {
+      width:70%;
+    }
+    #id_location{
+      width:60%;
+    }
+    .form-inline .input-group > .form-control
+    {
+       width:190%;
+    }
+     @supports (-moz-appearance:none) {
+    .form-inline .input-group > .form-control
+    {
+      
+       width:230%;
+       
+    }
+}
+    .input-group{
+      right:130px;
+    }
+  </style>
+{% endblock %}
+
+{%block titleOfContent %}
+  Applicant List for Preview for Pre-Selection / Rejection
+{% endblock %}
+
+{% block container %}
+<br>
+<div class="container-fluid">
+<center>
+ <form>
+    <div class="row container">
+      <div class="col-md-4">
+        <label><b>Program :</b></label>&nbsp&nbsp{{form2.programs}}
+      </div>
+
+      <div class="col-md-3">
+        <label><b>Location :</b></label>&nbsp&nbsp{{form2.location}}
+      </div>
+
+
+      <div class="col-md-2 text-left">
+        <input class="btn btn-sm btn-primary" type="submit" value="Apply Filter" style="width: 70%">
+      </div>
+    </div>     
+</form>
+</center>
+<br>
+
+{% render_table table %}
+
+<br>
+<br>
+{% endblock %}

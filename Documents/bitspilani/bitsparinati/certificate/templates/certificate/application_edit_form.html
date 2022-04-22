@@ -1,0 +1,984 @@
+{% load static %}
+{% load widget_tweaks %}
+{% load admission_filter %}
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<link rel="stylesheet" type="text/css" href="{% static "assets/css/style.css"%}">
+<link href="{% static "assets/css/bootstrap.min.css"%}" rel="stylesheet">
+<link href="{% static "assets/css/ie10-viewport-bug-workaround.css"%}" rel="stylesheet">
+<link href="{% static "assets/css/signin.css"%}" rel="stylesheet">
+<script src="{% static "assets/js/ie-emulation-modes-warning.js"%}"></script>
+<script src="{% static "assets/js/jquerynew.min.js"%}"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css"> 
+<link href="{% static "assets/css/bootstrap-glyphicons.css"%}" rel="stylesheet">
+
+<div class="jumbotron">
+    <header>
+
+    <title>BITS WILP</title>
+    <div class="headerWrapper" style=" height: 167px;">
+
+    <h1 class="hidden">BITS Pilani</h1>
+    <div class="logoWrapper" padding-top: 17px;>
+      <img src="{% static "assets/images/BIts_Logo-01.png" %}" id="headercontrol_imgu" alt="BITS Pilani logo" class="logoFunc" >
+
+       <h2 class="appCentre" ><i>Application Centre</i></h2>
+
+       <div id="tag"  >
+        <a href={% url 'registrationForm:applicantData'%}>Home</a>
+        &nbsp|&nbsp 
+        {% if user.email|get_payfee_permission %}
+          <a href={% url 'registrationForm:payfee'%} TARGET="_blank">Download Fee Receipt</a>
+        {% else %}
+          <a href={% url 'registrationForm:payfeeview'%}>Pay Fees</a>
+        {% endif %}
+        &nbsp|&nbsp
+        <a style= "float:right; padding-right: 19px;" href={% url 'auth_logout'%}> Log out</a>
+      </div>
+
+    </div>
+  </div>
+  </header>
+
+</div>
+
+<style>
+.del1 , .del2
+{
+  color: black;
+}
+#id_program_display{
+  width: 50%;
+}
+.required {
+    color: #e32;
+    content: ' *';
+    display:inline;
+}
+ul {
+  list-style-type: none;
+  margin: 1px;
+  padding: 3px;
+}
+
+li {
+  display: inline;
+}
+td, th {
+  padding: 7px;
+}
+div#stuDiv{
+  padding: 10px;
+}
+.add-row{
+  padding: 8px 21px;
+  border-radius: 6px;
+  color:black;
+  background-size:  38px 34px;
+  background-repeat: no-repeat;
+  position: relative;
+  left: 1%;
+}
+.delete-row{
+  padding: 8px 21px;
+  border-radius: 6px;
+  color:black;  
+  position: relative;
+  background-size:  38px 34px;
+  background-repeat: no-repeat;
+}
+  #id_country{
+    width: 70%;
+  }
+  #id_work_location{
+    width: 80%;
+  }
+  #id_current_organization{
+    width: 70%;
+  }
+  #id_total_work_experience_in_months{
+    width: 70%;
+  }
+  #id_current_org_industry{
+    width: 70%;
+  }
+  #id_current_employment_status{
+    width: 80%;
+  }
+  #id_fee_payment_owner{
+  width: 80%;
+}
+.phone select{
+  width: 24%;
+}
+
+.table>tbody>tr>td{
+  border-top: 0px solid #ddd;
+}
+.table-bordered>tbody>tr>td{
+  border-top: 0px solid #ddd;
+}
+.addrInput input{
+  width: 92%;
+}
+  
+.bold{
+  font-weight: bold;
+}
+
+.alignTh{
+  font-weight: bold;
+  text-align: center;
+}
+ .city input{
+  width: 93%;
+ }
+#tableedu tr:first-child td:last-child{
+ display: none;
+ } 
+.formwidth1 input{
+  width: 101%;
+}
+.formwidth2 input{
+  width: 106%;
+ }
+.alignTh1{
+ width: 33%;
+ text-align: center;
+}
+.alignTh2{
+  width: 27%;
+ text-align: center;
+}
+.alignThno{ 
+  text-align: center;
+}
+.datepicker:read-only { 
+    background-color: yellow;
+}
+.alignTh8 input{
+  width: 51%
+}
+.col-md-2 {   
+  width: 20.666667%;    
+}
+.incr{
+  width: 100%;
+}
+</style>
+
+<script type="text/javascript">
+
+function checkMobile(text) {
+
+   var obj = document.getElementById('id_mobile_1').value ;
+
+   var id=$("#id_mobile_0").val();
+   
+
+   document.getElementById('id_mobile_1').setCustomValidity('');
+    var testvar_1;
+    if(obj == ""){
+           
+          document.getElementById('id_mobile_1').setCustomValidity('Please Enter Number');
+          return false;
+    } 
+    else {
+
+                    $.ajax({
+                  
+                   type: "GET",
+                  url: "{% url 'registrationForm:student-ajax-mob'%}",
+
+                  data: {'a':id+"."+obj},
+                  cache: false,
+                  success: function(data){
+                   
+                            testvar_1=data;                   
+                            },
+                  async:false,
+                  failure: function(data) { 
+                     
+                      }
+                  });
+                  if(testvar_1['num']==1){
+
+                    document.getElementById('id_mobile_1').setCustomValidity('Invalid Mobile Number');
+                    return false;
+                  }
+                  document.getElementById('id_mobile_1').setCustomValidity('');
+                  return true;
+              }        
+}
+
+function checkPhone(text) {
+
+   var obj = document.getElementById('id_phone_1').value ;
+
+   var id=$("#id_phone_0").val();
+   
+
+   document.getElementById('id_phone_1').setCustomValidity('');
+    var testvar_1;
+    if(obj == ""){
+       
+          document.getElementById('id_phone_1').setCustomValidity('Please Enter Number');
+          return false;
+    }  
+    else {
+         
+          $.ajax({
+                 type: "GET",
+                  url: "{% url 'registrationForm:student-ajax-mob'%}",
+
+                  data: {'a':id+"."+obj},
+                  cache: false,
+                  success: function(data){
+                            testvar_1=data;                   
+                            },
+                  async:false,
+                  failure: function(data) { 
+                      
+                      }
+                  });
+                  if(testvar_1['num']==1){
+
+                    document.getElementById('id_phone_1').setCustomValidity('Invalid Phone Number');
+                    return false;
+                  }
+                  document.getElementById('id_phone_1').setCustomValidity('');
+                  return true;              
+                }        
+}
+
+</script>
+
+<body >
+<h2 style="text-align: center;color: rgb(12, 12, 112);">{{title}}</h2>
+<form method="post" action="{%url 'certificate:student-application-edit' %}"  id="form" class="my-form-class">
+
+    {% csrf_token %}
+
+<div id="stuDiv">
+<div>
+
+</br>
+<table class="table ">
+
+  <div class="divInfoBlock">&nbsp;<span class="glyphicon glyphicon-arrow-right"></span> 
+   Personal Details
+  </div>
+  </br>
+  <tr>
+    <td width="20%" class="bold">Full Name<br>(name as per your degree certificate)<p class="required"> *</p></td>
+    <td>{{form.full_name|add_class:"incr"|attr:'required:true'|attr:'oninvalid:Invalidname(this);'|attr:'oninput:Invalidname(this);'|attr:"pattern:^[a-zA-Z][a-zA-Z\s,-\.`']*$"}}
+    <span style="font-size:smaller; color:blue">NOTE : Allowed special characters are:
+    <span style="font-size:small;">( ",", "-", ".", " ` ", " ' " )</span></span>
+    </td>
+  </tr>
+  <tr>
+
+    <td class="bold">Date of birth<p class="required"> *</p></td>
+    <td class="DOB">
+      {{form.date_of_birth|attr:'autocomplete:off'| attr:'onkeydown:return false;'|attr:'required:true'|attr:'oninvalid:Invaliddate(this);'|attr:'onchange:Invaliddate(this);'}}
+    </td>
+    <td class="bold">Gender<p class="required"> *</p></td>
+    <td>
+      {{form.gender|attr:'required:true'|attr:'oninvalid:setCustomValidity("Please Select Gender ")'|attr:'onchange:setCustomValidity("")'}}
+    </td>
+    <td class="bold">Nationality<p class="required">*</p></td>
+    <td>{{form.nationality|attr:'required:true'|attr:'oninvalid:setCustomValidity("Please Select Nationality ")'|attr:'onchange:setCustomValidity("")'}}
+    </td>
+  </tr>
+
+  <tr>
+    <td class="bold">Father's Name<p class="required"> *</p></td>
+    <td>
+      {{form.fathers_name|attr:'required:true'|attr:'oninvalid:Invalidname(this);'|attr:'oninput:Invalidname(this);'|attr:'maxlength:100'|attr:'pattern:^[A-Za-z]+( [A-Za-z]+)*$'}}
+    </td>
+    <td class="bold">Mother's Name<p class="required">*</p></td>
+    <td>
+      {{form.mothers_name|attr:'required:true'|attr:'oninvalid:Invalidname(this);'|attr:'oninput:Invalidname(this);'|attr:'maxlength:100'|attr:'pattern:^[A-Za-z]+( [A-Za-z]+)*$'}}
+    </td>
+  </tr>
+
+  <table class="table ">
+      <tr>
+          <td class="col-md-1 bold" nowrap> Applying for Programme <p class="required"> *</p></td><td class="col-md-2" id="appProgram" >{{form.program}}{{form.program_display}}</td>
+          <td class="col-md-1 bold" nowrap> Preferred Exam Location <p class="required"> *</p> </td><td class="col-md-2" id="curentLocation">{{form.current_location|attr:'required:true'|attr:'oninvalid:setCustomValidity("Please Select Location ")'|attr:'onchange:setCustomValidity("")'}}</td>
+      </tr>
+
+  </table>
+
+<!--   <table class="table ">
+      <tr>
+          <td class="bold">Please choose the preferred mode of attending classes for the program<p class="required"> *</p> </td>
+          <td>{{form.teaching_mode|attr:'required:true'|attr:'oninvalid:setCustomValidity("Please Select Teaching Mode ")'|attr:'onchange:setCustomValidity("")'}}</td>
+           <td><b style="color: blue;">  &nbsp;&nbsp;NOTE : The decision to offer the programme in a particular mode (Online sessions or Face-to-Face sessions) is at the discretion of BITS Pilani, and a decision on the same will be communicated to candidates through the Admission Offer Letter </b></td>
+          
+      </tr>
+  </table> -->
+
+  <table  class="table ">
+      <tr>
+          <td class="bold" nowrap>Address line 1<p class="required"> *</p> </td>     
+          <td class="addrInput">{{form.address_line_1|attr:'required:true'|attr:'oninvalid:Invalidadd(this);'|attr:'oninput:Invalidadd(this);'|attr:'maxlength:50'}}
+          </td>
+          <td nowrap>Address line 2</td><td class="addrInput">{{form.address_line_2|attr:'maxlength:40'}}</td>
+          <td nowrap>Address line 3</td><td class="addrInput">{{form.address_line_3|attr:'maxlength:40'}}</td>
+      </tr>
+      <tr>
+          <td class="bold">City<p class="required"> *</p> </td>
+          <td class="city">
+              {{form.city|attr:'required:true'|attr:'oninvalid:Invalidcity(this);'|attr:'oninput:Invalidcity(this);'|attr:'pattern:^[A-Za-z]+( [A-Za-z]+)*$'}}
+          </td>
+
+          <td class="bold">Pin Code<p class="required"> *</p> </td>
+          <td >{{form.pin_code|attr:'required:true'}}</td>
+      </tr>
+      <tr>
+           <td class="bold">State<p class="required"> *</p> </td>
+           <td>
+              {{form.state|attr:'required:true'|attr:'oninvalid:setCustomValidity("Please Select State")'|attr:'onchange:setCustomValidity("")'}}</td>
+           <td class="bold">Country<p class="required"> *</p> </td>
+           <td>
+              {{form.country|attr:'required:true'|attr:'oninvalid:setCustomValidity("Please Select Country")'|attr:'onchange:setCustomValidity("")'}}
+           </td>
+      </tr>
+
+      <tr>
+          <td class="bold">Phone<p class="required"> *</p> </td>
+          <td class="col-md-3" id="phoneId">
+              {{form.phone|attr:'required:true'|attr:'onblur:checkPhone(this);'|attr:'maxlength:15'}}
+          </td>
+          <td class="bold">Mobile<p class="required"> *</p> </td>
+          <td class="col-md-3" id="mobileId">
+              {{form.mobile|attr:'required:true'|attr:'onblur:checkMobile(this);'|attr:'maxlength:13'}}
+          </td>
+          <td class="bold">Email ID<p class="required"> *</p> </td>
+          <td class="city">
+              {{form.email_id|attr:'required:true'|attr:'pattern:[^@]+@[^@]+\.[a-zA-Z]{2,}'|attr:'maxlength:50'}}
+          </td>
+      </tr>
+  </table>
+
+
+  <table class="table ">
+  </br>
+  <div class="divInfoBlock">&nbsp;<span class="glyphicon glyphicon-arrow-right"></span> Current Employment Details
+  </div>
+  <table>
+      <tr>
+          <td nowrap class="bold"> Current Employment Status <p class="required"> *</p> </td>
+          <td >{{form.current_employment_status|attr:'required:true'|attr:'oninput:InvalidCurrentEmpStatus(this)'}} </td>
+                     
+          <td nowrap class="bold"> Current Organization <p class="required"> *</p> </td>
+          <td>
+              {% with org=user.email|get_ELOA_org %} 
+                {%if user.email|get_payfee_waiver_permission %}
+                  {% render_field form.current_organization readonly="true" value=org %}
+                {% else %}
+                  {{form.current_organization|attr:'maxlength:50'|attr:'required:true'}}
+                {% endif %}
+              {% endwith %}
+          </td>
+          <td nowrap class="bold"> Current Designation <p class="required"> *</p> </td>
+          <td>
+              {{form.current_designation|attr:'maxlength:30'|attr:'required:true'}}
+          </td>
+      </tr>
+
+    <tr>
+      <td class="bold"> Current Work Location <p class="required"> *</p> </td>
+      <td id="work">
+      {{form.work_location|attr:'oninvalid:setCustomValidity("Please Select Current Work Location")'|attr:'onchange:setCustomValidity("")'|attr:'required:true'}}
+      </td>
+      <td class="bold"> Current Industry <p class="required"> *</p> </td>
+      <td id="industry">{{form.current_org_industry|attr:'oninvalid:setCustomValidity("Please Select Current Industry")'|attr:'onchange:setCustomValidity("")'|attr:'required:true'}}
+      </td>
+    </tr>
+
+    <tr>
+        <td id="fee" class="bold">Fee Payment Entity <p class="required"> *</p> </td>
+        <td>
+        {{form.fee_payment_owner|attr:'oninvalid:setCustomValidity("Please Select Fee Payment Entity")'|attr:'onchange:setCustomValidity("")'|attr:'required:true'}}
+        </td>
+        <td nowrap class="bold"> Total Work Experience in Years <p class="required"> *</p> </td> 
+        <td >
+        {{form.total_work_experience_in_months|attr:'maxlength:10'|attr:'required:true'}}
+        </td>
+    </tr>
+
+   </table>
+  </div>
+ 
+</br>
+<div class="divInfoBlock">&nbsp;<span class="glyphicon glyphicon-arrow-right"></span>
+  Education Details
+</div>
+
+<h5 style="color:red"><b>Please Provide your Graduation Details ONLY</b></h5>
+
+<div style="overflow-x: auto;">
+
+  <table class="table " id="tableedu">
+
+      <thead>
+         <tr>
+          <th style="width: 1px;"></th>
+            <th class="alignTh" style="width: 17px;">Qualification Level<p class="required"> *</p></th>
+            <th class="alignTh" style="width: 17px;">Qualification Name<p class="required"> *</p></th>
+            <th class="alignTh" style="width: 15px;">Board/University<p class="required"> *</p></th>
+            <th class="alignTh" style="width: 10px;">Duration<p class="required"> *</p></th>
+            <th class="alignTh" style="width: 28px;">Discipline<p class="required"> *</p></th>
+            <th class="alignTh" style="width: 4px;">Year of Passing<p class="required">*</p></th>
+            <th class="alignTh" style="width: 1px;">% Marks/CGPA<p class="required">*</p></th>
+            <th class="alignTh" style="width: 9px;">Division<p class="required"> *</p></th>  
+            <th class="alignTh" style="">&nbsp;</th>
+          </tr>
+
+      </thead>
+
+    <font size="5"> <strong> {{ educationFormset.non_form_errors }}</strong></font>
+    <font size="5"> <strong> {{ educationFormset.form_errors }}</strong></font>
+    {% for y in educationFormset.forms %}
+      {{ y.id }}
+
+      <tr class="link-formset">
+          <td name="{{ forloop.counter }}"></td>
+          <td nowrap>
+            Graduation or equivalent
+          </td>
+
+          <td id="degree" style="width: 15px;"  >
+              {{y.degree|attr:'required:true'|attr:'oninvalid:this.setCustomValidity("Please Select Qualification Name")'|attr:'onchange:OtherBox(this);'}}
+             <br>
+            <span class="o_box">
+              {% if y.degree.value|get_degree_other_string == 'Others' %}
+                {{y.other_degree|attr:'type:text'|attr:'required:true'|attr:'maxlength:30'}}
+              {% else %}
+                {{y.other_degree}}
+              {% endif %}
+            </span>
+          </td>
+          <td style="width: 15px;">
+              {{y.school_college|attr:'required:true'|attr:'oninvalid:Invalidschool(this);'|attr:'oninput:Invalidschool(this);'|attr:'maxlength:45'}}
+          </td>
+          <td style="width: 7px;">
+              {{y.duration|attr:'required:true'|attr:'oninvalid:setCustomValidity("Please Select Duration")'|attr:'onchange:setCustomValidity("")'}}
+          </td>
+         
+          <td style="width: 28px;" id="discipline">
+              {{y.discipline|attr:'required:true'|attr:'oninvalid:this.setCustomValidity("Please Select Discipline")'|attr:'onchange:OtherBox(this);'}}
+              <br>
+             <span class="o_box">
+                {%if y.discipline.value|get_discpline_other_string == 'Others' %}
+                  {{y.other_discipline|attr:'type:text'|attr:'required:true'|attr:'maxlength:40'}}
+                {% else %}
+                  {{y.other_discipline}}
+                {% endif %}
+              </span>
+          </td> 
+          <td id="hi12" style="width: 4px;">
+              {{y.completion_year|attr:'style:width:100%'|attr:'required:true'|attr:'pattern:[0-9]{4}'|attr:'oninvalid:InvalidMsg(this);'|attr:'oninput:InvalidMsg(this);'|attr:'maxlength:4'}}
+          </td>
+          <td style="width: 5px;">
+              {{y.percentage_marks_cgpa|attr:'style:width:100%'|attr:'required:true'|attr:'type:text'|attr:'pattern:((\d{1,2})((\.\d{1,2})?))$'|attr:'oninvalid:Invalidcgpa(this);'|attr:'oninput:Invalidcgpa(this);'|attr:'maxlength:13'}}
+          </td>
+          <td style="width: 7px;">
+              {{y.division|attr:'required:true'|attr:'required:true'|attr:'oninvalid:setCustomValidity("Please Select Division")'|attr:'onchange:setCustomValidity("")'}}
+          </td>
+          <td class="del" >&nbsp;{% if educationFormset.can_delete %}
+             {{ y.DELETE }}
+          {% endif %} 
+          </td>
+        
+        </tr>
+      {% endfor %}
+
+  </table>
+       {{ educationFormset.management_form }}
+</div>
+
+<br>
+<table>
+  {% if form.programming_flag.label %}
+    <tr>
+        <td class="col-md-6 bold">{{form.programming_flag.label}}<p class="required"> *</p> </td>
+        <td>{{form.programming_flag|attr:'required:true'}}</td>
+    </tr>
+  {% endif %}
+</table>
+<table>
+    <tr>
+        <td class="col-md-3 bold">Are you a past student of BITS Pilani <p class="required"> *</p> </td>
+        <td class="col-md-2">{{form.prior_student_flag|attr:'required:true'|attr:'oninvalid:setCustomValidity("Please Select Are you a past student of BITS Pilani")'|attr:'onchange:setCustomValidity("")'}}</td>
+        <td class="col-md-3">BITS ID Number (if past student)  </td>
+        <td>{{form.bits_student_id|attr:'maxlength:15'}}</td>
+    </tr>
+</table>
+
+<table>
+<tr>
+    <td>{{form.bonafide_flag|attr:'required:true'}}
+</td>
+<td class="bold">I Certify that the information provided by me in the  application form is correct to the best of my knowledge<p class="required"> *</p>
+</td>
+
+</tr>
+</table>
+
+<br><br><br>
+
+<div style="  text-align:center;">
+  <input class="btn btn-sm btn-primary col-md-offset-4 col-md-3" type="submit" value="Submit Application" id="validateradio" onclick="checkPinCode();">
+  <input class="btn btn-sm btn-primary col-md-offset-1 col-md-3" type="button" value="Reset All Entries" id="reset-form">
+</div>
+
+<div style="padding:0px">
+    <div class="footerWrapper" style="margin-top: 95px;">
+          <div class="cpInfoFixWrapper">
+              <div class="cpInfoFix">
+                  <p class="info">
+                      Admissions Office, BITS, Pilani - 333 031 (Rajasthan) India.<br>
+                      For Assistance Call +91-80-48767777
+                  </p>
+              </div>
+          </div>
+    </div>
+</div>
+
+</form>
+
+<script src="{% static 'assets/js/jquery-1.9.1.js' %}"></script>
+<link rel="stylesheet" href="{% static 'assets/css/jquery-ui.css' %}"></link>
+<script src="{% static 'assets/js/jquery.min.js' %}"></script>
+<script src="{% static 'assets/js/jquery.formset.js' %}"></script>
+<script src="{% static 'assets/js/jquery-ui.js' %}"></script>
+
+<script>
+var noOfForms=0;
+
+function renewDatePickers(row) {
+    try {
+        var other_degree = row.find('input[id$="other_degree"]').attr('id');
+        var other_discipline = row.find('input[id$="other_discipline"]').attr('id');
+        $('#'+other_degree).attr("type","hidden");
+        $('#'+other_discipline).attr("type","hidden");
+    }
+    catch(err) {
+        console.log(err.message);
+    }
+
+    $('.datepicker').datepicker('destroy');
+    $('.DOB').children('input').datepicker({
+        dateFormat: 'dd-mm-yy',
+        changeMonth: true,
+        changeYear: true,
+        maxDate: '-1',
+        yearRange: "1900:nn",
+        showOn: "button",
+        buttonImage: "{% static "assets/images/img-calendar-lg.gif" %}",
+        buttonImageOnly: true,
+        buttonText: "Select date",        
+    });
+$('#discipline select option[value=""]').text('Choose Discipline');
+$('#degree select option[value=""]').text('Choose ');
+$('#qualCat select option[value=""]').text('Choose Qualification Level');
+
+}
+  $(renewDatePickers);
+
+   $('.link-formset').formset({
+        addText: 'Add more Education details',
+	deleteCssClass:'del2',
+        deleteText: 'Delete',
+        prefix: '{{ educationFormset.prefix }}',
+        formCssClass: 'dynamic-link-formset',
+        added: renewDatePickers,
+        
+           });
+
+$(document).ready(function () {
+
+{% if  not is_pg_active %}
+  $('#validateradio').attr("disabled",true);
+{%endif%}
+
+var textbox=$('#id_current_employment_status').val();
+
+ var state1=$('#id_state').val();
+
+ if(state1=="30")
+{
+ 
+ $('#id_country').attr("disabled", false);
+
+ 
+}
+
+else{
+ 
+   $('#id_country').attr("disabled", true); 
+}
+
+
+$('#curentLocation select option[value=""]').text('Choose Preferred Exam Location');
+
+ $('#appProgram select option[value=""]').text('Choose Program');
+    
+    $('#work select option[value=""]').text('Choose Work Location');
+
+$('#industry select option[value=""]').text('Choose Industry');
+$('#discipline select option[value=""]').text('Choose Discipline');
+$('#degree select option[value=""]').text('Choose ');
+ 
+
+$('#preferredLocation select option[value=""]').text('Choose Exam Location');
+
+
+ noOfForms =$("#id_eduForm-INITIAL_FORMS").val();
+$(".del").click(function() {
+
+});
+
+$( "#validateradio" ).click(function() {
+  
+    $('#id_country').attr("disabled", false);
+     var abc=$('#id_date_of_birth').val();
+     InvalidCurrentEmpStatus(document.getElementById('id_current_employment_status'))
+        
+});
+
+$( "#reset-form" ).click(function() {
+
+    location.reload();
+});
+});
+
+function OtherBox(selectBox){
+  var select_id =$( "#"+selectBox.id ).val();
+  var select_value =$( "#"+selectBox.id +" option:selected" ).text();
+  var sibling=$( "#"+selectBox.id ).siblings( "span" );
+  var select_input=$( "#"+selectBox.id ).siblings( "span" ).find( "input" );
+
+  if (select_value == "Others"){
+    select_input.attr("type","text");
+    select_input.attr("required","true");
+    select_input.attr("value","");
+
+  }
+  else{
+    select_input.attr("type","hidden");
+    select_input.attr("required","false");
+  }
+  selectBox.setCustomValidity("");
+}
+
+function InvalidMsg(textbox) {
+  if(textbox.value=="" ){
+   
+ 
+     textbox.setCustomValidity('Please Enter Year Of Passing');
+  }
+
+else{
+  var d_o_b = $("#id_date_of_birth").val();
+     if(textbox.validity.patternMismatch){
+      
+        textbox.setCustomValidity('Please enter 4 numeric value');
+    }
+    else if(textbox.value < d_o_b.split('-')[2]){
+      textbox.setCustomValidity('Year of Passing should be greater than year of birth');
+    }     
+    else {
+        textbox.setCustomValidity('');
+    }
+    return true;
+}
+}
+
+function InvalidPhone(textbox) {
+ if(textbox.value==""){
+   
+ 
+     textbox.setCustomValidity('Please Enter Number');
+  }
+  else{
+
+     if(textbox.validity.patternMismatch){
+      
+        textbox.setCustomValidity('Please enter 10 numeric value');
+    }    
+    else {
+        textbox.setCustomValidity('');
+    }
+    return true;
+}
+}
+
+function Invalidemail(textbox) {
+  if(textbox.value==""){
+   
+ 
+     textbox.setCustomValidity('Please Enter EmailId');
+  }
+else{
+     if(textbox.validity.patternMismatch){
+      
+        textbox.setCustomValidity('Please Enter Valid EmailId');
+    }    
+    else {
+        textbox.setCustomValidity('');
+    }
+    return true;
+}
+}
+
+function Invalidname(textbox){
+    if(textbox.value==""){
+      textbox.setCustomValidity('Please Enter Name');
+    }
+
+    else{
+    if(textbox.value.match(/^[0-9]+$/)){
+      textbox.setCustomValidity('Please enter the name without digits');
+    }
+
+    else if(textbox.validity.patternMismatch){
+      textbox.setCustomValidity('Please enter the name without special characters');
+    }    
+    else{
+      textbox.setCustomValidity('');
+    }
+    return true;
+  }
+}
+
+function Invalidcgpa(textbox) {
+  if(textbox.value==""){
+   
+ 
+     textbox.setCustomValidity('Please Enter CGPA');
+  }
+  else{
+
+     if(textbox.validity.patternMismatch){
+     
+        textbox.setCustomValidity('Please Enter Proper CGPA');
+    }    
+    else {
+        textbox.setCustomValidity("");
+    }
+    return true;
+}
+}
+function Invalidadd(textbox) {
+  
+  if(textbox.value==""){
+   
+ 
+     textbox.setCustomValidity('Please Enter Address line 1');
+  }
+else{
+  var ab=textbox.value.trim().length
+
+  if(textbox.value.trim().length==0){
+      textbox.setCustomValidity('Please Enter Address line 1');
+  }
+  else{
+    textbox.setCustomValidity('');
+  }
+
+}
+}
+function Invalidcity(textbox) {
+
+
+ if(textbox.value==""){
+   
+ 
+     textbox.setCustomValidity('Please Enter city');
+  }
+  else{
+
+     if(textbox.validity.patternMismatch){
+      
+        textbox.setCustomValidity('Please Enter city');
+    }    
+    else {
+        textbox.setCustomValidity('');
+    }
+    return true;
+  }
+}
+
+
+function Invalidbitsno(textbox){
+if(textbox.value==""){
+   
+ 
+     textbox.setCustomValidity('Please Enter BITS ID Number');
+  }
+else{
+  var ab=textbox.value.trim().length
+
+  if(textbox.value.trim().length==0){
+      textbox.setCustomValidity('Please Enter BITS ID Number');
+  }
+  else{
+    textbox.setCustomValidity('');
+  }
+
+}
+}
+function Invalidschool(textbox)
+{
+  if(textbox.value==""){
+   
+ 
+     textbox.setCustomValidity('Please Enter Board/University');
+  }
+else{
+  var ab=textbox.value.trim().length
+
+  if(textbox.value.trim().length==0){
+      textbox.setCustomValidity('Please Enter Board/University');
+  }
+  else{
+    textbox.setCustomValidity('');
+  }
+
+}
+}
+
+function InvalidcurrnetNo(textbox){
+  if(textbox.value==""){
+   
+ 
+     textbox.setCustomValidity('Please Enter Current Employee Number');
+  }
+else{
+  var ab=textbox.value.trim().length
+
+  if(textbox.value.trim().length==0){
+      textbox.setCustomValidity('Please Enter Current Employee Number');
+  }
+  else{
+    textbox.setCustomValidity('');
+  }
+
+}
+}
+
+$( "#reset-form" ).click(function() {
+
+    location.reload();
+});
+
+
+
+function Invaliddate(textbox){
+if(textbox.value==""){
+
+    textbox.setCustomValidity('Please Enter Date Of Birth');
+  }
+  else{
+
+   textbox.setCustomValidity('');
+  }
+
+ 
+}
+
+$("#id_current_employment_status").change(function(){
+var textbox=$('#id_current_employment_status').val();
+
+if((textbox== "2")){
+  {% if not user.email|get_payfee_waiver_permission %}
+    $('#id_current_organization').val("NA");
+  {% endif %}
+  $('#id_current_designation').val("NA");
+  $('#id_work_location').val('10');
+  $('#id_current_org_industry').val('31');
+  $('#id_fee_payment_owner').val('4');
+  $('#id_total_work_experience_in_months').val("0");
+  document.getElementById('id_current_employment_status').setCustomValidity('');
+  document.getElementById('id_current_organization').setCustomValidity('');
+  document.getElementById('id_current_designation').setCustomValidity('');
+  document.getElementById('id_total_work_experience_in_months').setCustomValidity('');
+  document.getElementById('id_work_location').setCustomValidity('');
+  document.getElementById('id_current_org_industry').setCustomValidity('');
+  document.getElementById('id_fee_payment_owner').setCustomValidity(''); 
+  renewDatePickers();              
+}
+else{
+  {% if not not user.email|get_payfee_waiver_permission %}
+    $('#id_current_organization').val("");
+  {% endif %}
+  $('#id_current_designation').val("");
+  $('#id_work_location').val('');
+  $('#id_current_org_industry').val('');
+  $('#id_fee_payment_owner').val('');
+  $('#id_total_work_experience_in_months').val("");
+  renewDatePickers(); 
+}
+
+    
+});
+$("#id_state").change(function(){
+var state=$('#id_state').val();
+
+if(state=="30")
+{
+
+ $('#id_country').val('');
+ 
+}
+
+else{
+ 
+  $('#id_country').val('IN');
+  document.getElementById('id_country').setCustomValidity('');
+  
+}
+});
+
+
+function InvalidCurrentEmpStatus(textbox) {         
+               
+         if(textbox.value=="")
+           {
+
+             textbox.setCustomValidity('Please Enter Current Employee Status');
+             return false;
+           }
+         else if (textbox.value == 2)
+          {
+              textbox.setCustomValidity('You have to be employed to qualify for attending this program');
+              return false;
+          }
+                  
+         else
+          {
+              textbox.setCustomValidity("");
+          }
+                  return true;
+    
+}
+
+function checkPinCode() {
+
+    var country = $("#id_country").val();
+    var pincode_length = $("#id_pin_code").val().length;
+    if (country == 'IN' && pincode_length !=6)
+    {
+      document.getElementById('id_pin_code').setCustomValidity('Not Valid Indian Pin Code');
+      return false;
+    }
+    document.getElementById('id_pin_code').setCustomValidity('');
+    return true;
+}
+
+</script>

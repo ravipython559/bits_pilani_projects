@@ -1,0 +1,101 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>{% block title %}BITS WILP{% endblock %}</title> <!-- change -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="{% static "assets/css/bits_base_css.css" %}">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  {% block staticContent %}
+
+  {% endblock %}
+</head>
+<!-- Header section starts here... -->
+
+<body>
+  <div class="header">
+    <div class="jumbotron">
+    <div class="container-fluid">
+    <div class="row">
+      <img class="img-responsive col-md-5 " src="{% static "assets/images/BIts_Logo-01.png" %}" width="483px"  height="103px">
+      
+        <h2 class="col-md-6 "><i>Application Centre</i></h2>
+        </div>
+      </div>
+    </div>
+    </div>
+  <div>
+  <img class="img-responsive navImg" src="{% static "assets/images/navUp2.png" %}"
+  >
+  </div>
+<!-- Header section ends here... -->
+
+                  <!-- Navigation section starts here... -->
+  <nav class="navbar transparent navbar-default navbar-static-top hr">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+          </div>
+         <div class="collapse navbar-collapse" id="myNavbar">
+          <ul class="nav navbar-nav navbar-right" style="clear:right;">
+          {% block navigationLinks %}
+            <!-- Page Navigation Links -->
+            <li><a href="#">Home</a></li>
+            <li><a href="#" target="_blank">How to Apply</a></li>
+            <li><a href="#"> Log out</a></li>
+         {% endblock %}
+          </ul>
+          </div>
+      </div>
+      <div>
+      <img class="img-responsive navImg" src="{% static "assets/images/navDown2.png" %}">
+      </div>
+  </nav>
+                  <!-- Navigation section ends here... -->
+    
+    <h3 class="text-center">  <!-- change -->
+      {%block titleOfContent %} 
+        Enter title for your content 
+      {% endblock %}
+    </h3>
+
+<!-- Container section starts here... -->
+
+<!-- <div class="container-fluid"> -->
+<div class="content">
+{% block container %}
+          ***Main content goes here...***
+{% endblock %}
+<!-- </div> -->
+</div>
+</body>
+<!-- Container section ends here... -->
+
+              <!-- Footer section starts here... -->
+<div class="footer1">
+<img class="img-responsive" src="{% static "assets/images/contentBg.gif" %}">
+<footer class="container-fluid">
+<div class="row">
+<div class="col-xs-8 col-sm-4 col-sm-offset-2 col-md-4 col-md-offset-2">
+ 
+       <p class="h6"> Admissions Office, BITS, Pilani - 333 031 (Rajasthan) India.<br>
+         Call us on: +91-80-48767777</p>
+</div>
+<div class="col-sm-4 col-sm-offset-2 col-xs-4 col-md-4 col-md-offset-2">
+<img class="img-responsive" src="{% static "assets/images/companyBranding.gif" %}">
+   
+</div>
+</div>
+</footer>
+            <!-- Footer section ends here... -->
+</div>
+    
+</html>

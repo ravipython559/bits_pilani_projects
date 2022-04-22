@@ -1,0 +1,76 @@
+<!-- css -->
+<style type="text/css" media="screen">
+.loader {
+	position:fixed;
+	z-index: 99999;
+	top:0;
+	left:0;
+	width: 100%;
+	height:100%;
+	background-color: White;
+	display: flex;
+	/*height: 50vh;*/
+	justify-content: center;
+	align-items: center;
+	opacity: 0.7;
+}
+
+.spinner {
+  height: 5vh;
+  width: 5vh;
+  border: 6px solid rgba(0, 174, 239, 0.2);
+  border-top-color: rgba(0, 174, 239, 0.8);
+  border-radius: 100%;
+  animation: rotation 0.6s infinite linear 0.25s;
+
+  /* the opacity is used to lazyload the spinner, see animation delay */
+  /* this avoid the spinner to be displayed when visible for a very short period of time */
+  opacity: 0;
+}
+
+.loader.hidden{
+	animation: fadeOut 1s;
+	animation-fill-mode: forwards;
+}
+
+@keyframes rotation {
+  from {
+    opacity: 1;
+    transform: rotate(0deg);
+  }
+  to {
+    opacity: 1;
+    transform: rotate(359deg);
+  }
+}
+
+@keyframes fadeOut {
+
+	100% {
+		opacity: 0;
+		visibility: hidden;
+	}
+}
+</style>
+
+<!-- html -->
+<div class="loader" id="buffer">
+  <div class="spinner"></div>
+</div>
+
+<!-- jQuery -->
+<script >
+$('#buffer').hide();
+</script>
+
+<!-- body -->
+<!-- <div id='buffer' >
+	<span>do something for buffer</span>
+</div> -->
+
+<!-- <script type="text/javascript">
+	window.addEventListener("load", function() {
+		const loader = document.querySelector(".loader");
+		// loader.className += ' hidden'
+	});
+</script> -->

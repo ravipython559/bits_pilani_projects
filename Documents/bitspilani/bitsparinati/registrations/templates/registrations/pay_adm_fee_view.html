@@ -1,0 +1,402 @@
+{% extends 'bits_BaseTemp.html' %}
+{% load static %}
+{% load admission_filter %}
+{% load widget_tweaks %}
+
+
+{% block title %}
+  {{ block.super }} - Pay Admission Fees
+{% endblock %}
+
+
+{% block staticContent %}
+<script type="text/javascript">
+  function is_checked(tac, amount, form, check){
+    var paytmUrl = "{% url 'bits_rest:paytm:adm_payment' %}";
+    $('#amount').html(amount);
+    $('#tpsl-form :input').prop("disabled", check);
+      if(check)
+        {
+          $('#pay-tm').removeAttr("href");
+        }
+        else
+        {
+          $('#pay-tm').attr("href", paytmUrl);
+        }
+
+    $('#emi_table').find('form').each(function(){
+      if ($(this).attr('id') != form)
+        $(this).find('input').each(function(){
+          $(this).prop('disabled', check);
+        });
+    });
+  }
+
+  function payment_mode(tac, amount, form){
+    if ($(tac).is(':checked'))
+      is_checked(tac, $(amount).val(), form, true);
+    else
+      is_checked(tac, '{{ap_fee_amount}}', form, false);
+  }
+
+  $(document).ready(function(){
+
+    {% if eduvanz_form %}
+      if ($('#{{eduvanz_form.is_terms_and_condition_accepted.auto_id}}').is(':checked')) 
+        is_checked('#{{eduvanz_form.is_terms_and_condition_accepted.auto_id}}', 
+          $('#{{eduvanz_form.amount_requested.auto_id}}').val(), 'eduvanz-form', true);
+
+      $('#{{eduvanz_form.is_terms_and_condition_accepted.auto_id}}').change(function(){
+        payment_mode('#{{eduvanz_form.is_terms_and_condition_accepted.auto_id}}', 
+          '#{{eduvanz_form.amount_requested.auto_id}}', 'eduvanz-form');  
+      });
+    {% endif %}
+
+    {% if zest_form %}
+      if ($('#{{zest_form.is_terms_and_condition_accepted.auto_id}}').is(':checked')) 
+        is_checked('#{{zest_form.is_terms_and_condition_accepted.auto_id}}', 
+          $('#{{zest_form.amount_requested.auto_id}}').val(), 'zest-form', true);
+
+      $('#{{zest_form.is_terms_and_condition_accepted.auto_id}}').change(function(){
+        payment_mode('#{{zest_form.is_terms_and_condition_accepted.auto_id}}', 
+          '#{{zest_form.amount_requested.auto_id}}', 'zest-form');
+      });
+    {% endif %}
+
+    {% if ezcred_form %}
+      if ($('#{{ezcred_form.is_terms_and_condition_accepted.auto_id}}').is(':checked'))
+        is_checked('#{{ezcred_form.is_terms_and_condition_accepted.auto_id}}',
+          $('#{{ezcred_form.amount_requested.auto_id}}').val(), 'ezcred-form', true);
+
+      $('#{{ezcred_form.is_terms_and_condition_accepted.auto_id}}').change(function(){
+        payment_mode('#{{ezcred_form.is_terms_and_condition_accepted.auto_id}}',
+          '#{{ezcred_form.amount_requested.auto_id}}', 'ezcred-form');
+      });
+    {% endif %}
+
+
+  });
+
+</script>
+<style type="text/css">
+  .container{font-size: medium;}
+  div[disabled]
+  {
+    pointer-events: none;
+    opacity: 0.7;
+  }
+  form[disabled]
+  {
+    pointer-events: none;
+    opacity: 0.7;
+  }
+  #emi{
+    padding-right: 0px !important;
+    padding-left: 0px !important;
+  }
+
+</style>
+{% endblock %}
+
+
+{% block navigationLinks %}
+  <li><a href="{% url 'registrationForm:applicantData'%}">Home</a></li>
+  <li><a href="{% url 'registrationForm:applicantView'%}" target="_blank">
+  Download Application PDF</a></li>
+  <li><a href="{% url 'registrationForm:payfee'%}" target="_blank">
+  Download Fee Receipt</a></li>
+  <li><a href={% url 'auth_logout'%}>Log Out</a></li>
+{% endblock %}
+
+
+{% block titleOfContent %}
+  Pay Program Admission Fees(1st Semester Fees)
+{% endblock %}
+
+
+{% block container %}
+<br><br>
+<div class="container table-responsive">
+  <div class="row">
+  <div class="col-md-offset-1 col-md-5">
+      <div class="col-md-6">
+        <b>Program Applied For:</b>
+      </div>
+      <div class="col-md-6">
+        {{ap_program}}
+      </div>
+    </div>
+  </div><br>
+
+  <div class="row">
+    <div class="col-md-offset-1 col-md-5">
+      <div class="col-md-6">
+        <b>Fee Amount:</b>
+      </div>
+      <div id="amount" class="col-md-6">
+        {{ap_fee_amount}}
+      </div>
+    </div>
+  </div><br><br>
+  <div class="row">
+ <div class="col-md-offset-1 col-md-8">
+   <div class="col-md-12">
+     {% if messages %}
+    <ul class="messages" style="color: red">
+        {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+</div>
+</div>
+  </div><br><br>
+
+  <div class="row table-responsive" {% if is_adm_inactive %}disabled{%endif%}>
+   
+    <div id='pay' class="{% if not active_emi and is_paytm %}col-sm-offset-1 col-sm-4{%else%}col-sm-offset-0 col-sm-4{% endif %}">
+       <table class="table">
+          <tr>
+            {% if not active_emi and is_paytm %}
+              <td >
+                <a id="pay-tm" href="{% url 'bits_rest:paytm:adm_payment' %}" class="btn btn-primary">Pay through PayTm Gateway</a>
+                <span style="font-size: smaller;">
+                  <a href={% static "static_pdf/Paytm.pdf" %} target="_blank"><u>View Payment Charge Details</u>
+                  </a>
+                </span>
+              </td>
+            {% endif %}
+
+        
+            <td>
+              <form id="tpsl-form" method='post'
+                {% if not active_emi  %}
+                  action="{% url 'registrationForm:payment-adm-redirect' %}" 
+
+                  
+                {% else %}
+                  action="#" disabled
+                {%endif %}
+              >
+        {% csrf_token %}
+
+             <input type="submit" name="tpsl-pay" value="Pay through Tech Process Gateway" class="btn btn-primary">
+             <span style="font-size: smaller;">
+                   <a href={% static "static_pdf/Techprocess.pdf" %} target="_blank"><u>View Payment Charge Details</u></a>
+             </span>
+           </td>
+        </form>
+          </tr>
+         
+        </table>
+
+
+     
+
+    </div>
+
+    <div id='emi' class="col-md-offset-1 col-md-3" {% if is_paytm %} style='margin-left: 134px;' {% endif %}>
+      <table id="emi_table" class="table table-responsive">
+        {% if zest_form %}
+          <tr>
+            <td>
+              
+              {% if zest_decline %}
+                <a class="btn" style="pointer-events: none;">You cannot apply for another Zest loan <br>as your prior application has been declined</a>
+              {% elif zest_progress %}
+                {% if zest_emi_link %}
+                  <p><a href="{{ zest_emi_link }}" target="_blank" class="btn btn-primary">Resume Your Zest EMI Loan Application</a></p>
+                {% else %}
+                  <p><a href="https://app.zestmoney.in/" target="_blank" class="btn btn-primary">Resume Your Zest EMI Loan Application</a></p>
+                {% endif %}
+              {%endif%}
+
+              {% if zest_decline %}
+
+              {% else %}
+                    <form id="zest-form" method="post"
+                      {% if not active_propelld %}
+                        {% if zest_decline %}
+                          action="#" disabled
+                        {% else %}
+                          action="{% url 'bits_rest:zest-create-view' %}"
+                        {% endif %}
+                      {%elif zest_decline or active_emi%}
+                        action="#" disabled
+                      {%else%}
+                        action="{% url 'bits_rest:zest-create-view' %}"
+                      {%endif%}
+                    >
+                      {% csrf_token %}
+                      {% if not zest_progress and not zest_decline %}
+                        <input type="submit" class="btn btn-primary" value="Pay Using Zest (EMI)">
+                      {% endif %}
+                      
+                      {%if zest_incancellation %}
+                        <input type="submit" name="zest_cancell" value="cancel zest emi" class="btn btn-danger">
+                      {%endif%}<br>
+
+                          {{zest_form.is_terms_and_condition_accepted}}
+                          <span style="font-size: smaller;">
+                            I have read and understood the 
+                            <a href="https://bits-pilani-wilp.ac.in/emi-option.php" target="_blank"><u>Loan Application Process</u></a> and
+                            <a href="https://bits-pilani-wilp.ac.in/emi-option.php#semester1" target="_blank"><u>EMI Plans</u></a>
+                          </span>
+                          {{zest_form.amount_requested}}
+                          {{errors_list}}
+                    </form>
+              {% endif %}
+            </td>
+        {% endif %}
+
+        {% if eduvanz_form %}
+            <td>
+              {% if eduvanz_declined%}
+                <a class="btn" style="pointer-events: none;">Your loan application is rejected.<br>You cannot re-apply to Eduvanz for another loan</a>
+              {% elif eduvanz_progress %}
+                <a href="https://eduvanz.com/sign" target="_blank" class="btn btn-primary">Go to Eduvanz Site for Loan Status and Actions</a>
+                <br>
+                <br>
+                You have Applied for a loan with Eduvanz with Loan ID - <strong>{{eduvanz_progress.order_id}}</strong>. The current status of your loan is <strong>{{eduvanz_progress.get_status_code_display}}</strong>
+
+                 {%endif%}
+
+              {% if eduvanz_declined %}
+
+              {% elif not eduvanz_declined  %}
+                 <form  id="eduvanz-form" method="post"
+                {% if not active_propelld %}
+                  action="{% url 'bits_rest:eduvanz:application' %}"
+                {% elif eduvanz_declined or active_emi %}
+                    action="#" disabled
+                  {%else%}
+                    action="{% url 'bits_rest:eduvanz:application' %}"
+                  {%endif%}
+              >
+              {% csrf_token %}
+                {{eduvanz_form.id}}
+
+                {% if not eduvanz_progress and not eduvanz_declined %}
+                  <input type='submit' class="btn btn-primary" value="Pay Using Eduvanz (EMI)"><br>
+                {% endif %}
+                {{eduvanz_form.is_terms_and_condition_accepted}}
+                <span style="font-size: smaller;">
+                  I have read and understood the
+                  <a href="https://bits-pilani-wilp.ac.in/emi-option.php" target="_blank"><u>Loan Application Process</u></a> and
+                  <a href="https://bits-pilani-wilp.ac.in/emi-option.php#semester1" target="_blank"><u>EMI Plans</u></a>
+                </span>
+                {{eduvanz_form.application}}
+                {{eduvanz_form.amount_requested}}
+              </form>
+
+
+              {%endif%}
+             
+              
+            </td>
+
+        {% endif %}
+             {% if ezcred_form %}
+            <td>
+
+              {% if ezcred_declined %}
+              {% if ezcred_status == "DISBURSAL_FAILED" %}
+                <a href="#" class="btn btn-primary disabled">Your loan application is disbursal failed and you cannot re-apply to ABFL for another loan</a>
+              {% else %}
+                <a href="#" class="btn btn-primary disabled">Your loan application is rejected and you cannot re-apply to ABFL for another loan</a>
+              {%endif%}
+
+              {% elif ezcred_progress and ezcred_link %}
+                <a href="{{ ezcred_link }}" target="_blank" class="btn btn-primary">Resume Your ABFL EMI Loan Application</a>
+
+                {% if ezcred_progress.status != "ACTIVE" %}
+                <form method="post" action="{% url 'bits_rest:ezcred:ezcred-cancell' %}">
+                  {% csrf_token %}
+                  <input type="hidden" value={{ezcred_progress.lead_id}} name="lead_id" />
+                  <input type="submit" name="ezcred_cancell" value="Cancel ABFL EMI" class="btn btn-danger">
+                </form>
+                {% endif %}
+                <br>
+
+                You have Applied for a loan with Ezcred with Lead ID - <strong>{{ezcred_progress.lead_id}}</strong>. The current status of your loan is <strong>{{ezcred_progress.status}}</strong>.
+              {%endif%}
+
+              {% if not lead_id %}
+                  <form id="ezcred-form" method="post"
+                      {% if not active_propelld %}
+                        action="{% url 'bits_rest:ezcred:application' %}"
+                      {% elif ezcred_declined or active_emi %}
+                        action="#" disabled
+                      {%else%}
+                        action="{% url 'bits_rest:ezcred:application' %}"
+                      {%endif%}
+
+                   >
+                    {% csrf_token %}
+                    {{ezcred_form.id}}
+
+                        <input type='submit' class="btn btn-primary" value="Pay Using  ABFL (EMI)"><br>
+
+                        {{ezcred_form.is_terms_and_condition_accepted}}
+                        <span style="font-size: smaller;">
+                          I have read and understood the
+                          <a href="https://bits-pilani-wilp.ac.in/emi-option.php" target="_blank"><u>Loan Application Process</u></a> and
+                          <a href="https://bits-pilani-wilp.ac.in/emi-option.php#semester1" target="_blank"><u>EMI Plans</u></a>
+                        </span>
+                        {{ezcred_form.application}}
+                        {{ezcred_form.amount_requested}}
+
+                  </form>
+                  {% endif %}
+                </td>
+                {% endif %}
+
+
+            {% if propelld_form %}
+
+                <td>
+                    {% if propelld_data.status == "REJECTED" %}
+                        <a class="btn" style="pointer-events: none;">You cannot apply for another Propelld loan <br>as your prior application has been Rejected</a>
+                    {% else %}
+                            <form id="propelld-form" method="post" action="{% url 'bits_rest:propelld:application' %}">
+                                {% csrf_token %}
+                                {% if propelld_progress and not propelld_data.status == "REJECTED" and not propelld_data.status == "DROPPED"%}
+                                    <input type='submit' class="btn btn-primary" value="Resume Your Propelld (EMI) Application"><br>
+                                {% elif propelld_data.status == "REJECTED" %}
+                                    <a href="#" class="btn btn-primary disabled">Propelld (EMI) is Rejected</a>
+                                {% else %}
+                                    <input type='submit' class="btn btn-primary" value="Pay Using  Propelld (EMI)"><br>
+                                {% endif %}
+                                {{propelld_form.loan_amount}}
+                            </form>
+                    {% endif %}
+                </td>
+
+            {% endif %}
+
+          </tr>
+      </table>
+    </div>
+    
+  </div><br>
+
+  {% if zest_document_complete %}
+    <div class="row">
+      <div class="col-md-offset-1 col-md-7">
+        <p style="font-size: medium;color: #337ab7;">
+          <b>
+            Your Loan Application is successfully submitted with Zest Money. Kindly wait for the same to be approved. Your admission will be confirmed and your student ID will be generated post this approval.
+          </b>
+        </p>
+      </div>
+    </div>
+  {% endif %}
+{% if  is_adm_inactive %}
+  <div class="row">
+    <div class="col-md-offset-2 col-md-10">
+      {% include 'inclusions/deactivate_prog_msg.html' %}
+    </div>
+  </div>
+{%endif%} 
+</div><br><br>
+{% endblock %}

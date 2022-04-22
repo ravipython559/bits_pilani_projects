@@ -1,0 +1,79 @@
+{% extends 'bits_base_admin.html' %}
+
+{% load static %}
+{% load widget_tweaks %}
+{% load admission_filter %}
+{% load super_reviewer_filter %}
+
+{% block title %}Super Reviewer - Home{% endblock %}
+
+{% block staticContent %}
+  <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css">
+
+  <script>
+  $(document).ready(function(){
+      $('#sr_table').DataTable();
+  });
+  </script>
+{% endblock %}
+
+{% block nav-links %}
+  <li><a href={% url 'auth_logout' %}> Log out</a></li>
+{% endblock %}
+
+
+{%block titleOfContent %} 
+    Applicants Escalated for Review (Offer Status and Program Selection Change Requests) 
+{% endblock %}
+
+{% block container %}
+<br>
+<div class="container">
+  <table class="table table-striped table-bordered" id="sr_table" >
+  <thead>
+    <tr>
+      <th>Application ID</th>
+      <th>Name</th>
+      <th>Applied On</th>
+      <th>Program Applied for</th>
+      <th>Prior Applicant Status</th>
+      <th>Change Request Type</th>
+    </tr>
+  </thead>
+  <tbody>
+    {%for element1 in queryResult%}
+      <tr>
+    
+        <td><a href="{% url 'super_reviewer:sr-review-application-details' element1.application.id %}" target="_blank">
+   
+        {% show_application_status element1.application.application_id %}
+        </a></td>
+
+        <td> {{element1.application.full_name}}</td>
+        <td> {{element1.application.created_on_datetime|date:'d-m-Y'}}</td>
+        <td> {{element1.application.program.program_name}}</td>
+        <td>
+        {% application_fees_paid element1.prior_status %}
+        </td>
+        <td>{{element1.request_type}}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+  </table>
+  <br>
+<br><br>
+  <div class="row container text-center">
+    <a class="col-md-offset-2 col-md-4 btn btn-sm btn-primary" 
+    href="{% url 'super_reviewer:sr-program-change' %}" style="width: 25%;">Review Program Change Requests</a>
+
+    <a class="col-md-offset-2 col-md-4 btn btn-sm btn-primary" 
+    href="{% url 'super_reviewer:sr-offer-change' %}" style="width: 25%;">
+    Review Offer Status Change Requests</a>
+    </div>
+
+<br>
+<br>
+</div>
+<br>
+{% endblock %}

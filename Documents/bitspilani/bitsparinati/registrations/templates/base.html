@@ -1,0 +1,106 @@
+
+
+{% load static %}
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<link rel="stylesheet" type="text/css" href="{% static "assets/css/style.css"%}">
+<link href="{% static "assets/css/bootstrap.min.css"%}" rel="stylesheet">
+<link href="{% static "assets/css/ie10-viewport-bug-workaround.css"%}" rel="stylesheet">
+ 
+
+    <!-- Custom styles for this template -->
+<link href="{% static "assets/css/signin.css"%}" rel="stylesheet">
+<script src="{% static "assets/js/ie-emulation-modes-warning.js"%}"></script>
+  <script src="{% static "assets/js/jquerynew.min.js"%}"></script>
+  <script src="{% static "assets/js/bootstrap.min.js"%}"></script>
+
+
+
+
+<div class="jumbotron" style="margin-top: -2%;">
+<header>
+
+<tr>
+
+<title>BITS WILP</title>
+<div class="headerWrapper" style=" height: 179px;">
+
+<h1 class="hidden">BITS Pilani</h1>
+<div class="logoWrapper" style="padding-top: 14px;">
+<img src="{% static "assets/images/BIts_Logo-01.png" %}" id="headercontrol_imgu" alt="BITS Pilani logo" class="logoFunc" >
+
+<h2 class="appCentre" ><i>Application Centre</i></h2>
+ <div id="tag"  >
+<!-- <a href={% url 'auth_logout'%}> Log out</a> -->
+
+                 
+ 
+                
+            </div>
+
+</div>
+</div>
+
+</tr>
+
+
+
+ <!-- Static navbar -->
+
+
+  </header>
+
+</div>
+
+
+
+
+
+
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>{% block title %}{% endblock %}</title>
+</head>
+<body id="{% block body_id %}{% endblock %}" class="{% block body_class %}{% endblock %}">
+  <div id="body" style="
+height: 419px;background-color:#ededed;width: 100%;">
+    {% block body %}
+      <div class="content_title" >
+        {% block content_title %}{% endblock %}
+      </div>
+      <div class="content">
+        {% block content %}{% endblock %}
+      </div>
+    {% endblock %}
+
+
+
+
+<footer><!-- 
+<div id="footer"> -->
+
+
+
+
+
+
+    <div class="footerWrapper" style="margin-top: 86px;padding-top: 0px;position:fixed;
+    bottom:0;width: 100%;">
+
+
+<div class="cpInfoFixWrapper">
+    <div class="cpInfoFix">
+        <p class="info">
+            Admissions Officecc, BITS, Pilani - 333 031 (Rajasthan) India.<br>
+            For Assistance Call +91-80-48767777</p>
+
+    </div>
+    <!--<div style="height: 50px; width: 100%; background-color: #F5F5F5; margin-top: 0px">
+            </div>-->
+</div>
+
+
+</div>
+
+</footer>

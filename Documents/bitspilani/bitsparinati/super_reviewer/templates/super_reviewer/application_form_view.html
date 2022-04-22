@@ -1,0 +1,738 @@
+{% extends 'bits_base_admin.html' %}
+{% load static %}
+
+{% load widget_tweaks %}
+{% load admission_filter %}
+
+{% block title %}Applicant Form{% endblock %}
+
+{% block staticContent %}
+<link href="{% static "assets/css/ie10-viewport-bug-workaround.css"%}" rel="stylesheet">
+
+<script src="{% static "assets/js/ie-emulation-modes-warning.js"%}"></script>
+  <script src="{% static "assets/js/jquerynew.min.js"%}"></script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+  <link rel="stylesheet" href="{% static 'assets/css/jquery-ui.css' %}"></link>
+
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
+
+<script type="text/javascript">
+
+  {% include "inclusions/offer_pgl_error.html" %}
+  
+</script>
+  
+<style>
+@media only screen  and (min-device-width: 0px) and (max-device-width: 1200px){
+  #tabedu .row {
+    margin-bottom: 40px;
+  }
+}
+.normal label{
+  font-weight:normal !important;
+}
+@media screen only and (min-width: 985px){
+.row{
+  margin-bottom: 10px;
+
+}
+}
+.col{
+  margin-bottom: 10px;
+}
+
+.divInfoBlock {
+    font-size: 16px;
+    width: 100%;
+    background-color: rgb(2, 2, 77);
+    font-weight: bold;
+    color: white;
+}
+ body {
+      min-height: 100%;
+      position: relative;
+      font-size: 13px;
+    }
+    body:after {
+      content: '';
+      display: block;
+      height: 100px;
+    }
+#id_a-0-program_display{
+  width: 50%;
+}
+.required {
+    color: #e32;
+    content: ' *';
+    display:inline;
+}
+        ul {
+    list-style-type: none;
+    margin: 1px;
+padding: 3px;
+}
+
+li {
+    display: inline;
+}
+td, th {
+padding: 7px;
+}
+
+.add-row{
+
+    padding: 8px 21px;
+    border-radius: 6px;
+    color:black;
+
+
+    background-size:  38px 34px;
+    background-repeat: no-repeat;
+    position: relative;
+    left: 1%;
+}
+.delete-row{
+
+    padding: 8px 21px;
+    border-radius: 6px;
+    color:black;
+    
+    position: relative;
+   
+    background-size:  38px 34px;
+    background-repeat: no-repeat;
+
+}
+
+
+#work select{
+     width: 99%;
+
+}
+#industry select{
+    width: 76%;
+}
+.phone select{
+    width: 24%;
+}
+
+.table>tbody>tr>td{
+
+    border-top: 0px solid #ddd;
+}
+.table-bordered>tbody>tr>td{
+border-top: 0px solid #ddd;
+}
+#fee select{
+    width: 77%;
+    }
+  
+.addrInput input{
+    width: 92%;
+}
+  
+
+.bold{
+    font-weight: bold;
+}
+
+.alignTh{
+    font-weight: bold;
+    text-align: center;
+}
+
+
+ .current input{
+  width: 99%;  
+ }
+ .city input{
+    width: 93%;
+ }
+</style>
+<script type="text/javascript">
+</script>
+{% endblock %}
+
+{% block nav-links %}
+  <li><a href={% url "super_reviewer:sr-home" %}>Home</a></li> 
+  <li><a href={% url 'auth_logout'%}> Log out</a></li>
+{% endblock %}
+
+{%block titleOfContent %}
+  {{form.program.form_title}}
+
+  <div style="text-align:right ; font-size:14px;">
+
+    {% if user.reviewer %}
+
+      <a href={% url 'registrationForm:reviewApplicantView' form.student_application_id %} target="_blank"><u>Download Application PDF</u></a>
+
+    {% endif %}
+
+    {% if form.login_email.email|get_admission_reviewer_offer_letter %}
+
+      <a 
+        href ="{% url 'registrationForm:offer_reviewer_redirect' form.student_application_id %}" target='_blank'>
+        <u>Download Offer Letter</u>
+      </a>
+    {% endif %}
+  </div>
+  <br>
+{% endblock %}
+
+
+{% block id_display %}
+  <div class="row" style="color:#D2691E; font-size:16px;">
+      <div class="col-md-4" >
+        <b><label>Application ID :</label> 
+          &nbsp&nbsp{{form.student_application_id}}</b>
+      </div>
+      
+      {% if form.id|stuID_exists %}
+      <div class="col-md-offset-5 col-md-3 text-right">
+        <b><label>Student ID :</label>
+        &nbsp&nbsp{% get_stu_id form.login_email.email %}</b>
+      </div>
+      {% endif %}
+  </div>
+{% endblock %}
+
+{% block container %}
+
+ <div class="divInfoBlock">&nbsp;<span class="glyphicon glyphicon-arrow-right"></span> Personal Details</div>
+
+
+</br>
+
+<div class="row">
+      <div class="col col-sm-6 col-md-4 col-lg-4">
+        <div class="form-group">
+          <label for="inputFirstname" class="col-md-5 control-label bold">Full Name
+          <br>(name as per your degree certificate)<p class="required"> *</p></label>
+          <div class="col-md-7">
+              {{form.full_name}}
+          </div>
+        </div>
+      </div>
+        
+    <div class="col col-sm-6 col-lg-4">
+      <div class="form-group">
+        <label for="inputFirstname" class="col-md-5 control-label bold">Date of birth<p class="required"> *</p></label>
+        <div class="col-md-7">
+            {{form.date_of_birth|date:'d-m-Y'}}
+        </div>
+      </div>
+    </div>
+    <div class="col col-sm-6 col-lg-4">
+        <div class="form-group">
+          <label for="inputFirstname" class="col-md-5 control-label bold">Gender<p class="required"> *</p></label>
+          <div class="col-md-7">
+              {{form.get_gender_display}}
+          </div>
+        </div>
+    </div>
+    <div class="col col-sm-6 col-lg-4">
+        <div class="form-group">
+          <label for="inputFirstname" class="col-md-5 control-label bold">Nationality<p class="required"> *</p></label>
+          <div class="col-md-7">
+              {{form.get_nationality_display}}
+          </div>
+        </div>
+    </div>
+
+
+    <div class="col col-sm-6 col-lg-4">
+            <div class="form-group">
+              <label for="inputFirstname" class="col-md-5 control-label bold">Father's Name<p class="required"> *</p></label>
+              <div class="col-md-7">
+                  {{form.fathers_name}}
+              </div>
+            </div>
+    </div>
+    <div class="col col-sm-6 col-lg-4">
+            <div class="form-group">
+              <label for="inputFirstname" class="col-md-5 control-label bold">Mother's Name<p class="required"> *</p></label>
+              <div class="col-md-7">
+                  {{form.mothers_name}}
+              </div>
+            </div>
+    </div>
+</div>
+ 
+<div class="row">
+    <div class="col col-sm-6 col-lg-4">
+            <div class="form-group">
+              <label for="inputFirstname" class="col-md-6 control-label bold">Applying for Programme<p class="required"> *</p></label>
+              <div class="col-md-6" id="appProgram">
+                  {{form.program.program_name}}
+              </div>
+            </div>
+    </div>
+    <div class="col col-sm-6 col-lg-4">
+            <div class="form-group">
+              <label for="inputFirstname" class="col-md-5 control-label bold">Preferred Exam Location <p class="required"> *</p></label>
+              <div class="col-md-7" id="curentLocation">
+                  {{form.current_location}}
+              </div>
+            </div>
+    </div>
+</div>
+
+{% if teaching_mode_check %}
+<div class="row">
+  <div class="col col-sm-6 col-lg-4">
+          <div class="form-group">
+            <label for="teachingMode" class="col-md-6 control-label bold">Teaching Mode<p class="required"> *</p></label>
+            <div class="col-md-6" id="teachingMode">
+               {{form.teaching_mode|default:'-'}}
+            </div>
+          </div>
+  </div>
+</div>
+{% endif %}
+
+<div class="row">
+    <div class="col col-sm-6 col-lg-4">
+            <div class="form-group">
+              <label for="inputFirstname" class="col-md-5 control-label bold">Address line 1<p class="required"> *</p></label>
+              <div class="col-md-7">
+                 {{form.address_line_1}}
+              </div>
+            </div>
+    </div>
+    <div class="col col-sm-6 col-lg-4">
+        <div class="form-group normal">
+          <label for="inputFirstname" class="col-md-5 control-label bold">Address line 2</label>
+          <div class="col-md-7">
+              {{form.address_line_2|default:'-----'}}
+          </div>
+        </div>
+    </div>
+    <div class="col col-sm-6 col-lg-4">
+        <div class="form-group normal">
+          <label for="inputFirstname" class="col-md-5 control-label bold">Address line 3</label>
+          <div class="col-md-7">
+              {{form.address_line_3|default:'-----'}}
+          </div>
+        </div>
+    </div>
+
+    <div class="col col-sm-6 col-lg-4">
+            <div class="form-group">
+              <label for="inputFirstname" class="col-md-5 control-label bold">City<p class="required"> *</p></label>
+              <div class="col-md-7">
+                 {{form.city}}
+              </div>
+            </div>
+    </div>
+    <div class="col col-sm-6 col-lg-4">
+            <div class="form-group">
+              <label for="inputFirstname" class="col-md-5 control-label bold">Pin Code<p class="required"> *</p></label>
+              <div class="col-md-7">
+                 {{form.pin_code|default:'-----'}}
+              </div>
+            </div>
+    </div>
+    <div class="col col-sm-6 col-lg-4">
+        <div class="form-group">
+          <label for="inputFirstname" class="col-md-5 control-label bold">State<p class="required"> *</p></label>
+          <div class="col-md-7">
+              {{form.get_state_display}}
+          </div>
+        </div>
+    </div>
+    <div class="col col-sm-6 col-lg-4">
+        <div class="form-group">
+          <label for="inputFirstname" class="col-md-5 control-label bold">Country<p class="required"> *</p></label>
+          <div class="col-md-7">
+              {{form.get_country_display}}
+          </div>
+        </div>
+    </div>
+ <div class="col col-sm-6 col-lg-4">
+            <div class="form-group">
+              <label for="inputFirstname" class="col-md-5 control-label bold">Phone<p class="required"> *</p></label>
+              <div class="col-md-7" id="phoneId">
+                 {{form.phone}}
+              </div>
+            </div>
+    </div>
+    <div class="col col-sm-6 col-lg-4">
+        <div class="form-group">
+          <label for="inputFirstname" class="col-md-5 control-label bold">Mobile<p class="required"> *</p></label>
+          <div class="col-md-7" id="mobileId">
+              {{form.mobile}}
+          </div>
+        </div>
+    </div>
+    <div class="col col-sm-6 col-lg-4">
+        <div class="form-group">
+          <label for="inputFirstname" class="col-md-5 control-label bold">Email ID<p class="required"> *</p></label>
+          <div class="col-md-7 city">
+              {{form.email_id}}
+          </div>
+        </div>
+    </div>
+    {% if 'alternate_email_id' in teaching_mode_check %}
+      <div class="col col-sm-6 col-lg-4">
+          <div class="form-group">
+            <label for="inputFirstname" class="col-md-5 control-label bold">Alternate Email ID<p class="required"> *</p></label>
+            <div class="col-md-7">
+                {{form.alternate_email_id|default:'-----'}}
+            </div>
+          </div>
+      </div>
+    {% endif %}
+</div>
+</br>
+    <div class="divInfoBlock">&nbsp;<span class="glyphicon glyphicon-arrow-right"></span>
+      Current Employment Details
+    </div>
+</br>
+</br>
+
+<div class="row" style="margin-bottom: 0px;">
+    <div class="col col-sm-6 col-lg-6">
+            <div class="form-group">
+              <label for="inputFirstname" class="col-md-5 control-label bold">Current Employment Status<p class="required"> *</p></label>
+              <div class="col-md-7">
+                 {{form.get_current_employment_status_display}}
+              </div>
+            </div>
+    </div>
+    <div class="col col-sm-6 col-lg-6">
+        <div class="form-group">
+          <label for="inputFirstname" class="col-md-4 control-label bold">Current Organization<p class="required"> *</p></label>
+          <div class="col-md-8">
+              {{form.current_organization}}
+          </div>
+        </div>
+    </div>
+    {% if is_specific %}
+    <div class="col col-sm-6 col-lg-6">
+        <div class="form-group">
+          <label for="inputFirstname"
+          class="col-md-5 control-label bold">Current Employee Number<p class="required"> *</p></label>
+          <div class="col-md-7">
+              {{form.current_org_employee_number|default:'-----'}}
+          </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col col-sm-6 col-lg-6">
+        <div class="form-group normal">
+          <label for="inputFirstname" class="col-md-5 control-label bold">Current Employee Number</label>
+          <div class="col-md-7">
+              {{form.current_org_employee_number|default:'-----'}}
+          </div>
+        </div>
+    </div>
+    {% endif %}
+    <div class="col col-sm-6 col-lg-6">
+            <div class="form-group">
+              <label for="inputFirstname" class="col-md-4 control-label bold">Current Designation <p class="required"> *</p></label>
+              <div class="col-md-8">
+                 {{form.current_designation}}
+              </div>
+            </div>
+    </div>
+    <div class="col col-sm-6 col-lg-6">
+        <div class="form-group">
+          <label for="inputFirstname" class="col-md-5 control-label bold">Current Work Location<p class="required"> *</p></label>
+          <div class="col-md-7" id="work">
+              {{form.work_location}}
+          </div>
+        </div>
+    </div>
+    <div class="col col-sm-6 col-lg-6">
+        <div class="form-group">
+          <label for="inputFirstname" class="col-md-4 control-label bold">Current Industry<p class="required"> *</p></label>
+          <div class="col-md-8" id="industry">
+              {{form.current_org_industry}}
+          </div>
+        </div>
+    </div>
+ <div class="col col-sm-6 col-lg-6">
+            <div class="form-group">
+              <label for="inputFirstname" class="col-md-5 control-label bold">Date of Joining Current Organization<p class="required"> *</p></label>
+              <div class="col-md-7 current" >
+                {% if form.login_email.email|get_certificate_payfee_text %}
+                    -----
+                {% else %}
+                    {{form.current_org_employment_date|date:'d-m-Y'}}
+                {% endif %}
+              </div>
+            </div>
+    </div>
+    <div class="col col-sm-6 col-lg-6">
+        <div class="form-group">
+          <label for="inputFirstname" class="col-md-4 control-label bold">Fee Payment Entity<p class="required"> *</p></label>
+          <div class="col-md-8">
+              {{form.get_fee_payment_owner_display}}
+          </div>
+        </div>
+    </div>
+</div>
+<div class="row" style="margin-bottom: 0px;">
+    <div class="col col-sm-6 col-lg-6">
+        <div class="form-group">
+          <label for="inputFirstname" class="col-md-5 control-label bold">Total Work Experience <p class="required"> *</p></label>
+          <div class="col-md-4">        
+	           {% if form.login_email.email|get_certificate_payfee_text %}
+                      {{ form.total_work_experience_in_months }} Years
+              {% else %}           
+                    {% display_y_m_d form.login_email.email %}  
+            {% endif %}
+          </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="container-fluid">
+{% if not form.employer_mentor_flag_hide %}
+<div class="row" style="margin-bottom: 0px;">
+   <div class="col col-sm-6 col-lg-6" >
+         <div class="form-group">
+          <div class="col-md-1" style="padding: 0 20px 0px 20px ;">
+      
+         <input type="checkbox" value="{{form.employer_mentor_flag}}" disabled 
+            {% if form.employer_mentor_flag %}
+              checked
+            {% endif %}/>
+          </div>
+          
+            <p class="bold" style="padding: 3px;">I confirm that I will be able to find a mentor before the programme begins.</p>
+    
+          </div>
+    </div>
+</div>
+{% endif %}
+{% if not form.employer_consent_flag_hide %}
+<div class="row" style="margin-bottom: 0px;">
+  <div class="col col-sm-6 col-lg-7">
+    <div class="form-group">
+       <div class="col-sm-1 col-md-1 check" style="padding: 0 20px 0px 20px ;">
+    
+         <input type="checkbox" value="{{form.employer_consent_flag}}" disabled
+            {% if form.employer_consent_flag %}
+              checked
+            {% endif %}/> 
+        </div>
+         <p class="control-label bold" style="padding: 0px;">  I confirm that my employing organization will give consent for me to enroll for this programme.</p>
+          
+    </div>
+  </div>
+</div>
+{% endif %}
+</div>
+                   
+
+<div class="divInfoBlock">&nbsp;<span class="glyphicon glyphicon-arrow-right"></span> Prior Employment Details
+
+
+    </div>
+
+<br/>
+
+
+<div class="container-fluid">
+
+<div class="table-responsive">
+  <div  style="margin-left: 0px; ">
+                     <table class="table table-bordered table-hover">
+                        <thead>
+                         <tr>
+                             <th class="alignTh" style="width: 17%;"> Organization </th>
+                             <th class="alignTh" style="width: 17%;">Designation Held </th>        
+                             <th class="alignTh" style="width: 17%;">Start Date  </th>
+                             <th class="alignTh" style="width: 17%;">End Date  </th>
+                         </tr>
+                         </thead>
+
+                        {% for x in edu1 %}
+                         <tr >
+                             <td style="width: 17%;">{{x.organization}}</td>
+                             <td style="width: 17%;">{{x.designations}}</td>        
+                             <td style="width: 17%;">{{x.start_date|date:'d-m-Y'}}</td>
+                             <td style="width: 17%;">{{x.end_date|date:'d-m-Y'}}</td>
+                        </tr>
+                         {% endfor %}
+                     </table>
+
+               </div> 
+</div>
+
+</div>
+
+</br>
+<div class="divInfoBlock">&nbsp;
+<span class="glyphicon glyphicon-arrow-right"></span>Education Details</div>
+</br>
+
+<div class="container-fluid" id="tabedu">
+
+ <div class="table-responsive">
+    <table class="table table-bordered table-hover" id="tableedu">
+
+        <thead>
+           <tr>
+           <th class="alignTh" style="width: 17px;">Qualification Level<p class="required"> *</p></th>
+              <th class="alignTh" style="width: 17%;">Degree<p class="required"> *</p></th>
+              <th class="alignTh" style="width: 15%;">Board/Universitye<p class="required"> *</p></th>
+              <th class="alignTh" style="width: 10%;">Duration<p class="required"> *</p></th>
+              <th class="alignTh" style="width: 28%;">Discipline<p class="required"> *</p></th>
+              <th class="alignTh" style="width: 7%;">Year of Passing<p class="required"> *</p></th>
+              <th class="alignTh" style="width: 6%;">% Marks / CGPA<p class="required"> *</p></th>
+              <th class="alignTh" style="width: 9%;">Division<p class="required"> *</p></th>       
+            </tr>
+
+        </thead>  
+           {% for y in qual1 %}
+               <tr>
+               <td>
+                 {{y.degree.qualification_category}}
+               </td>
+                
+
+                       <td id="degree" style="width: 15px;" >
+
+
+          {% if y.degree.degree_long_name == 'Others' %}
+             {{ y.other_degree }}
+            {% else %}
+             {{y.degree}}
+          {% endif %}
+
+          </td>
+                <td style="width: 15px;">{{y.school_college}}</td>
+                <td style="width: 7px;">{{y.get_duration_display}}</td>
+               
+                 <td style="width: 28px;" id="discipline">
+
+
+          {% if y.discipline.discipline_long_name == 'Others' %}
+             {{ y.other_discipline }}
+            {% else %}
+             {{y.discipline}}
+            {% endif %}
+
+          </td> 
+                  <td id="hi12" style="width: 4px;">{{y.completion_year}}</td>
+                    <td style="width: 5px;">{{y.percentage_marks_cgpa}}</td>
+                      <td style="width: 7px;">{{y.get_division_display}}</td>
+                      
+
+              </tr>
+            {% endfor %}
+
+    </table>
+</div>
+
+  </div>
+ 
+<br>
+
+<div class="row">
+  {% if 'programming_flag' in teaching_mode_check %}
+    <div class="col col-sm-6 col-lg-7">
+            <div class="form-group">
+              <label for="inputFirstname" class="col-md-7 control-label bold">Do you have working knowledge of ANY programming language <p class="required"> *</p></label>
+              <div class="col-md-5" id="progFlag" >{{form.get_programming_flag_display|default:'-'}}
+              </div>
+            </div>
+    </div>
+    {% endif %}    
+    
+    <div class="col col-sm-6 col-lg-7">
+            <div class="form-group">
+              <label for="inputFirstname" class="col-md-5 control-label bold">Level of Studies in Mathematics<p class="required"> *</p></label>
+              <div class="col-md-7">
+                 {{form.get_math_proficiency_level_display}}
+              </div>
+            </div>
+    </div>
+    <div class="col col-sm-6 col-lg-7">
+        <div class="form-group">
+          <label for="inputFirstname" class="col-md-5 control-label bold">Are you a past student of Bits Pilani<p class="required"> *</p></label>
+          <div class="col-md-7">
+              {{form.get_prior_student_flag_display}}
+          </div>
+        </div>
+    </div>
+    <div class="col col-sm-6 col-lg-7">
+        <div class="form-group normal">
+          <label for="inputFirstname" class="col-md-5 control-label bold">BITS ID Number (if past student)</label>
+          <div class="col-md-7">
+              {{form.bits_student_id|default:'-----'}}
+          </div>
+        </div>
+    </div>
+
+    
+</div>
+
+<div class="row">
+    <div class="col col-sm-6 col-lg-7">
+            <div class="form-group">
+              <label for="inputFirstname" class="col-md-9 control-label bold">Are you currently pursuing studies in any other university or college<p class="required"> *</p></label>
+              <div class="col-md-3">
+                {{form.get_parallel_studies_flag_display}}
+              </div>
+            </div>
+    </div>
+</div>
+
+
+
+{% if form.login_email.email|get_rej_reason_sel_comments %}
+
+<div class="row">
+  <div class="col col-sm-6 col-lg-7">
+    <div class="form-group normal">
+      <label for="inputFirstname" class="col-md-5 control-label bold">BITS Rejection Reason</label>
+      <div class="col-md-7">{{bits_rej_reason|default:'-----'}}</div>
+    </div>
+  </div>
+
+  <div class="col col-sm-6 col-lg-7">
+    <div class="form-group normal">
+      <label for="inputFirstname" class="col-md-5 control-label bold">BITS Selection / Rejection Comments</label>
+      <div class="col-md-7">{{bits_comment|default:'-----'}}</div>
+    </div>
+  </div>
+</div>
+
+{% endif %}
+
+
+
+
+
+
+<div class="divInfoBlock">&nbsp;<span class="glyphicon glyphicon-arrow-right"></span> Uploaded Documents
+
+
+    </div>
+
+<br/>
+  <div class="container-fluid">
+  {% for x in uploadFiles %}
+  <div class="row">
+      <div class="col col-sm-6 col-lg-12">
+              <div class="form-group">
+                <label for="inputFirstname" class="col-md-4 control-label bold">{{x.document}}</label>
+                <div class="col-md-4">
+                  <a href="{% if x.file %}{% url 'registrationForm:document-view' x.pk %}{% else %}#{% endif %}" TARGET="_blank">{{x}}</a>
+                </div>
+              </div>
+      </div>
+  </div>
+   {% endfor %}
+  </div>
+
+<div style= "display:none;" id="id_gen" >
+  <p style= "font-size:17px;" ></p>
+</div>
+{% endblock %}

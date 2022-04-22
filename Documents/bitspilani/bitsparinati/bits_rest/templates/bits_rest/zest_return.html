@@ -1,0 +1,29 @@
+{% extends 'bits_BaseTemp.html' %}
+{% load static %}
+
+
+{% block title %} Loan Payment Status {% endblock %}
+
+{% block navigationLinks %}
+  <li><a href="{% url 'registrationForm:applicantData'%}">Home</a></li>
+  <li><a href="{% url 'registrationForm:applicantView'%}" target="_blank">
+  Download Application PDF</a></li>
+  <li><a href="{% url 'registrationForm:payfee'%}" target="_blank">
+  Download Fee Receipt</a></li>
+  <li><a href={% url 'auth_logout'%}>Log Out</a></li>
+{% endblock %}
+
+{%block titleOfContent %} Loan Payment Status {% endblock %}
+
+{% block container %}
+<br><br>
+	<div class="container">
+		<div class="row">
+			<div class="text-center" style="font-size: medium;">
+			<b>
+				Your loan application with Zest Money is still in progress. You will need to revisit their site and complete the process.
+			</b>
+		</div>
+		</div>
+	</div>
+{% endblock %}

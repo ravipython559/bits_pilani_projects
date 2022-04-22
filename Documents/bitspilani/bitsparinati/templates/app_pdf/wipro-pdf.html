@@ -1,0 +1,380 @@
+{% extends "easy_pdf/base.html" %}
+{% load static %}
+{% load admission_filter %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+{% block content %}
+<html>
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>BITS</title>
+</head>
+<style>
+#rectangle1{border:1px solid black; }
+#rectangle1 h5{border:none;}
+#title{
+text-align:center;
+top:50px;
+}
+
+#form_name{
+text-align:center;
+}
+  body{
+      font-size: 10px;
+      font-family: Calibri;
+    }
+
+/*table, th, td {
+    border: 1px solid blue;
+    border-collapse: collapse;
+}
+*/
+th{
+padding:10px;
+}
+.required:after { content:" *"; }
+.footer span {
+width:3cm;
+border-bottom:0.1em solid #000;
+display:inline-block;
+}
+
+.main span{
+width:3cm;
+border-bottom:0.1em solid #000;
+display:inline-block;
+
+}
+img{zoom:80%;}
+
+    @page {
+                size: A4;
+                margin: 1cm;
+                size: {{ pagesize|default:"A4" }};
+                margin-left: 1cm;
+                margin-right: 1cm;
+                margin-top: 1.2cm;
+                margin-bottom: 2cm;
+                @frame footer {
+                    -pdf-frame-content: footerContent;
+                    bottom: 0cm;
+                    margin-left: 50cm;
+                    margin-right: 50cm;
+                    height: 1cm;
+                }
+
+        
+
+            
+
+            
+    
+        size: a4 portrait;
+        @frame header_frame {           /* Static Frame */
+            -pdf-frame-content: header_content;
+            left: 490pt; width: 512pt; top: 20pt; height: 40pt;
+        
+        
+    }
+  @frame footer { 
+    -pdf-frame-content : footer; 
+    /*bottom: 2cm; margin-left: 1cm; margin-right: 1cm; height: 1cm; */
+    left: 490pt; width: 512pt; bottom: 20pt; height: 40pt;
+
+} 
+
+       }
+</style>
+<body>
+ <div id="header_content" style="font-size: 14px;"><b> {{q.student_application_id}}</b></div>
+ <div id="footer" style="font-size: 10px;" ><pdf:pagenumber/> </div>
+
+<h3 id="title" style="font-size: 12px;"><b>Birla Institute of Technology & Science,Pilani,Rajasthan<br>Work Integrated Learning Programmes Division</b></h3>
+
+<h4 id="form_name" style="font-size: 11px;"><b>Application for Admission to {{q.program.program_name}} for {{q.admit_year}}</b></h4>
+
+<div id="rectangle1" style=" ">
+</br>
+<label style="margin-top: 2px;margin-left: 4px;" style="font-size: 10px;"><b>&nbsp&nbsp&nbspFor Office use only</b></label><br/></br>
+<label style="margin-left: 4px;border-bottom: 1px solid black;padding-top:20px;" style="font-size: 10px;">&nbsp&nbsp&nbspID No: {{q.admit_year}}{{q.program.program_code}}______&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</label>
+<label style="margin-left: 650px;">&nbsp&nbsp&nbspDate of Receipt:_________________<span></span></label><br/><br/>
+<label style="margin-left: 4px;">&nbsp&nbsp&nbspRemarks,if any:________________________________________</label><br/><br/>
+<label>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspDean</label>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+<label style="float:right">Vice-Chancellor</label><br/>
+</div>
+</br>
+<label style="top:30px">Note:Please read the instructions carefully before filling in this application form.</label>
+
+<h4><b>SECTION 1:PERSONAL INFORMATION & EDUCATIONAL BACKGROUND</b></h4>
+
+
+<table style="width:100%">
+  <tr>
+
+    <td style="font-size: 12px;">1.Name: {{q.full_name}}</td>
+    <td rowspan="9" colspan="0" >&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+    <img src="{% static "assets/images/passprt.PNG" %}" style="margin-left:-145px;" /></td></tr>
+
+   
+  
+  <tr>
+      <td style="font-size: 12px;">2.Gender: {{q.get_gender_display}}</td>
+  </tr>
+  <tr>
+    <td style="font-size: 12px;">3.Date of Birth: {{q.date_of_birth}}</td>
+  </tr>
+  <tr>
+    <td style="font-size: 12px;">4.Father's Name: {{q.fathers_name}}</td>
+  </tr>
+  <tr>
+    <td style="font-size: 12px;">5.Mother's Name: {{q.mothers_name}}</td>
+  </tr>
+  <tr>
+    <td style="font-size: 12px;">6.Email: {{q.email_id}}</td>
+  </tr>
+  <tr>
+    <td style="font-size: 12px;">7.Mobile/Phone: {{q.mobile}}/{{q.phone}}</td>
+  </tr>
+  <tr>
+    <td style="font-size: 12px;">8.Nationality: {{q.get_nationality_display}}</td>
+  </tr>
+  <tr>
+    <td style="font-size: 12px;">9.Do you belong to Scheduled Caste or Scheduled Tribe?[Y/N]  ___</td>
+  </tr>
+  <tr>
+    <td style="font-size: 12px;">10.Address for Correspondence: {{q.address_line_1}}</br>
+&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp{{q.address_line_2}}</br>
+&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp{{q.address_line_3}}</br>
+&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp{{q.city}},{{q.get_state_display}},{{q.get_country_display}}</br>
+</td>
+  </tr>
+<tr>
+<td style="font-size: 12px;">11.WIPRO Employee ID : {{q.current_org_employee_number}}</td>
+</tr>
+</table>
+
+
+<table style="width:100%; border: 1px solid black;">
+<p><b>12.Educational details </b>from School Leaving Certificate onwards 
+in chronological order:</p>
+<tr>
+<th style="font-size: 8px;">Qualification Level</th>
+<th style="font-size: 12px;" >Name of Diploma/ Degree</th>
+<th style="font-size: 12px;">Subject/ Branch</th>
+<th>Duration(Years)</th>
+<th>Year of completion</th>
+<th>Total Marks /CGPA</th>
+<th>Maximum Marks</th>
+<th>Final Marks </th>
+<th>Division</th>
+</tr>
+
+{% for x in qualification %}
+<tr>
+
+<td style="padding:5px">
+     {{ x.degree.qualification_category}}
+</td>
+
+<td style="padding:5px">
+   {% if x.degree.degree_long_name == 'Others' %}
+    {{ x.other_degree }}
+   {% else %}
+    {{x.degree|default:"&nbsp&nbsp&nbsp&nbsp"}}
+   {% endif %}
+</td>
+<td style="padding:5px">
+   {% if x.discipline.discipline_long_name == 'Others' %}
+    {{ x.other_discipline }}
+   {% else %}
+    {{x.discipline|default:"&nbsp&nbsp&nbsp&nbsp"}}
+   {% endif %}
+</td>
+<td 
+style="padding:5px">{{x.get_duration_display|default:"&nbsp&nbsp&nbsp&nbsp"}}</td>
+<td 
+style="padding:5px">{{x.completion_year|default:"&nbsp&nbsp&nbsp&nbsp"}}</td>
+<td 
+style="padding:5px">{{x.percentage_marks_cgpa|default:"&nbsp&nbsp&nbsp&nbsp"}}</td>
+<td style="padding:5px">&nbsp</td>
+<td style="padding:5px">&nbsp</td>
+<td 
+style="padding:5px">{{x.get_division_display|default:"&nbsp&nbsp&nbsp&nbsp"}}</td>
+</tr>
+
+{% endfor %}
+
+{% for x in qual_count %}
+  <tr>
+   <td style="padding:5px">&nbsp</td>
+   <td style="padding:5px">&nbsp</td>
+   <td style="padding:5px">&nbsp</td>
+   <td style="padding:5px">&nbsp</td>
+   <td style="padding:5px">&nbsp</td>
+   <td style="padding:5px">&nbsp</td>
+   <td style="padding:5px">&nbsp</td>
+   <td style="padding:5px">&nbsp</td>
+   <td style="padding:5px">&nbsp</td>
+</tr>
+{% endfor %}
+
+</table>
+
+
+<h5><i>*As Calculated for declaring result and award of Division by your Board / university.If marks are not awarded,give Cumulative Grade Point Average 
+
+Or its equivalent.Explain below the basis on which your B. SC. / B.E. M. SC. / M. C.A. (Or equivalent)final percentage is Calculated (Cleary explain 
+
+gaps, if any in a separate Sheet.) 
+</i></h5>
+<p><h5>13.Level at which you have studied Mathematics: {{q.get_math_proficiency_level_display}}</h5></p>
+<p><h5>14.Are you currently enrolled for degree or diploma in any University/Institution: (Y/N)
+  {% if q.parallel_studies_flag == 1 %}
+  Y
+  {% else %} 
+ N
+  {% endif %}
+  <span></span></h5></p>
+
+<p>If Yes,give details specifying the University Institution name,programme name,duration,date of joining the programme and likely date of completion of the same.<hr></p>
+<p>15.Have you ever been a student of BITS,Pilani.(Yes/No):if yes,please write name of the degree and your ID No.: {{q.obits_student_id}}</p>
+<hr>
+<p><strong>16.Exam Centre Choice:</strong> {{q.current_location}}</p>
+ 
+<small><i>Note:In case exam centre is not indicated the institute will unilaterally assign a Centre.The Institute is also free to demand that students come to an Exam Centre other than the one indicated above.Further,in case of Dubai centre there will be an additional exam centre fees,which will be indicated at the time of admission.</i></small>
+<p>17.Current Employment Status: {{q.get_current_employment_status_display}}</p>
+<p>18.Total Work Experience:
+{% if q.login_email.email|get_certificate_payfee_text %}
+    {{ q.total_work_experience_in_months }} Years
+{% else %}           
+    {% display_y_m_d q.login_email.email %}
+{% endif %}
+</p>
+<p>19.Work Experience in Current Organisation:  
+{% if q.login_email.email|is_employed %}
+  {% c_w_e q.login_email.email %}
+  {% else%}
+  --
+{% endif %}
+  </p>
+<p><small><i>(as on applicable deadline to be counted only from the point of completing BE/MSc or equivalent))</i></small></</p>
+
+<p><strong>20.Employment Details:</strong><small>Since the year of completing BE/MSc or equivalent,give brief employment details below in reverse chronological order.</small></p>
+
+<table style="width:100%; border: 1px solid black;">
+<tr>
+<th>Name of Employer</th>
+<th>Designation held</th>
+<th>Start Date</th>
+<th>End Date</th>
+
+</tr>
+
+<tr>
+<td height="200"></td>
+<td height="200"></td>
+<td height="200"></td>
+<td height="200"></td>
+
+</tr>
+{%for element1 in exp%}
+
+<tr>
+<td style="padding:5px" >{{element1.organization}}</td>
+<td style="padding:5px">{{element1.designations}}</td>
+<td style="padding:5px">{{ element1.start_date | date:" D d M Y"}}</td>
+<td style="padding:5px">{{ element1.end_date | date:" D d M Y"}}</td>
+
+</tr>
+
+{% endfor %}
+<tr>
+<th colspan="2">Total Work Experience calculated after completing BE/MSc or equivalent</th>
+
+</tr>
+
+</table>
+<br>
+<small><i>Provide the dates of start end of the employment period.Clearly explain gaps,if any in a separate sheet.</i></small>
+
+<p><strong>21.Declaration by the Applicant</strong></p>
+<p>I have carefully read the details and the instructions given in this form and hereby declare that all the information given and statements 
+
+made in various sections and parts of this Application Form and enclosures are true to the best of my knowledge. I agree to the condition that if 
+
+information or statement were found to be wrong, my admission to BITS would automatically be cancelled. I understand that the objective of the Institute will be
+
+to examine in detail my educational and professional background along with my employer's visualization of my current and future professional involvement 
+
+to accommodate my Career aspirations within the framework of an appropriate learning avenue. I thus realize that in this process of matching, the Institute 
+
+instead of rejecting my application for admission may even Suggest that I would be more suitable for another degree programme / area of study for which I 
+
+have not applied. If admitted,I promise to abide by the Rules and Regulations in force or those that may hereafter be made by the Institute and I shall do 
+
+nothing either inside or outside the Institute which will interfere with its orderly working and discipline.I promise to be regular in the study schedule and in 
+
+appearing in the examinations at allotted centre. If I am required to Pilani for any examination,I shall take permission from my employer for appearing 
+
+in the same. In the case that I myself will be paying my fees / dues,I affirm that I will regularly pay fees/dues to the Institute during my programme.
+
+Further, in all matters concerning the Institute and myself the decision of BITS Vice-Chancellor shall be binding on me. 
+
+</p>
+
+
+    Place:________________________<span></span>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+    Signature:_____________________<span></span>
+<br>
+ Date:________________________<span></span>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+ &nbspName:<span></span>
+
+<div> 
+   <pdf:nextpage /> 
+</div> 
+
+
+<p align="center"><b>MANDATORY SUPPORTING DOCUMENTS</b></p>
+<p style="font-size: 11px;">To complete the application submission process, candidates are required to submit copies of supporting documents through the Application Centre.</p>
+<p style="font-size: 11px;">Before uploading scanned copies of the mandatory supporting documents listed below, please ensure that they are complete in all respects, failing which your application will be considered as incomplete and rejected. <b>Each uploaded document should be SELF ATTESTED by you using your FULL SIGNATURE. Please attest all pages of documents you upload.</b>
+</p><p style="font-size: 11px;"><b>
+For certain documents such as marksheets where multiple pages may need to be uploaded, you may scan multiple pages into a single pdf file and upload it. Alternatively, you may scan different pages as separate pdf files, then create a zip file of these pdf files and upload it as a single zip file.
+</b></p>
+<p><u>Documents to be uploaded</u></p>
+  <ol type="1">
+   <li>
+    <u>Application Form</u>: This implies pages 1 & 2 of the downloaded pdf of the Application Form. Upload a single pdf file containing the two pages scanned together, or a zip file that has separate pdf files for each page. Ensure that all additional information required therein has been filled legibly by hand, and photograph and signature are present.  
+   </li>
+
+   <li>
+  
+     <u>Photograph</u>: Upload a soft copy of a professionally taken passport-sized photograph.  
+   </li>
+
+   <li>
+  <u>Degree Certificate(s)</u>: Upload scans of your 10th, 10+2 and degree / diploma certificates that include your name. Upload all documents as a multi-page pdf or a zip file.
+   </li>
+
+   <li>
+  <u>Proof of Date of Birth</u>: Upload a photocopy of your 10th Pass/ Matriculation/ Secondary School Leaving Certificate/ Marksheet clearly stating your date of birth.  
+   </li>
+
+   <li>
+  <u>Marksheet(s)</u>: Upload academic marksheets for all years/ semesters of all your 10th, 10+2 and degree/ diploma examinations. Upload all marksheets together as a multi-page pdf, or a zip file.  
+   </li>
+  
+  </ol>
+
+
+
+
+<br>
+
+<div id="footerContent">
+            {%block page_foot%}
+                Page <pdf:pagenumber>
+            {%endblock%}
+        </div>
+</body></html>
+{% endblock %}

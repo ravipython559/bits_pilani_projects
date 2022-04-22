@@ -1,0 +1,47 @@
+{% load static %}
+{% load i18n %}
+{% load admission_filter %}
+<head>
+<body>
+<title>Registration Page</title>
+
+
+
+
+	<h1 style="margin-left: 6%;">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp Application Fee Receipt</h1>
+</br>
+ 	<table>
+		<tr>
+	<td>Applcation ID:</td>
+	<td>{{ap_id}}</td>
+	</tr>
+	<tr>
+	<td>Applicant Name:</td>
+	<td>{{ap_name}}</td>
+	</tr>
+	<tr>
+	<td>Program Applied For</td>
+	<td>{{ap_program}}</td>
+	</tr>
+	<tr>
+	<td>Fee Amount</td>
+	<td>{{ap_fee_amount}}</td>
+	</tr>
+	<tr>
+	<td>Payment Bank</td>
+	<td>{{ap_pay_bank}}</td>
+	</tr>
+	<tr>
+	<td>Transaction ID</td>
+	<td>{{ap_trans_io}}</td>
+	</tr>
+	<tr>
+	<td>Payment Date and Time</td>
+	<td>{{ap_pay_d_t}}</td>
+	</tr>
+</table>
+
+</form>
+</body>
+</head>
+</html>

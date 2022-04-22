@@ -1,0 +1,163 @@
+{% extends 'bits_BaseTemp.html' %}
+
+{% load static %}
+{% load widget_tweaks %}
+{% load admission_specific_filter %}
+{% load admission_filter %}
+
+{% block titleOfContent %} Upload Application Documents {% endblock %}
+
+{% block navigationLinks %}
+<a href="{% url 'registrationForm:applicantData'%}">Home</a> |
+{% if user.email|is_CIOT_user %}
+  <a href='{% static "static_pdf/How_to_Apply_IoT.pdf" %}' target="_blank">How to Apply</a> |
+{% elif not user.email|is_specific_user %}
+  <a href='{% static "static_pdf/How_to_Apply-NonSpecific.pdf" %}' target="_blank">How to Apply</a> |
+{% else %}
+  <a href='{% static "How_to_Apply.pdf" %}' target="_blank">How to Apply</a> |
+{% endif %}
+<a href="{% url 'registrationForm:applicantView'%}" TARGET="_blank">Download Application PDF</a> |
+{% if sca.application_status == "Submitted" %}
+  <a href="{% url 'registrationForm:payfeeview'%}">Pay Fees</a> |
+{% elif  sca.application_status == "Application Fees Paid" or "Application Fee Paid,Documents Uploaded"%}
+  <a href="{% url 'registrationForm:payfee'%}" TARGET="_blank">Download Fee Receipt</a> |
+{% endif %}
+<a href="{% url 'auth_logout'%}"> Log out</a>
+{% endblock %}
+
+
+{% block staticContent %}
+	{% include 'registrations/inclusion/image_cropper_css.html' %}
+
+	<script type="text/javascript">
+		var file_error = [];
+		var actual_size = 10485760;
+		var forms = '{{formset.forms|length}}';
+		$(function() {
+			var count = 0;
+			{% include 'registrations/inclusion/upload_file_validation.html' with formset=formset %}
+			if('{{document_submission_flag}}' == 'False'){
+				$('#upload_doc_sub').prop('disabled', true);
+			}
+			$('#upload_form_ajax').submit(function(e){
+				e.preventDefault();
+				$('#upload_doc_sub').attr('disabled',true);
+				var error_count = 0;
+				$.each(file_error, function( key, value ) {
+					error_count += value;
+				});
+
+				$("#file-loading").children().addClass("loading-bar");
+				if(!error_count)
+				{
+					{% include 'registrations/inclusion/upload_ajax_submit.html' with formset=formset %}
+
+				}
+				$("#file-loading").children().removeClass("loading-bar");
+				
+			});
+
+		});
+	</script>
+
+{% endblock %}
+
+{% block container %}
+<div class="container">
+	<div class='row'>
+		<div class="col-md-6">
+			<div style="font-weight: bold;font-size: 19px;color: darkblue;">
+				<label>Application ID - </label>
+				<label>{{sca.student_application_id}}</label>
+			</div>
+			<form method='post' enctype="multipart/form-data" id="upload_form_ajax">
+				<h5>Document Names with a RED asterisk are mandatory. For final upload confirmation, all mandatory documents should be submitted. Please refer the Document Upload Guidelines on the right hand side to ensure complete and correct submission of documents.</h5>
+				<h5>Please ensure the total size of all files you upload doesn't exceed 32 MB.</h5>
+
+				<table class="table table-bordered table-hover" style="font-size: 11px;">
+					{{ formset.management_form }}
+					{% for form in formset.forms %}
+						<tr>
+							{% include 'registrations/inclusion/upload_form.html' with form=form %}
+						</tr>
+					{% endfor %}
+				</table>
+				<center>
+					 {% if not document_submission_flag %}
+					  <b style="color:red">Further submission or re-submission of documents for this program has now been disabled as admissions for this program has been closed or is near closure for the current batch</b>
+					  {% endif %}<br>
+					<input id='upload_doc_sub' class="btn btn-sm btn-primary" type="submit" value="Upload Documents"/>
+					<!-- <br><br><br>
+					<div class="progress" style="width:50%">
+						<div id="progress_bar" class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100">
+						0/{{formset.forms|length}}
+						</div>
+					</div> -->
+				</center>
+			</form>
+			<div class="loading" id="file-loading">
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+			</div>
+			
+
+		</div>
+		<div class="col-md-6" style="background: whitesmoke;color: darkblue;">
+				<p style="font-size: x-large;">INSTRUCTIONS FOR UPLOADING</p>
+				<p style="font-size: small;">
+					Before uploading scanned copies of the mandatory supporting documents listed below, please ensure that they are complete in all respects, failing which your application will be considered as incomplete and rejected. <b>Please SELF ATTEST all academic mark-sheets and certificates using your FULL SIGNATURE.</b>
+				</p>
+				<p style="font-size: small;">
+					<b>
+						For certain documents such as marksheets where multiple pages may need to be uploaded, you may scan multiple pages into a single pdf file and upload it. Alternatively, you may scan different pages as separate pdf files, then create a zip file of these pdf files and upload it as a single zip file.
+					</b>
+				</p>
+				<p style="font-size: small;"><u>Documents to be uploaded</u></p>
+				{% autoescape off%}
+					{% include sca.program.document_upload_page_path|document_path %}
+				{% endautoescape %}
+
+		</div>
+	</div>
+</div>
+
+	<div class="modal fade" id="modalCrop">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close crop_close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title">
+						<b>PHOTO CROP(Please ensure your face is fully fitted in the photo sizing window)</b>
+					</h4>
+				</div>
+				<div class="modal-body" style="padding-left:0">
+					<img src="" id="image" style="max-width: 100%;">
+				</div>
+				<div class="modal-footer">
+					<div class="btn-group pull-left" role="group">
+						<button type="button" class="btn btn-default js-zoom-in">
+							<span class="fa fa-search-plus"></span>
+						</button>
+						<button type="button" class="btn btn-default js-zoom-out">
+							<span class="fa fa-search-minus"></span>
+						</button>
+						<button type="button" class="btn btn-default js-rotate-ac">
+							<span class="fa fa-rotate-left"></span>
+						</button>
+						<button type="button" class="btn btn-default js-rotate-c">
+							<span class="fa fa-rotate-right"></span>
+						</button>
+					</div>
+					<button type="button" class="btn btn-primary js-crop-and-upload">Crop</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}
+
+

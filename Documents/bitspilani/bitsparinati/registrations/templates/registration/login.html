@@ -1,0 +1,46 @@
+{% extends "registration/base_registration.html" %}
+
+{% load static %}
+
+{% include "base.html" %}
+{% block title %}Log in{% endblock %}
+
+{% block body_class %}{{ block.super }} login_form{% endblock %}
+
+
+{% block content_title %}
+  <h2>Log in</h2>
+{% endblock %}
+
+
+{% block content %}
+
+   </td>
+ </tr>
+ <tr style="height: 100%" bgcolor="#F2F2F2" valign="top">
+ 	  <td style="height: 100% ;background-color: #0ca3d2;" align="center" valign="top" >
+  <section class="container" style="height:315px;"> 
+
+    <div class="login" >
+    <link rel="stylesheet" href="{%static assets" type="text/css" media="all">
+ <h1 style="font-size: medium;">Login to BITS Admission</h1>
+       <form action="https://wilpadmissions.bits-pilani.ac.in/accounts/login/" method="post" class="login_form">{% csrf_token %}
+    {{ form.as_p }}
+    <p class="submit"><button type="submit" name="submit" value="Login">Log in</button></p>
+    {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+  </form>
+    </div>
+
+    <div class="login-help">
+      <p>Forgot your password? <a href="index.html">Click here to reset it</a>.</p>
+    </div>
+    <div class="login-help">
+      <p>New User? <a href="index.html">Click here to register</a>.</p>
+</section></td>
+</tr>
+<tr height="15px" bgcolor="#F2F2F2">
+                <td>
+                </td>
+            </tr>
+	<tr><td>
+{% endblock %}

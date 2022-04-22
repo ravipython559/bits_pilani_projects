@@ -1,0 +1,8 @@
+{% extends 'bits_BaseTemp.html' %}
+{% load static %}
+
+{% block container %}
+	{% for key,value in paytm.items %}
+		{{key}} =  {{value}} <br>
+	{% endfor %}
+{% endblock %}

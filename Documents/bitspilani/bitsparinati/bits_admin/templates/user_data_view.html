@@ -1,0 +1,163 @@
+{% extends 'bits_base_admin.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% load table_tags %}
+{% load i18n %}
+
+{% block title %}User Data View{% endblock %}
+
+{% block staticContent %}
+<link rel="stylesheet" href="/static/assets/css/jquery-ui.css">
+<script src="/static/assets/js/jquery-ui.js"></script>
+<script src="/static/assets/js/datepicker.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+     $("#csv").click(function(){
+      var search=$('.dataTables_filter input').val()
+      console.log(search);
+       var to_date=$("#id_to_date").val();
+       var from_date=$("#id_from_date").val();
+       $("#texens").val(search);
+       $("#fromDate").val(from_date);
+       $("#toDate").val(to_date);
+
+      });
+
+  $("#id_from_date").datepicker({
+          dateFormat: "dd-mm-yy",
+                numberOfMonths: 1,
+                changeMonth: true,
+                changeYear: true,
+                showOn: "button",
+                 maxDate: '0',
+      buttonImage: "/static/assets/images/img-calendar-lg.gif",
+      buttonImageOnly: true,
+        buttonText: "Select date",
+            onSelect: function(selected) {
+                  $("#id_to_date").datepicker("option","minDate", selected);
+                }
+            });
+
+    $("#id_to_date").datepicker({
+        dateFormat: "dd-mm-yy",
+            numberOfMonths: 1,
+            changeMonth: true,maxDate: '0',
+            changeYear: true,showOn: "button",
+      buttonImage: "/static/assets/images/img-calendar-lg.gif",
+      buttonImageOnly: true,
+        buttonText: "Select date",
+            onSelect: function(selected) {
+               $("#id_from_date").datepicker("option","maxDate", selected);
+
+            }
+        });
+
+  });
+
+  jQuery.extend( jQuery.fn.dataTableExt.oSort, {
+    "date-uk-pre": function ( a ) {
+  if(a!='-')
+  {
+    var ukDatea = a.split('-');
+    var year_time_array = ukDatea[2].split(" ");
+    var h_m_array = year_time_array[1].split(":");
+    var a_p = year_time_array[2];
+    var a_p_num; 
+    if(a_p =='a.m.')
+      a_p_num = 0;
+    else
+      a_p_num = 1;
+
+    return (year_time_array[0] + ukDatea[1] + ukDatea[0] + a_p_num + h_m_array[0] + h_m_array[1]) * 1;
+}
+else
+  return null;
+},
+
+"date-uk-asc": function ( a, b ) {
+    return ((a < b) ? -1 : ((a > b) ? 1 : 0));
+},
+
+"date-uk-desc": function ( a, b ) {
+    return ((a < b) ? 1 : ((a > b) ? -1 : 0));
+}
+} );
+
+jQuery.validator.setDefaults({
+  debug: true,
+  success: "valid"
+});
+$( "#myform" ).validate({
+  rules: {
+    from_date: {
+      required: true,
+      date: true
+    },
+    to_date: {
+      required: true,
+      date: true
+    }
+  }
+});
+</script>
+
+<style type="text/css">
+  body {
+    min-height: 100%;
+    position: relative;
+  }
+  body:after {
+    content: '';
+    display: block;
+    height: 100px;
+  }
+  .form-inline .input-group > .form-control
+  {
+     width:130%;
+  }
+</style>
+{% endblock %}
+
+{%block titleOfContent %}
+  User Data View
+{% endblock %}
+
+
+{% block container %}
+<br>
+<div class="container">
+<form action="{% url 'bits_admin:userDateFormat' %}" method="post" id="myform" >
+{% csrf_token %}
+  <div class="row container">
+    <div class="col-md-3">
+      <label><b>From Date :</b></label>&nbsp&nbsp{{form1.from_date|attr:'maxlength:0'}}
+      <p style="font-size: 9px;"><b>(Created on Date) </b></p>
+    </div>
+
+    <div class="col-md-3">
+      <label><b>To Date :</b></label>&nbsp&nbsp{{form1.to_date|attr:'maxlength:0'}}
+      <p style="font-size: 9px;"><b>(Created on Date)</b> </p>
+    </div>
+
+    <div class="col-md-4">
+      <input class="btn btn-sm btn-primary" type="submit" value="List" style="width:20%;">
+    </div>
+  </div>
+</form>
+
+  {% render_table table %}
+
+  <div class="text-center">
+    <input type="hidden" value="" id="appStatus" />
+    <form action="{% url 'bits_admin:usercsv' %}" method="post">
+      {% csrf_token %}
+      <input class="btn btn-sm btn-primary" type="submit" value="Download CSV" id="csv" style="width:20%">
+      <input type="hidden" id="texens" name="user" value="texens" />
+      <input type="hidden" id="fromDate" name="fromDate" value="texens" />
+      <input type="hidden" id="toDate" name="toDate" value="texens" />
+    </form>
+  </div>
+</div>
+<br>
+{% endblock %}

@@ -1,0 +1,14 @@
+<html>
+	<body>
+		<p>
+			Thank you for showing interest in the Program {{progName}} for the
+			Location - {{location}}<br>
+			You Application ID is - {{appID}}<br>
+			Your user ID is - {{userID}}<br>
+			Your registered email ID is - {{regEmailID}}<br>
+			For making further updates to your application OR for tracking its status at any time, please use the link below:<br>
+			<a href="https://wilpadmissions.bits-pilani.ac.in">https://wilpadmissions.bits-pilani.ac.in</a>
+		</p>
+	</body>
+</html>
+

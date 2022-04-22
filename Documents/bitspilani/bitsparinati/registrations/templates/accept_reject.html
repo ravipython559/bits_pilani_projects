@@ -1,0 +1,387 @@
+{% extends 'bits_BaseTemp.html' %}
+{% load admission_filter %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% load i18n %}
+{% block title %}{% trans "BITS WILP" %}{% endblock %}
+
+  {% block staticContent %}
+  <script src="{% static "assets/js/jQuery.js" %}" type="text/javascript"></script>
+  <script src="{% static "assets/js/jquery.ui.draggable.js" %}" 
+  type="text/javascript"></script>
+  <script src="{% static "assets/js/jQuery.alert.js" %}" type="text/javascript"></script>
+  <link href="{% static "assets/css/jQuery.alert.css" %}" rel="stylesheet" 
+  type="text/css" media="screen" />
+<style >
+  #id_rejection_by_candidate_reason{width:136px ;}
+  body {
+      min-height: 100%;
+      position: relative;
+    }
+    body:after {
+      content: '';
+      display: block;
+      height: 100px;
+    }
+
+  .btn-primary{
+    padding:8px 40px;
+}
+
+  h3{
+    margin-top: -30px;
+    margin-bottom: 50px;
+  }
+
+  .error_display{
+      color:red;
+      text-align: right;
+
+    }
+
+#HRname,#Mname,#Mdes,#HRdes{
+  color:red;
+}
+.col{
+  text-align: right;
+}
+
+    .MnHr{
+  text-align: right;
+  font-weight: bold;
+}
+</style>
+<script>
+
+$( document ).ready(function() {
+  $('#id_rejection_by_candidate_reason option[value=""]').text('Choose Reason ');
+  
+{% if is_mentor_required or is_hr_required %}
+
+  $( "#hr_mn_form" ).submit(function( e ) {
+
+    /*e.preventDefault();*/
+    var is_mentor_check = false;
+    var is_hr_check = false;
+    /*var unbind_form = $("form").unbind("submit");*/
+    var pattern = new RegExp(/^[A-Za-z\s]+[\.]?[\']?[A-Za-z\s]*$/); // dot,apostrophe and spaces
+
+    {% if is_mentor_required %}
+      var m = $('#id_m_name').val()
+      var m_des = $('#id_m_des').val()
+      var m_valid= pattern.test(m);
+      var m_des_valid= pattern.test(m_des);
+
+        if(m == '')
+          $("#Mname").html("This field is required.");
+        else if(m_valid == false)
+          $("#Mname").html("Please Enter Valid Mentor Name");
+        else
+          $("#Mname").html("");
+
+
+        if(m_des == '')
+          $("#Mdes").html("This field is required.");
+
+        else if(m_des_valid == false)
+          $("#Mdes").html("Please Enter Valid Mentor Designation");
+        else
+          $("#Mdes").html("");
+        is_mentor_check = (m!= '' && m_valid == true && m_des!= '' && m_des_valid == true)
+
+        if (!is_mentor_check)
+          return false;
+
+    {% endif %}
+
+    {% if is_hr_required %}
+      var hr = $('#id_hr_cont_name').val()
+      var hr_des = $('#id_hr_cont_des').val()
+      var hr_valid= pattern.test(hr);
+      var hr_des_valid= pattern.test(hr_des);
+
+      if(hr == '')
+        $("#HRname").html("This field is required.");
+      else if(hr_valid == false)
+        $("#HRname").html("Please Enter Valid HR Name");    
+      else
+        $("#HRname").html("");
+
+
+      if(hr_des == '')
+        $("#HRdes").html("This field is required.");
+      else if(hr_des_valid == false)
+        $("#HRdes").html("Please Enter Valid HR Designation");
+      else
+        $("#HRdes").html("");
+
+      is_hr_check = (hr!= '' && hr_valid==true && hr_des!= '' && hr_des_valid == true);
+
+      if(!is_hr_check)
+        return false;
+
+
+    {% endif %}
+
+  if( is_mentor_check || is_hr_check )
+    $("form").submit();
+           
+ });
+
+{% endif %}
+
+
+
+    $("#valB").click(function(e)
+        {
+         if($('#id_rejection_by_candidate_reason').val() == "")
+         {
+          e.preventDefault();
+          $('#spanCbox').html("<br>Please Select a Reason");
+         }
+         else if($('#id_rejection_by_candidate_reason').val() != "")
+         {  
+          e.preventDefault(); 
+          jConfirm('<b>Are you sure you want to decline the Program Offer? Please click on "Yes" to confirm</b>','', function(r)
+           {
+
+            if (r == true){
+              $('#formR').submit();
+            }
+            else if(r == false){
+              /*return false;*/
+              $('#spanCbox').text('');
+
+            }
+         });
+        }
+});
+});
+
+</script>
+
+
+{% endblock %}
+
+
+{% block navigationLinks %}
+    <li><a href="{% url 'registrationForm:applicantData'%}">Home</a></li>
+    <li><a href="{% url 'registrationForm:applicantView'%}" TARGET="_blank">Download Application PDF</a></li>
+    <li><a href="{% url 'registrationForm:payfee'%}" TARGET="_blank">Download Application Fee Receipt</a></li>
+    <li><a href={% url 'auth_logout'%}>Log Out</a></li>
+{% endblock %}  <!-- Page Navigation Links ends here -->
+
+{%block titleOfContent %} 
+  Program Offer Acceptance
+{% endblock %}
+
+{% block container %}
+<div class="container text-left">
+<form method="post" action="{% url 'registrationForm:accept-offer' %}" 
+    class="my-form-class" id="hr_mn_form">
+    {% csrf_token %}
+<!-- 1st div accept program -->
+<div style="font-size:12px"> 
+    <p>
+      Dear <strong>{{app_name}}</strong>,
+    </p>
+  <br>
+    <p>
+      Congratulations! We are pleased to inform you that based on your educational experience, work experience, work profile and requirements of your employing organisation, you have been <strong>provisionally selected for admission to {{program_name}}.</strong>
+    </p>
+  <br>
+    <p>
+    To accept this provisional offer, please click on the <strong>"Accept Admission Offer"</strong> button below. Once you accept the offer, the offer letter will open as a PDF document in a separate window. Please go through the PDF document carefully. Please take a print out of the same and keep it with you for your records.
+    </p>
+  <br>
+
+    {% if not user.email|is_ELOA_admission%}
+        <p>
+        <strong>You must pay the fee {{fees}} by {{dead_date|date:'M j, Y'}}.</strong>
+        </p>
+      <br>
+    {% endif %}
+
+
+      <p>
+        Once you have successfully paid the Admission  & Semester fees you will receive further information regarding your BITS Student ID, email ID and eLearn portal access.
+      </p>
+    <br>
+      <p>
+        <strong>
+        Please note that in case you decide to discontinue from the programme after confirmation of admission and registration, you will forfeit the entire Admission and Semester Fee.
+        </strong>
+      </p> 
+    <br>
+        {% if user.email|get_deff_mandat_status_at_acceptance %}
+        <p>
+          <b>
+            You have missing documents that need to be submitted soon. Please submit them in the stipulated time. Please refer your offer letter post acceptance for more details. Please note that failure to submit these documents may result in revocation of admission offer.
+          </b>
+        </p>
+    <br> 
+      {% endif %}
+
+        <p>
+          
+            Work Integrated Learning Programmes offer a unique learning methodology that demands commitment to upholding the high academic standards of <strong>BITS Pilani</strong> along with meeting the work-related demands of your employer organisation. You are expected to be employed for the entire duration of the programme. After admission, in case you change your organisation or mentor (if having a mentor is required for your programme) , you must inform Work Integrated Learning Programmes Division by submitting a new Employer Consent Form and/ or Mentor Consent on your profile page in e-Learn portal.
+          
+        </p>
+    <br>
+          <p>
+            <input type="checkbox" required>&nbsp I, {{app_name}}, have read the 
+              <a href="https://bits-pilani-wilp.ac.in/resource/education-policy.php" target="_blank" style="color:blue; text-decoration:underline;">education policy</a> and I hereby accept the admission offer as per the conditions stated above and also confirm my registration for the 1st semester of the program.
+          </p>
+</div>
+<br>
+{% if is_mentor_required %}
+<div class="container">
+<p class="text-center">
+          <font size="3">
+          ****** You are required to provide the following details below before accepting the admission offer ******
+          </font>
+          </p>
+          <font size="4">
+            <strong>Mentor Details</strong>
+          </font>
+          <br>
+          <br>
+          <div class="row MnHr">
+            <div class="col-md-4">
+              Mentor Name {{men_form.m_name}}
+            </div>
+            <div class="col-md-offset-2 col-md-4">
+              Mentor Designation {{men_form.m_des}}
+            </div> 
+          </div>
+          <div class="row MnHr">
+            <div class="col-md-4" id="Mname"></div>
+            <div class="col-md-offset-2 col-md-4" id="Mdes"></div>
+          </div>
+          <br>
+          <div class="row MnHr">
+            <div class="col-md-4" id="mId">
+              Mentor Mobile {{men_form.m_mob_no}}
+                    <div class="error_display">
+                      {% for x in men_form.m_mob_no.errors %}
+                          {{ x }}
+                      {% endfor %}
+                      </div>
+            </div>
+            <div class="col-md-offset-2 col-md-4">
+              Mentor Email {{men_form.m_email}}
+              
+      <div class="error_display">
+          {% for x in men_form.m_email.errors %}
+              {{ x }}
+          {% endfor %}
+      </div>
+            </div> 
+          </div>
+          <br>
+          <br>
+{% endif %}
+
+{% if is_hr_required %}
+
+          <font size="4">
+            <strong>HR Contact Details</strong>
+          </font>
+          <br>
+          <br>
+    <div class="row MnHr">
+        <div class="col-md-4">
+          HR Contact Name {{hr_form.hr_cont_name}}
+        </div>
+        <div class="col-md-offset-2 col-md-4">
+          HR Contact Designation {{hr_form.hr_cont_des}}
+        </div> 
+    </div>
+          <div class="row MnHr">
+            <div class="col-md-4" id="HRname"></div>
+            <div class="col-md-offset-2 col-md-4" id="HRdes"></div>
+          </div>
+<br>
+<div class="row MnHr">
+  <div class="col-md-4" id="hrId">
+    HR Contact Mobile {{hr_form.hr_cont_mob_no}}
+          <div class="error_display">
+              {% for x in hr_form.hr_cont_mob_no.errors %}
+                  {{ x }}
+              {% endfor %}
+          </div>
+  </div>
+  <div class="col-md-offset-2 col-md-4">
+    HR Contact Email {{hr_form.hr_cont_email}}
+      <div class="error_display">
+              {% for x in hr_form.hr_cont_email.errors %}
+                  {{ x }}
+              {% endfor %}
+      </div>
+  </div> 
+</div>
+<br>
+<br>
+</div>
+{% endif %}
+
+
+    <div class="text-center">
+    {{accept_offer}}<br>
+    </div>
+      <br>
+    
+</div> <!-- 1st div accept program ends here-->
+</form>
+<br>
+
+<div class="container">  <!-- 2nd div reject program -->
+  <form method="post" id="formR" class="my-form-class tH" >
+    {% csrf_token %}
+    <div class="row container">
+        <div class="col-md-offset-1 col-md-2 col">
+        <span>
+            <label><b>Select Decline Reason</b></label>
+       </span>
+        </div>
+
+        <div class="col-md-2" id="dropR">
+            {{form.rejection_by_candidate_reason}}
+            {{form.rejection_by_candidate_reason.errors}}
+            <span id="spanCbox" class="error" style="color:red;"></span>
+        </div>
+
+        <div class="col-md-offset-1 col-md-2 col">
+        <span> 
+            <label><b>Decline Comments</b></label>
+            </span>
+        </div>
+
+        <div class="col-md-2">
+          {{form.rejection_by_candidate_comments}}
+          {{form.rejection_by_candidate_comments.errors}}
+          <br>
+        </div>
+    </div>
+      <br>
+    <div class="text-center" >
+      {{reject_offer}}
+    </div>
+  </form>
+{% if  is_admission_inactive %}
+    <br>
+    <div class="row">
+      <div style="font-size: 1.2em;">
+        <center>
+          {% include 'inclusions/deactivate_prog_msg.html' %} 
+        </center>
+      </div>
+    </div>
+
+{%endif%}
+</div>   <!-- 2nd div reject program ends here -->
+<br><br>
+  {% endblock %}
+
+

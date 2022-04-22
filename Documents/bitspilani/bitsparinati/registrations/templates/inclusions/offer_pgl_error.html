@@ -1,0 +1,17 @@
+function off_let_pg_loc(err_type){
+      if (err_type==1){
+        $('#id_gen p').text('Offer letter template not set for the user or program');
+      }
+      else{
+        $('#id_gen p').text('Entry for the program and location combination missing. Please enter the same under master table management');
+      }
+      
+      $('#id_gen').dialog({
+      width: 500,
+      resizable:false,
+      buttons: {
+        "OK": function(){
+         $(this).dialog("close");
+         },
+      }});
+    }

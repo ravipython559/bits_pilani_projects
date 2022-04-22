@@ -1,0 +1,26 @@
+{% load static %}
+{% load i18n %}
+<tr>
+<td class="aligncenterwu">{{sr_no}}</td>
+<td>
+      <a href={{ link }} target="{% if target %} {%trans '_blank' %} {% endif %}" 
+      style="text-decoration: underline"
+      	{% if status == 'Not Applicable' and is_eloa  %}
+        	onclick='$( "#dialog" ).dialog();'
+        {% endif %}
+      >
+        {{ title }}
+        
+      </a>
+</td>
+<td>{{ status }}</td>
+</tr>
+
+
+{% if status == 'Not Applicable'%}
+       <div id="dialog" title="Fees Paid" style="display:none;">
+       <p>
+      Your Application fee will be paid by your organization
+       </p>
+      </div>
+       {% endif %}

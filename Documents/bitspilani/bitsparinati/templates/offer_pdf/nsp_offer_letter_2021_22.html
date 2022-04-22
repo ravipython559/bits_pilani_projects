@@ -1,0 +1,128 @@
+{% extends "easy_pdf/base.html" %}
+{% load static %}
+{% load i18n %}
+{% load widget_tweaks %}
+{% load admission_filter %}
+{% load humanize %}
+<head>
+<link href="{% static "assets/css/bootstrap.min.css" %}" rel="stylesheet">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head>
+
+
+{% block content %}
+<style>
+  table, th, td{
+    border: 1px solid black; 
+    border-collapse: collapse;
+    }
+  th{
+    text-align: left;
+    }
+  th, td{
+    padding: 2px;
+  }
+  .tableNB{
+    border: none;
+  }
+@page {
+  margin: 2cm;
+  @frame footer {
+    -pdf-frame-content: footerContent;
+   /* bottom: 1cm;
+    margin-left: 14cm;
+    margin-right: 1cm;
+    margin-top: 8cm; 
+    height: 10cm;*/
+    left: 450pt;
+    width: 512pt;
+    bottom: 20pt; 
+    height: 40pt;
+  }
+} 
+  </style>
+ <div style="padding-bottom:25px; text-align:right;">
+    <img src="{% static "assets/images/BIts_Logo-01.png" %}" alt="BITS Pilani logo" width=400>
+ </div>
+    <div style="clear:right;">
+    <h1 style="text-align:center;"><b><u>Admission Offer</u></b></h2> 
+    </div>
+    <p>
+       <b>Ref:</b> Adm/{{ cs.application.admit_batch }}/Admit/{{cs.application.student_application_id}}
+    </p>
+    <p>
+
+        Dear {{ cs.application.full_name }},<br>
+   
+      </p>
+      <p>
+
+        Congratulations! We are pleased to inform you that based on your educational background, professional experience and work profile, you have been <strong>provisionally selected for admission to the {{ program_name }}.
+
+      </strong>
+      </p>
+      <p>
+
+        To confirm your admission, you required to submit INR {{ cs.adm_fees|intcomma }}/- (towards one time Admission Fee of INR 16,500/-, and Semester Fee of INR {{ semFees|intcomma }}/-). You can make this payment through the 
+        <a href="https://wilpadmissions.bits-pilani.ac.in/accounts/login/">Admission Centre</a> using Netbanking/ Credit Card/ Debit Card/ PayTm.You may also choose to submit the fee using an EMI option that features convenient EMIs of INR 13,365 per month.<a href="https://bits-pilani-wilp.ac.in/emi-option.php">Click here</a> to learn more about the EMI option.
+
+      </p>
+      <p>
+      <a href="https://wilpadmissions.bits-pilani.ac.in/accounts/login/">Click here</a> to login to the Admission Center now and make the fee payment.<br> 
+      <strong>You must pay the fee by {{ cs.fee_payment_deadline_dt|date:'M j, Y'|default:'will be provided later' }}.</strong>
+
+      </p>
+      <p>
+      Upon successful payment, you will receive your BITS ID Number and login information to Taxila - the BITS Pilani e-learning portal. You will also be allotted your individual BITS Pilani email ID.
+      </p>
+      <p>
+
+        Please note that in case you decide to discontinue from the programme after confirmation of admission and registration, you will forfeit the entire Admission Fee and Semester Fee of INR {{ cs.adm_fees|intcomma }}/-.
+
+      </p>
+      <p>
+      Work Integrated Learning Programmes offer a unique learning methodology that demands commitment to upholding the high academic standards of BITS Pilani, along with meeting the work-related demands of your employer organisation. You are expected to be employed for the entire duration of the programme. 
+      </p>
+      <p>
+      <strong>
+        Information related to schedule of classes will be shared in the next few weeks.
+      </strong>
+      </p>
+
+
+      
+      <!-- Change to be asked -->
+    {% if cs.application|get_course_list %}
+
+      <hr>
+    
+      <p>I {{ cs.application.full_name }}, have read the <a href="https://bits-pilani-wilp.ac.in/resource/education-policy.php">education policy</a> and I herewith accept the admission offer as per above stated conditions and also confirm my Registration for the First Semester of my degree offered in {{ pgFeeAdm.admit_sem_des }} of BITS calendar for the four courses as given below:
+      </p>
+      <table align="center" style="text-align:center; border: 1px solid black; 
+        border-collapse: collapse;padding:2px" width="80%" >
+        <tr>
+          <th width="20%" style="text-align:center;">Course No.</th>
+          <th width="50%" style="text-align:center;">Course Title</th>
+          <th width="10%" style="text-align:center;">Units</th>
+        </tr>
+        <tbody>
+        {%for course in courseL%}
+        <tr>
+          <td> {{course.course_id}}</td>
+          <td> {{course.course_name}}</td>
+          <td> {{course.course_unit}}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    <br>
+    <br>
+
+{% endif %}   
+    <footer>
+    <div id="footerContent">
+      <img src="{% static "assets/images/companyBranding.gif"%}" width="200" height="80" >
+    </div>
+    </footer>
+
+{% endblock %}

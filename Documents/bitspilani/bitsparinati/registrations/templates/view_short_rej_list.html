@@ -1,0 +1,284 @@
+{% extends 'reviewer/bits_base_reviewer.html' %}
+{% load i18n %}
+{% load static %}
+{% load widget_tweaks %}
+{% load admission_filter %}
+{% load super_reviewer_filter %} 
+
+{% block title %}Offer Status Change{% endblock %}
+
+{% block staticContent %}
+  <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css">
+
+  <script>
+  var result = [];
+  {% for x in hidden_id %}
+    result.push('{{ x.id }}');
+  {% endfor %}
+ 
+
+  $(document).ready(function(){
+     
+    $('#sr_table').DataTable({
+      "bPaginate": false,
+      "bInfo":false,
+    });
+    $('input[type=search]').val("{{form1.search.value|default:''}}");
+
+    $('input[type=search]').on('keyup',function(e){
+      var link ="{% url 'registrationForm:review_application_details' 0 %}".split('0')[0];
+      $.ajax({ 
+          type: "POST",
+          url: "{% url 'reviewer:offer_ajax_list' %}",
+          cache:false,
+          async: true,
+          data: { 
+            'locations':"{{form1.locations.value|default:''}}", 
+            'programs':"{{form1.programs.value|default:''}}",
+            // 'admit_batch':"{{form1.admit_batch.value|default:''}}",
+            'search':$('input[type=search]').val(),
+            'csrfmiddlewaretoken': '{{ csrf_token }}', 
+          },
+          success: function(data){
+            result = [];
+            $('#id_locations').val(data['locations']);
+            $('#id_programs').val(data['programs']);
+            // $('#id_admit_batch').val(data['admit_batch']);
+            $('#id_search').val(data['search']);
+            $('#table_count').html('Total: '+ data['count']);
+            $('#id_CSForm-TOTAL_FORMS').val(data['per_page']);
+            $('#id_CSForm-INITIAL_FORMS').val(data['per_page']);
+            $('#paginate').empty();
+            $('#sr_table tbody').empty();
+            var fetching_data = JSON.parse(data['app']);
+
+            if (data['count']){
+
+              $.each(fetching_data,function(index,value){
+                var tr = $('<tr/>');
+                tr.append($('<td/>').append($('<a/>').attr('href',link + value['app_id']+'/').attr('target','_blank').text(value['student_application_id'])));
+                // tr.append('<td>' + value['admit_batch'] + '</td>');
+                tr.append('<td>' + value['finalName'] + '</td>');
+                tr.append('<td>' + value['created_on_datetime'].substring(0, 10) + '</td>');
+                tr.append('<td>' + value['pg_name'] + '</td>');
+                tr.append('<td>' + value['application_status'] + '</td>');
+                var td =$('<td></td>');
+                $('<input>').attr(
+                {
+                  type: 'hidden',
+                    id: 'id_CSForm-' + index + '-application',
+                    name: 'CSForm-' + index + '-application',
+                    value: value['app_id']
+                }).appendTo(td);
+                $('<input>').attr(
+                {
+                  type: 'hidden',
+                    id: 'id_CSForm-' + index + '-id',
+                    name: 'CSForm-' + index + '-id',
+                    value: value['id']
+                }).appendTo(td);
+                if(value['es_to_su_rev'])
+                  $('<input>').attr(
+                  {
+                      type: 'checkbox',
+                      id: 'id_CSForm-' + index + '-es_to_su_rev',
+                      name: 'CSForm-' + index + '-es_to_su_rev',
+                      checked: 'checked',
+                      disabled: 'disabled',
+                  }).appendTo(td);
+              else
+                $('<input>').attr(
+                  {
+                      type: 'checkbox',
+                      id: 'id_CSForm-' + index + '-es_to_su_rev',
+                      name: 'CSForm-' + index + '-es_to_su_rev',
+                    
+                  }).appendTo(td);
+                tr.append(td);
+                $('#sr_table tbody').append(tr);
+              });
+
+        for(var i=0;i<data['total_pages'] && i<3;i++)
+                $('#paginate').append('<li><a onclick="pagelostform('+(i+1)+')">'+(i+1)+'</a></li>');
+
+              if(data['total_pages']>1)
+                $('#paginate').append('<li><a onclick="pagelostform('+2+')">Next</a></li>');
+
+            }
+          },
+          failure: function(data) { 
+          alert('problem while ajax request to program change');
+        }
+      });
+    });
+
+
+    $('#form').on('submit',function(e){
+      $('#id_search').val($('input[type=search]').val());
+        var total_form = document.getElementById('id_CSForm-TOTAL_FORMS').value;
+
+        for (var i=0;i<total_form;i++)
+        {
+          var esc = document.getElementById('id_CSForm-'+i+'-es_to_su_rev');
+          var app = document.getElementById('id_CSForm-'+i+'-application')
+          if( esc.checked && !(esc.disabled) )
+            result.push(app.value);
+          if(!esc.checked)
+            result = jQuery.grep(result, function(value) {return value != app.value;});
+
+        }
+
+      var JsonString = JSON.stringify(jQuery.unique(result));
+      $('#id_hidden_id').val(JsonString);
+
+      if (!result.length && 
+        $(e.target).find("input[type=submit]:focus" ).attr('name') == 'escalate'
+        ){
+        e.preventDefault();
+        return false;
+      }
+
+    });
+
+  });
+
+</script>
+<script >
+function pagelostform(page){
+  $('#id_page').val(page);
+  $('#id_locations').val("{{form1.locations.value|default:''}}");
+  $('#id_programs').val("{{form1.programs.value|default:''}}");
+  $('#id_admit_batch').val("{{form1.admit_batch.value|default:''}}");
+  $('#id_search').val($('input[type=search]').val());
+  $('#form').submit();
+
+}
+
+  </script>
+
+  <style type="text/css">
+    textarea{
+      vertical-align: top;
+    }
+  </style>
+{% endblock %}
+
+{%block titleOfContent %} 
+    Applicant List (Select and Submit for Offer Status Change)
+{% endblock %}
+
+{% block container %}
+
+<div class="container-fluid">
+  <br>
+  <form method="post" action="{% url 'reviewer:sh-rej-list' %}" id="form" class="my-form-class" disabled="disabled">
+  
+    <div class="row container">
+     {% csrf_token %}
+      <div class="col-md-5">
+        <label><b>Select Program :</b></label>&nbsp&nbsp{{form1.programs}}
+      </div>
+
+      <div class="col-md-4">
+        <label><b>Select Location :</b></label>&nbsp&nbsp{{form1.locations}}
+      </div>
+
+      
+
+      <div class="col-md-2">
+        {{form1.hidden_id}}
+        {{form1.page}}
+        {{form1.search}}
+        <input class="btn btn-sm btn-primary" name="filter_list" id="get_list" type="submit" value="Get List" style="width: 100px;">
+      </div>
+    </div>
+
+    <div class="row  container">
+      <div class="col-md-5">
+        <span style="margin-right: 20px;"><b>Admit Batch :</b></span>{{form1.admit_batch}}
+      </div>
+    </div>
+    
+  <br>
+  {{ cs_formset.management_form }}
+  {{ cs_formset.non_form_errors }}
+  {{ cs_formset.form_errors }}
+  <table class="table table-striped table-bordered" id="sr_table" >
+  <thead>
+    <tr>
+      <th>Application ID</th>
+      <!-- <th>Admit Batch</th> -->
+      <th>Name</th>
+      <th>Applied On</th>
+      <th>Program Applied for</th>
+      <th>Application Status</th>
+      <th>Select for Escalation</th>
+    </tr>
+  </thead>
+  <tbody >
+    {%for form in cs_formset.forms %}
+      <tr>
+
+          {% bits_offer_status_td  app_stud_id=form.application %}
+          <td>
+            {% for hidden in form.hidden_fields %}
+              {{ hidden }}
+            {% endfor %}
+            {% if form.application|esc_applicant_check %}
+              {{ form.es_to_su_rev|attr:'disabled:disabled' }}
+            {% else %}
+              {% if form.application|is_in:hidden_id %}
+                {{ form.es_to_su_rev|attr:'checked:checked' }}
+              {% else %}
+                {{ form.es_to_su_rev }}
+              {% endif %}
+            {% endif %}
+          </td>
+        
+      </tr>
+    {% endfor %}
+  </tbody>
+  </table>
+  
+  <br>
+ <div id="pagify" class="row">
+  <div class="col-sm-2 col-md-2 col-lg-2" style="width:10%">
+    <ul class="pagination form-control">
+      <li id='table_count'>
+        &nbsp Total: {{total}}
+      </li>
+    </ul>
+  </div>
+  <div class="col-sm-9 col-md-9 col-lg-9 text-right" style="float:right; cursor:pointer">
+  <ul class="pagination" id='paginate'>
+    {% if objects.has_previous %}
+      <li><a onclick="pagelostform({{ objects.previous_page_number }});">Previous</a></li>
+    {% endif %}
+
+    {% list_pages objects.paginator.num_pages objects.number as pages%}
+  
+
+    {% for x in pages %}
+      <li><a style="{% if x == objects.number %}
+        color: white; background-color:#23527c;
+        {% endif %}" onclick="pagelostform({{ x }});">{{ x }}</a></li>
+    {% endfor %}
+
+    {% if objects.has_next %}
+      <li><a onclick="pagelostform({{ objects.next_page_number }});">Next</a></li>
+    {% endif %}
+  </ul>
+</div>
+</div>
+  <br>
+
+    <div class="text-center">
+    <input class="btn btn-sm btn-primary" name="escalate" type="submit" value="Escalate for Offer Status Change" style="width:30%">
+    </div>
+        <div id ="extra_form"></div>
+
+  </form> 
+</div>
+<br>
+{% endblock %}

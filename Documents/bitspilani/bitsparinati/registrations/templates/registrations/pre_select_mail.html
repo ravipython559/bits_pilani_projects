@@ -1,0 +1,114 @@
+{% load static %}
+{% load humanize %}
+<html>
+<head>
+	<style type="text/css">
+		table {
+		  width: 100%;
+		}
+
+		th ,td{
+		  height: 30px;
+		}
+
+		td{
+			padding-left: 10px;
+		}
+
+		table, th, td {
+		  border: 1px solid black;
+		}
+
+		table {
+		  border-collapse: collapse;
+		}
+
+		th{
+			text-align: center;
+		}
+
+		img.image{
+			width: 300px;
+			margin-bottom: 20px;
+
+		}
+	</style>
+</head>
+
+<body>
+<div class="img_container" style='text-align: right;'>
+	<img class='image' src="{{logo_path}}" alt="BITS Pilani logo">
+</div>
+
+<p><i>{{sel_rej_date|date:'d F Y'}}</i></p>
+
+<p>
+Dear Applicant,
+</p>
+
+
+<p>We are pleased to offer you an admission to {{program}}.<br>
+The admission process was competitive and the admissions committee was impressed with your educational credentials and work profile. Congratulations for being a part of this selective pool of students!</p>
+
+<p>Over the duration, you will interact with BITS Pilani faculty to learn the latest developments in the industry. Upon successful completion of the program, you will receive a certificate for {{program}} from BITS Pilani.</p>
+
+<p>
+	<b>To confirm your acceptance of the offer, please submit the following before {{date_limit}}</b>
+</p>
+
+<ol>
+	<li>Pay a minimum block amount of INR {{application_fee|intcomma}} to confirm your admission </li>
+	<li>Self-attested copy of BE/ B.Tech. Degree and Transcript/ Marksheets, clearly highlighting your GPA/ Marks</li>
+	<li>Passport Sized Photograph</li>
+	<li>Proof of employment, such as a Work Experience Certificate from the current employer organisation and your latest resume.</li>
+</ol>
+
+<p>To pay the minimum block amount of INR {{application_fee|intcomma}} and submit the supporting documents, visit the <a href="https://wilpadmissions.bits-pilani.ac.in">Online Application Center</a>.The online payment can be made through debit card, credit card or net banking.</p>
+
+<p>Kindly note that your admission to this programme is conditional upon the authenticity of the information provided by you in the application form and the authenticity of the documents submitted by you during the admissions process. In case of discrepancy between the information filled in the online application form and the submitted documents, the admission offer stands cancelled and your fees will be duly refunded as per the standard <a href="https://bits-pilani-wilp.ac.in/certification-programmes/pg-diploma-in-internet-of-things-iot.php">cancellation and refund policy</a>.</p>
+
+<h3>Fee Schedule</h3>
+
+<table class="table .table-bordered">
+	<thead class=".thead-light">
+		<tr>
+			<th></th>
+			<th>Amount</th>
+			<th>Deadline</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>Block amount</td>
+			<td>INR {{application_fee|intcomma}}</td>
+			<td>Within 7 days of receipt of Provisional Admission Letter</td>
+		</tr>
+		<tr>
+			<td>Remainder Fee payment</td>
+			<td>INR {{admission_fee|intcomma}}</td>
+			<td>Within 15 days of receipt of Final Admission Offer Letter</td>
+		</tr>
+	</tbody>
+</table><br><br>
+
+We once again welcome you to BITS Pilani {{program}}.<br>
+<p>Should you have any queries, kindly write to <a href="mailto:admission@wilp.bits-pilani.ac.in" target="_top">admission@wilp.bits-pilani.ac.in</a> or call +91-40-67874610.</p>
+
+
+<br>
+<br>
+<p>
+With best wishes,
+</p>
+
+<p>
+Admission Cell<br>
+Work Integrated Learning Programmes<br>
+Birla Institute of Technology & Science, Pilani
+</p>
+</body>
+</html>
+
+
+
+	

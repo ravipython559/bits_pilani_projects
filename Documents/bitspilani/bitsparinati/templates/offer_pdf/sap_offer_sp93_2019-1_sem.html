@@ -1,0 +1,110 @@
+{% extends "easy_pdf/base.html" %}
+{% load static %}
+{% load i18n %}
+{% load widget_tweaks %}
+{% load admission_filter %}
+{% load thumbnail %}
+{% load humanize %}
+
+<head>
+  <link href="{% static "assets/css/bootstrap.min.css" %}" rel="stylesheet">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head>
+
+
+{% block content %}
+<style>
+  @page {
+    margin: 2cm;
+    @frame footer {
+      -pdf-frame-content: footerContent;
+      bottom: 2cm;
+      margin-left: 14cm;
+      margin-right: 1cm;
+      margin-top: 8cm; 
+      height: 10cm;
+    }
+  } 
+</style>
+<div style="font-family:'Times New Roman';">
+<div style="padding-bottom:25px; text-align:right;">
+    <img 
+    src="{% static "assets/images/BIts_Logo-01.png" %}" 
+      alt="BITS Pilani logo" width=400>
+ </div>
+ <br>
+ <div style="text-align:right">
+   <b>{{cs.accepted_rejected_by_candidate|date:'F d, Y'}}</b>
+ </div>
+    <p>
+      <b>Ref: Adm/{{pgFeeAdm.admit_sem_des}}/{{cs.application.program.program_code}}/{{cs.application.student_application_id}}</b>
+    </p>
+    <p>
+       <font size="4" ><b> Dear {{ cs.application.full_name }},</b></font>     
+    </p>
+      <div style="clear:right;">
+    <h2 style="text-align:center;  font-size:20px"><b>Congratulations!</b></h2> 
+    </div>
+      <p>
+        With reference to your Application, we would like to inform you that you have been offered <strong>provisional admission</strong> to the four-semester {{program_name}} degree programme conducted by our Institute in collaboration with your employing organization.        
+      </p>      
+      {% if cs.application.login_email.email|get_deffered_mandatory_offer_status %}
+      <p>
+        <strong>
+        You have pending documents that need to be submitted. Please submit the same on Application Centre by 30th September 2019, failing which you will forfeit this admission offer.</strong>
+      </p>
+      {% endif %} 
+      <p>
+        This unique method of education demands simultaneous obligation to meet the high academic standards of this Institute with the work demands of your sponsoring employer. This being a collaborative programme, it is mandatory that you remain an employee of your sponsoring organization till you complete the programme. You will cease to be a student of this programme if you cease to be an employee of your sponsoring organization. The requisite processing fee for your application is Rs.{{appfees|intcomma }}/-. The fee schedule for this programme is: One time Admission fees of Rs. 16,500/-; Semester fees of Rs. 50,000/- for every semester of Registration. It may be noted that, in case you decide to discontinue from the programme after confirmation of Admission and Registration, you will not be entitled to seek refund of any fees paid.
+      </p>
+      <p>
+      You should take <strong>three hardcopies</strong> of this Offer Letter. One copy is for your records. The other two copies should be duly signed and submitted to BITS Pilani and to your employing organization.
+      </p>
+     
+      Best Wishes,
+      <br>
+      <img src="{% static "organization/images/oracle_dean_sign.jpg"%}" width=100 height=30>
+      <br>
+      Dean, WILP
+<hr>
+
+{% if cs.application|get_course_list %}
+    
+<p style="text-align:center"><b>To be filled and duly signed by the applicant without detaching the above part of this letter.</b></p>
+<p>I {{ cs.application.full_name }} herewith accept the admission offer as per above stated conditions and also confirm my Registration for the First Semester of my degree offered in
+{{ pgFeeAdm.admit_sem_des }} of BITS calendar for the four courses as given below:</p>
+      <table align="center" style="text-align:center; border: 1px solid black; 
+        border-collapse: collapse;padding:2px" width="80%" >
+        <tr>
+          <th width="20%" style="text-align:center;">Course No.</th>
+          <th width="50%" style="text-align:center;">Course Title</th>
+          <th width="10%" style="text-align:center;">Units</th>
+        </tr>
+        <tbody>
+        {%for course in courseL%}
+        <tr>
+          <td> {{course.course_id}}</td>
+          <td> {{course.course_name}}</td>
+          <td> {{course.course_unit}}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    <br>
+    <br>
+
+{% endif %} 
+<br>
+<br>
+<br>
+<br>
+<br>
+<table>
+<tr>
+<td><b>Place & Date</b></td>
+<td style="text-align:right"><b>(Applicant's Signature)</b></td>
+</tr>
+</table>
+
+</div>
+{% endblock %}

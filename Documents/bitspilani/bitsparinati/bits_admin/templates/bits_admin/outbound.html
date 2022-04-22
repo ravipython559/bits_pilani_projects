@@ -1,0 +1,121 @@
+{% extends 'bits_base_admin.html' %}
+{% load static %}
+{% load table_tags %}
+{% load widget_tweaks %}
+<!-- title -->
+{% block title %}Call Log Details{% endblock %}
+
+<!-- content title -->
+{%block titleOfContent %}Call Logs for Prospective Applicants{% endblock %}
+
+<!-- static content -->
+{% block staticContent %}
+<link rel="stylesheet" href="{% static 'assets/css/jquery-ui.css'%}">
+<script src="{% static 'assets/js/jquery-ui.js' %}"></script>
+<script src="{% static 'assets/js/datepicker.js' %}"></script>
+
+<script type="text/javascript">
+	$(document).ready(function(){
+
+	$("#id_from_date").datepicker({
+		dateFormat: "dd-mm-yy",
+		numberOfMonths: 1,
+		changeMonth: true,
+		changeYear: true,
+		showOn: "button",
+		maxDate: '0',
+		buttonImage: "{% static "assets/images/img-calendar-lg.gif" %}",
+		buttonImageOnly: true,
+		buttonText: "Select date",
+		onSelect: function(selected) {
+			$("#id_to_date").datepicker("option","minDate", selected);
+		}
+	});
+
+	$("#id_to_date").datepicker({
+		dateFormat: "dd-mm-yy",
+		numberOfMonths: 1,
+		changeMonth: true,maxDate: '0',
+		changeYear: true,showOn: "button",
+		buttonImage: "{% static "assets/images/img-calendar-lg.gif" %}",
+		buttonImageOnly: true,
+		buttonText: "Select date",
+		onSelect: function(selected) {
+			$("#id_from_date").datepicker("option","maxDate", selected);
+		}
+	});
+});
+</script>
+
+	<style type="text/css">
+	.link-container{
+		font-size: 1.2em;
+		display: flex;
+		justify-content: center;
+		text-decoration: underline;
+	}
+	.link-item{
+		margin:10px;
+	}
+
+	.isDisabled {
+		pointer-events: none;
+		color: currentColor;
+		cursor: not-allowed;
+		opacity: 0.5;
+		text-decoration: none;
+	}
+
+	.table-title{
+		text-align: center;
+	}
+
+	.calendar-form{
+		display: flex;
+		justify-content: center;
+	}
+
+	.calendar-item{
+		padding:20px;
+	}
+</style>
+{% endblock %}
+
+
+<!-- main content -->
+{% block container %}
+
+<div class='container-fluid'>
+	<div class="link-container">
+		<a href="{% url 'bits_admin:inbound' %}" class='link-item'>InBound Calls</a>
+		<a href="{% url 'bits_admin:outbound' %}" class="link-item isDisabled">OutBound Calls</a>
+	</div>
+	
+	<h5 class="table-title">Outbound Calls</h5>
+
+	<!-- calendar form -->
+	<style type="text/css">
+
+	</style>
+	<div class="calendar">
+		<form action="" method="" id="myform">
+
+			<div class="calendar-form">
+				<div class="calendar-item">
+					From Date :{{form.from_date}}
+				</div>
+
+				<div class="calendar-item">
+					To Date :{{form.to_date}}
+				</div>
+				
+				<div class="calendar-item">
+					<input class="btn btn-xs btn-primary" type="submit" value="List" style="width:100px">
+				</div>
+			</div>
+			
+		</form>
+	</div>
+	{% render_table table %}
+</div>
+{% endblock %}

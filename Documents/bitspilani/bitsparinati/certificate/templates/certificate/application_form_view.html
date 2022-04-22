@@ -1,0 +1,617 @@
+{% load static %}
+
+{% load widget_tweaks %}
+{% load admission_filter %}
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<link rel="stylesheet" type="text/css" href="{% static "assets/css/style.css"%}">
+<link href="{% static "assets/css/bootstrap.min.css"%}" rel="stylesheet">
+<link href="{% static "assets/css/ie10-viewport-bug-workaround.css"%}" rel="stylesheet">
+
+
+    <!-- Custom styles for this template -->
+<link href="{% static "assets/css/signin.css"%}" rel="stylesheet">
+<script src="{% static "assets/js/ie-emulation-modes-warning.js"%}"></script>
+ <!--<script src="{% static "assets/js/bootstrap.min.js"%}"></script>-->
+  <script src="{% static "assets/js/jquerynew.min.js"%}"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
+  
+<script>
+
+  $(document).ready(function(){
+    inner_html_obj = $(".nav").find('li:contains(|)');
+    var str = inner_html_obj.html();
+    str= str.split(';')[2];
+    inner_html_obj.html(str);
+
+    $('.DOB').children('input').datepicker({
+        dateFormat: 'dd-mm-yy',
+        changeMonth: true,
+        changeYear: true,
+        maxDate: '-1',
+        yearRange: "1900:nn",
+        showOn: "button",
+        buttonImage: "{% static "assets/images/img-calendar-lg.gif" %}",
+        buttonImageOnly: true,
+        buttonText: "Select date",
+      });
+
+
+    {% if alert_status %}
+      $('#id_gen p').text('Offer letter generated');
+        $('#id_gen').dialog({
+        width: 500,
+        resizable:false,
+        buttons: {
+          "OK": function(){
+           $(this).dialog("close");
+           },
+        }});
+    {% endif %}
+  });
+
+  function popP() {
+  var max_stuID = {% if sca.id|chk_max_stuID %}true{% else %}false{% endif %};
+  var stuID_exists = {% if sca.id|stuID_exists %}true{% else %}false{% endif %};
+
+
+  if(max_stuID)
+    $('#id_gen p').text('The program ID being used for generating student ID has crossed its limit. Please define a new program ID and regenerate the student ID');
+  else if (stuID_exists)
+    $('#id_gen p').text('The student ID for this student is already generated');
+  else if( {% if sca.id|status_check_student_id %}true{% else %}false{% endif %} )
+    $('#id_gen p').text('The student ID for the applicant cannot be generated. The applicant has to accept the admission offer and have an admission fee waiver OR the applicant should have paid his admission fees');
+
+
+      $('#id_gen').dialog({
+      width: 500,
+      resizable:false,
+      buttons: {
+        "OK": function(){
+         $(this).dialog("close");
+         },
+      }});
+    }
+
+    function noPLD_record(){
+      $('#id_gen p').text('All source fields are null or blank. Process aborted.');
+      $('#id_gen').dialog({
+      width: 500,
+      resizable:false,
+      buttons: {
+        "OK": function(){
+         $(this).dialog("close");
+         },
+      }});
+    }
+    {% include "inclusions/offer_pgl_error.html" %}
+    
+</script>
+
+
+<div class="jumbotron">
+<header>
+
+<title>BITS WILP</title>
+
+<div class="header">
+  <div class="jumbotron">
+  <div class="container-fluid">
+    <div class="row">
+      <img class="img-responsive col-md-5 " src="{% static "assets/images/BIts_Logo-01.png" %}" width="483px"  height="103px">
+      <h2 class="col-md-6 "><i>Application Centre</i></h2>
+    </div>
+  </div>
+  </div>
+  </div>
+<div>
+<img class="img-responsive navImg" src="{% static "assets/images/navUp2.png" %}">
+</div>
+
+
+<!-- Navigation section begins here... -->
+<nav class="navbar transparent navbar-default navbar-static-top hr">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" 
+        data-target="#myNavbar">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+          </div>
+         <div class="collapse navbar-collapse" id="myNavbar">
+          <ul class="nav navbar-nav navbar-right" >
+          {% if user.is_staff %}   <!-- admin navigation -->
+            {% include 'admin_nav_bar.html' %}
+          {% elif user|pr_check_in_admin %}  <!-- payment reviewer navigation -->
+            {% include 'payment_reviewer/payment_reviewer_nav_bar.html' %}
+          {% elif  user.is_staff == False%}   <!-- student navigation -->
+            {% include 'student_nav_bar.html' %}
+          {% endif %}
+          </ul>
+          </div> <!-- /.navbar-collapse -->
+      </div> <!-- /.container-fluid -->
+      <div>
+      <img class="img-responsive navImg" src="{% static "assets/images/navDown2.png" %}">
+      </div>
+  </nav>
+<!-- Navigation section ends here... -->
+
+  </header>
+
+</div>
+
+
+<style>
+.header h2 {
+    font-size: 30px;
+    font-weight: bolder;
+    color: #02024D;
+}
+
+#stuNav{
+  line-height: 40px;
+}
+
+#stuNav a{
+  font-size: 14px;
+}
+
+.navbar-nav > li > a {
+  line-height: 4px;
+}
+.required {
+    color: #e32;
+    content: ' *';
+    display:inline;
+}
+        ul {
+    list-style-type: none;
+    margin: 1px;
+padding: 3px;
+}
+
+li {
+    display: inline;
+}
+td, th {
+padding: 7px;
+}
+div#stuDiv{
+    padding: 10px;
+}
+.add-row{
+
+    padding: 8px 21px;
+    border-radius: 6px;
+    color:black;
+
+
+    background-size:  38px 34px;
+    background-repeat: no-repeat;
+    position: relative;
+    left: 1%;
+}
+.delete-row{
+
+    padding: 8px 21px;
+    border-radius: 6px;
+    color:black;
+    
+    position: relative;
+   
+    background-size:  38px 34px;
+    background-repeat: no-repeat;
+
+}
+
+
+#work select{
+     width: 99%;
+
+}
+#industry select{
+    width: 76%;
+}
+.phone select{
+    width: 24%;
+}
+
+.table>tbody>tr>td{
+
+    border-top: 0px solid #ddd;
+}
+.table-bordered>tbody>tr>td{
+border-top: 0px solid #ddd;
+}
+#fee select{
+    width: 77%;
+    }
+  
+.addrInput input{
+    width: 92%;
+}
+  
+
+.bold{
+    font-weight: bold;
+}
+
+.alignTh{
+    font-weight: bold;
+    text-align: center;
+}
+
+
+ .current input{
+  width: 99%;  
+ }
+ .city input{
+    width: 93%;
+ }
+ .navbar-default .navbar-nav > li > a {
+    color: #337ab7;
+    font-size: 14px;
+}
+
+
+</style>
+</head>
+<body >
+
+
+
+<h3 style="text-align: center;color: rgb(12, 12, 112);">
+{{sca.program.form_title}}
+  </h3>
+
+
+<div style="text-align:right ; font-size:16px;">
+    {% if sca.login_email.email|get_preview_offer_letter and user.is_staff %}
+
+      <a 
+      {% if sca.login_email.email|offer_letter_assigned and sca.login_email.email|pg_loc_assigned %} 
+        href = "{% url 'registrationForm:preview-offer-letter-pdf' sca.student_application_id %}" target='_blank'
+      {% elif not sca.login_email.email|offer_letter_assigned %}
+        href ="#" onClick="off_let_pg_loc(1)"
+      {% elif not sca.login_email.email|pg_loc_assigned %}
+        href ="#" onClick="off_let_pg_loc(2)" 
+      {% endif %}
+      >
+      <u>Offer Letter preview (not yet released to student)<u>
+    </a>
+    {% elif sca.login_email.email|get_admission_reviewer_offer_letter  and user.is_staff %}
+
+      <a 
+        href ="{% url 'registrationForm:offer_reviewer_redirect' sca.student_application_id %}" target='_blank'>
+        <u>Download Offerrrr Letter</u>
+      </a>
+    {% endif %}
+  </div>
+
+
+
+<div id="stuDiv">
+<div>
+
+</br>
+
+ 
+<div class="row" style="color:#D2691E; font-size:16px;">
+  <div class="col-md-4" >
+    <b><label>Application ID :</label>   
+      &nbsp&nbsp{{sca.student_application_id}}</b>
+  </div>
+  {% if sca.id|stuID_exists %}
+  <div class="col-md-offset-5 col-md-3 text-right">
+    <b><label>Student ID :</label>
+    &nbsp&nbsp{% get_stu_id sca.login_email.email %}</b>
+  </div>
+  {% endif %}
+</div>
+<form method="post" action="{% url 'certificate:student-rev-or-adm-application-view' sca.id %}">
+{% csrf_token %}
+    <table class="table table-bordered table-hover">
+      <div class="divInfoBlock">&nbsp;<span class="glyphicon glyphicon-star"></span> Personal Details</div>
+      </br>
+      <tr>
+        <td class="bold">Full Name (name as per your degree certificate)<p class="required"> *</p></td>
+        <td colspan='5'>{{sca.full_name}}</td>
+      </tr>
+
+      <tr>
+        <td class="bold">Date of birth<p class="required"> *</p></td>
+        {% if user.is_staff %}
+        <td class="DOB">{{form.date_of_birth}}
+        <span style="color:red; font-weight:bold">{{form.date_of_birth.errors|striptags}}</span>
+        </td>
+
+        {% else %}
+        <td class="DOB">{{sca.date_of_birth|date:'d-m-Y'}}</td>
+        {% endif %}        
+        <td class="bold">Gender<p class="required"> *</p></td>
+        <td>{{sca.get_gender_display}}</td>
+        <td class="bold">Nationality<p class="required"> *</p></td>
+        <td>{{sca.get_nationality_display}}</td>
+      </tr>
+
+      <tr>
+        <td class="bold">Father's Name<p class="required"> *</p></td>
+        <td>{{sca.fathers_name}}</td>
+        <td class="bold">Mother's Name<p class="required"> *</p></td>
+        <td colspan="3" >{{sca.mothers_name}}</td>
+      </tr>
+    </table>
+    
+
+
+            <table class="table table-bordered table-hover" >
+                <tr>
+                    <td class="col-md-1 bold" style="width:6.5%" nowrap> Applying for Programme <p class="required"> *</p></td>
+                    <td class="col-md-2" id="appProgram" >{{sca.program.program_name}}</td>
+                    <td class="col-md-1 bold" style="width:6.5%" nowrap>Preferred Exam Location<p class="required"> *</p> </td><td class="col-md-2" id="curentLocation">{{sca.current_location}}</td>
+                </tr>
+            </table>
+
+            <!-- <table class="table table-bordered table-hover" >
+                <tr>
+                    <td class="col-md-1 bold" style="width:6.5%" > Teaching mode <p class="required"> *</p></td>
+                    <td class="col-md-2" id="teachingMode" >{{form.teaching_mode|default:'-'}}</td>
+                </tr>
+
+            </table> -->
+
+
+            <table class="table table-bordered table-hover">
+            <tr>
+                <td class="bold" nowrap>Address line 1<p class="required"> *</p> </td><td class="addrInput">{{sca.address_line_1}}</td>
+                <td nowrap>Address line 2</td><td class="addrInput">{{sca.address_line_2}}</td>
+                <td nowrap>Address line 3</td><td colspan="3" class="addrInput">{{sca.address_line_3}}</td>
+            </tr>
+            <tr>
+ <td class="bold">City<p class="required"> *</p> </td><td class="city">{{sca.city}}</td>
+ <td class="bold">Pin Code<p class="required"> *</p></td> <td>{{sca.pin_code|default:'-'}}</td>
+ <td class="bold">State<p class="required"> *</p> </td><td>{{sca.get_state_display}}</td>
+ <td class="bold">Country<p class="required"> *</p> </td><td>{{sca.get_country_display}}</td>
+            </tr>
+
+            <tr>
+            <td class="bold">Phone<p class="required"> *</p> </td><td class="col-md-3" id="phoneId">{{sca.phone}}</td>
+            <td class="bold">Mobile<p class="required"> *</p> </td><td class="col-md-3" id="mobileId">{{sca.mobile}}</td>
+            <td class="bold">Email ID<p class="required"> *</p> </td>
+            <td colspan="3" class="city">{{sca.email_id}}</td>
+            </tr>
+            </table>
+
+
+                <table class="table table-bordered table-hover">
+                </br>
+                <div class="divInfoBlock">&nbsp;<span class="glyphicon glyphicon-star"></span> Current Employment Details
+
+
+    </div>
+</br>
+            <tr>
+                <td class="col-md-2"> Current Employment Status </td>
+                <td class="col-md-2">{{sca.get_current_employment_status_display}}</td>
+                <td class="col-md-2">Current Organization </td>
+                <td>{{sca.current_organization|default:''}}</td>
+                <td class="col-md-2">Current Designation </td>
+                <td>{{sca.current_designation|default:''}}</td>
+            </tr>
+            <tr>
+                <td class="col-md-2"> Current Work Location </td>
+                <td id="work" class="col-md-2">{{sca.work_location|default:''}}</td>
+                <td class="col-md-2"> Current Industry </td>
+                <td id="industry" class="col-md-2">{{sca.current_org_industry|default:''}}</td>
+            </tr>
+            <tr>
+                <td id="fee" class="col-md-2"> Fee Payment Entity </td>
+                <td class="col-md-2">{{sca.get_fee_payment_owner_display}}</td>
+                <td class="col-md-2"> Total Work Experience In Years</td>
+                <td class="current col-md-2">{{ sca.total_work_experience_in_months|floatformat|default:''}}</td>
+            </tr>
+
+    </table>
+
+            </tr>
+            </table>
+
+</br>
+                        <div class="divInfoBlock">&nbsp;
+<span class="glyphicon glyphicon-star"></span>
+                            Education Details
+
+
+    </div>
+
+</br>
+        <div>
+        <div style="overflow-x: auto;">
+
+        
+         <div  >
+
+
+                    <table class="table table-bordered table-hover" id="tableedu">
+
+<thead>
+<tr>
+    <th class="alignTh" style="width: 16%;">Qualification Level<p class="required"> *</p></th>
+      <th class="alignTh" style="width: 17%;">Degree<p class="required"> *</p></th>
+      <th class="alignTh" style="width: 15%;">Board/University<p class="required"> *</p></th>
+      <th class="alignTh" style="width: 8%;">Duration<p class="required"> *</p></th>
+      <th class="alignTh" style="width: 24%;">Discipline<p class="required"> *</p></th>
+      <th class="alignTh" style="width: 6%;">Year of Passing<p class="required"> *</p></th>
+      <th class="alignTh" style="width: 6%;">% Marks / CGPA<p class="required"> *</p></th>
+      <th class="alignTh" style="width: 8%;">Division<p class="required"> *</p></th>       
+    </tr>
+
+</thead>
+ {% for y in qual1 %}
+     <tr>
+           <td>
+                 {{y.degree.qualification_category}}
+           </td>
+
+             <td id="degree" style="width: 15px;" >
+
+
+{% if y.degree.degree_long_name == 'Others' %}
+   {{ y.other_degree }}
+  {% else %}
+   {{y.degree}}
+{% endif %}
+
+</td>
+      <td style="width: 15px;">{{y.school_college}}</td>
+      <td style="width: 7px;">{{y.get_duration_display}}</td>
+     
+       <td style="width: 28px;" id="discipline">
+
+
+{% if y.discipline.discipline_long_name == 'Others' %}
+   {{ y.other_discipline }}
+  {% else %}
+   {{y.discipline}}
+  {% endif %}
+
+</td> 
+        <td id="hi12" style="width: 4px;">{{y.completion_year}}</td>
+          <td style="width: 5px;">{{y.percentage_marks_cgpa}}</td>
+            <td style="width: 7px;">{{y.get_division_display}}</td>
+            
+
+    </tr>
+  {% endfor %}
+
+                                 </table>
+
+                    </div>
+              
+
+          </div>
+        </div>
+
+<table class="table table-bordered table-hover">
+    {% if 'programming_flag' in teaching_mode_check %}
+      <tr>
+          <td class="bold" style="width:35%" > Do you have working knowledge of ANY programming language <p class="required"> *</p></td>
+          <td id="progFlag" >{{sca.get_programming_flag_display|default:'-'}}</td>
+      </tr>
+    {% endif %}
+    <tr>
+        <td class="bold">Are you a past student of Bits Pilani <p class="required"> *</p> </td>
+        <td>{{sca.get_prior_student_flag_display}}</td>
+        
+    </tr>
+    <tr>
+      <td>BITS ID Number (if past student)  </td>
+        <td>{{sca.bits_student_id}}</td>
+    </tr>
+</table>
+
+  </div>
+</div>
+
+</div>
+
+<div class="divInfoBlock">&nbsp;<span class="glyphicon glyphicon-star"></span> Uploaded Documents
+
+
+    </div>
+
+<br/>
+<table class="table table-bordered table-hover" style="    margin-left: 7px;width:98%">
+  
+  {% for x in uploadFiles %}
+  <tr>
+    <td>
+    {{x.document}}
+      
+    </td>
+
+    <td>
+
+    <a href="{% if x.file %}{% url 'registrationForm:document-view' x.pk %}{% else %}#{% endif %}" TARGET="_blank">{{x}}</a>
+      
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+
+<br>
+{% if user.is_staff %}
+<div class="row container ">
+<div class="col-md-offset-3 col-md-2">
+    <input class="btn btn-sm btn-primary" name="update" id="id_update" 
+        type="submit" value="Update" >
+  </div>
+  <div class="col-md-offset-1 col-md-2">
+    <a class="btn btn-sm btn-primary" 
+    {% if sca.id|stuID_exists or  sca.id|chk_max_stuID %}
+     onclick="popP()"
+    {% elif sca.id|id_gen_st_check1 %}
+     href="{% url 'bits_admin:adm_man_id_gen' sca.id %}" 
+    {% else %}
+      onclick="popP()"
+    {% endif %}>
+    Generate Student ID</a>
+  </div>
+
+  <div class="col-md-offset-1 col-md-3">
+    {% if sca.student_application_id|is_regen_offer_button %}
+      <a class="btn btn-sm btn-primary"
+      {% if sca.student_application_id|is_pld_record %} 
+        href="{% url 'bits_admin:adm_regen_offer' sca.id %}"
+      {% else %}
+        onclick="noPLD_record();"
+      {% endif %}
+      >Regenerate Offer Letter</a>
+    {% endif %}
+  </div>
+</div>
+
+{% endif %}
+</form>
+<br>
+
+<div style= "display:none;" id="id_gen" >
+  <p style= "font-size:17px;" ></p>
+</div>
+
+
+
+
+<div style="margin-left: 16px;
+">
+
+
+</div>
+
+    <p></p>
+    <div style="padding:0px">
+        <div style="padding:0px"></div>
+    <div class="footerWrapper" style="margin-top: 95px;">
+
+
+<div class="cpInfoFixWrapper">
+    <div class="cpInfoFix">
+        <p class="info">
+            Admissions Office, BITS, Pilani - 333 031 (Rajasthan) India.<br>
+            For Assistance Call +91-80-48767777</p>
+
+    </div>
+    
+
+
+</div>
+
+
+
+
+

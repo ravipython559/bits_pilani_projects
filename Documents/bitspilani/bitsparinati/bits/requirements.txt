@@ -1,0 +1,15 @@
+Django==1.9.5
+MySQL-python==1.2.5
+PyPDF2==1.25.1
+Wand==0.4.2
+argparse==1.2.1
+django-easy-pdf==0.1.0
+django-queryset-csv==0.3.3
+django-tables2==1.1.6
+html5lib==0.9999999
+reportlab==2.7
+six==1.10.0
+wsgiref==0.1.2
+xhtml2pdf==0.0.6
+django-simple-email-confirmation==0.12
+django-registration-redux==1.4

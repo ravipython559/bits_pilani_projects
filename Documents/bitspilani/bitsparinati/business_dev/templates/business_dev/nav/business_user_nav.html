@@ -1,0 +1,60 @@
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" 
+  aria-expanded="false">View Applicants Data
+  <span class="caret"></span></a>
+  <ul class="dropdown-menu dropdown-menu-right" role="menu">
+    <li>
+      <a href="{% url 'business_user:deferred-docs-app' %}">View Deferred Documents Missing</a>
+    </li>
+    <li>
+      <a href="{% url 'business_user:deferred-docs-sub' %}">View Deferred Document Submissions</a>
+    </li>
+    <li>
+      <a href="{% url 'business_user:applicantData' %}">Application Data View</a>
+    </li>
+    <li>
+      <a href="{% url 'business_user:archive-data-view' %}">Archive Applicant View</a>
+    </li>
+  </ul>
+</li>
+
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" 
+  aria-expanded="false">Reports
+  <span class="caret"></span></a>
+  <ul class="dropdown-menu dropdown-menu-right" role="menu">
+    <li><a href="{% url 'business_user:dmr-non-spec'%}">
+    DMR Report - Program wise - NonSpecific Programs</a></li>
+    <li><a href="{% url 'business_user:dmr-daily-non-spec'%}">
+    DMR Report - Daily Movement - NonSpecific Programs</a></li>
+    <li><a href="{% url 'business_user:dmr-daily-cluster'%}">
+      DMR Report - Daily Movement - Cluster Programs</a></li>
+    <li><a href="{% url 'business_user:dmr-daily-certification'%}">
+    DMR Report - Daily Movement - Certification Programs</a></li>
+    <li><a href="{% url 'business_user:dmr-daily-specific'%}">
+    DMR Report - Daily Movement - Specific Programs</a></li>
+    <li><a href="{% url 'business_user:dmr-spec'%}">
+    DMR Report - Program wise - Specific Programs</a></li>
+    <li><a href="{% url 'business_user:dmr-cluster'%}">
+    DMR Report - Program wise - Cluster Programs</a></li>
+    <li><a href="#" style="color:#bfb5b5">Program Summary Report</a></li>
+    <li><a href="{% url 'business_user:milestone-report'%}">Milestones Date Report</a></li>
+    <li><a href="{% url 'business_user:waiver-report'%}">Fee Waiver Report</a></li>
+    <li><a href="{% url 'business_user:prog-change-report'%}">Program Change Report</a></li>
+    <li><a href="{% url 'business_user:app-exp'%}">Applicant List with Internal Program Transfers</a></li>
+    <li><a href="{% url 'business_user:prog-loc-report-cluster'%}">Program Location Report (Cluster)</a></li>
+    <li><a href="{% url 'business_user:prog-loc-report-specific'%}">Program Location Report (Specific)</a></li>
+    <li><a href="{% url 'business_user:emi-report'%}">Student EMI Loan Applications Report (Zest)</a></li>
+    <li><a href="{% url 'business_user:emi-report-propelld'%}">Student EMI Loan Applications Report (Propelld)</a></li>
+    <li><a href="{% url 'business_user:program-admissions-report' %}">Program
+     Admissions Report</a></li>
+    <li><a href="{% url 'business_user:emi-report-eduv' %}">Student EMI Loan Applications Report (Eduvanz)</a></li>
+     <li><a href="{% url 'business_user:emi-report-ezcred' %}">Student EMI Loan Applications Report (ABFL-Ezcred)</a></li>
+     <li><a href="{% url 'business_user:emi-report-propelld' %}">Student EMI Loan Applications Report (PROPELLD)</a></li>
+    <li><a href="{% url 'registrationForm:saleforce:specific_report' %}">Specific Program Summary Data (sent to Salesforce)</a></li>
+  </ul>
+</li>
+
+<li class="dropdown">
+  <a href="{% url 'auth_logout'%}">Logout</a>
+</li>

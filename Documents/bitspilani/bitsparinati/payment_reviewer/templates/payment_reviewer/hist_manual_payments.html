@@ -1,0 +1,128 @@
+{% extends 'payment_reviewer/bits_base_payment_reviewer.html' %}
+{% load static %}
+{% load i18n %}
+{% load table_tags %}
+{% load widget_tweaks %}
+
+{% block staticContent %}
+  <link rel="stylesheet" href="/static/assets/css/jquery-ui.css">
+  <script src="/static/assets/js/jquery-ui.js"></script>
+  <script src="/static/assets/js/datepicker.js"></script>
+
+  <script type="text/javascript">
+  $(document).ready(function(){ 
+      {% if messages %} 
+        $("#popUp").html('{{ messages }}');
+        $("#popUp").dialog({
+        modal: true,
+        width: 500,
+        resizable:false,
+        buttons: {
+          "OK": function(){
+           $(this).dialog("close");
+           
+           },
+
+         }});
+      {% endif %} 
+      $("#csv").click(function(){
+         var search=$('input[type=search]').val();
+         var to_date=$("#id_to_date").val();
+         var from_date=$("#id_from_date").val();
+         var st=$("#id_status").val();
+         $("#texens").val(search);
+         $("#fromDate").val(from_date);
+         $("#toDate").val(to_date);
+         $("#stat").val(st);
+        });
+
+    $("#id_from_date").datepicker({
+            dateFormat: "dd-mm-yy",
+                  numberOfMonths: 1,
+                  changeMonth: true,
+                  changeYear: true,
+                  showOn: "button",
+                   maxDate: '0',
+        buttonImage: "{% static "assets/images/img-calendar-lg.gif" %}",
+        buttonImageOnly: true,
+          buttonText: "Select date",
+              onSelect: function(selected) {
+                    $("#id_to_date").datepicker("option","minDate", selected);
+                  }
+              });
+
+      $("#id_to_date").datepicker({
+          dateFormat: "dd-mm-yy",
+              numberOfMonths: 1,
+              changeMonth: true,maxDate: '0',
+              changeYear: true,showOn: "button",
+        buttonImage: "{% static "assets/images/img-calendar-lg.gif" %}",
+        buttonImageOnly: true,
+          buttonText: "Select date",
+              onSelect: function(selected) {
+                 $("#id_from_date").datepicker("option","maxDate", selected);
+
+              }
+          }); 
+
+  });
+ </script> 
+
+ <style type="text/css">
+    #popUp{
+      font-weight:bold;
+      font-size:14px;
+    }
+    .ui-dialog-titlebar-close {
+    visibility: hidden;
+    }
+  </style>
+{% endblock %}
+
+
+{% block title %}Manual Payments History{% endblock %}
+
+{%block titleOfContent %} 
+  Manual Payments Data Uploaded into Application Center - History
+{% endblock %}
+
+{% block container %}
+<br>
+  <div class="container-fluid">
+    <form action="{% url 'payment_reviewer:hist-manual-payments-home' %}" method="get" id="myform">
+      <table>
+        <tr>
+          <td style="width:25%; font-weight:bold;">
+          From Date :{{form.from_date|attr:'maxlength:0'}}</td>
+          
+          <td style="width:25%;font-weight:bold;">
+          To Date :{{form.to_date|attr:'maxlength:0'}}</td>
+       
+          <td style="width:40%;font-weight:bold;">Payment Processing Status :{{form.status}}</td>
+          
+          <td style="padding:2px">
+          <input class="btn btn-xs btn-primary" type="submit" value="Filter" style="width:100px">
+          </td>
+        </tr>
+      </table>
+    </form>
+<br>
+
+  {% render_table table %}
+
+  <div class="text-center">
+    <form action="{% url 'payment_reviewer:hmp-csv' %}" method="post">
+        {% csrf_token %}
+       <input class="btn-sm btn-primary" type="submit" value="Download CSV file" 
+        id="csv" style="width: 20%;"> 
+
+        <input type="hidden" id="texens" name="user" value="texens" />
+        <input type="hidden" id="fromDate" name="fromDate" value="texens" />
+        <input type="hidden" id="toDate" name="toDate" value="texens" />
+        <input type="hidden" id="stat" name="stat" value="texens" />
+    </form> 
+  </div> 
+  </div>  
+<br>
+<span id="popUp"></span>
+{% endblock %}

@@ -1,0 +1,370 @@
+{% extends 'bits_base_admin.html' %}
+{% load admission_filter %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block title %} Adhoc Fee Payment {% endblock %}
+
+{% block staticContent %}
+<style type="text/css">
+.container{font-size: medium;}
+.required {
+    color: #e32;
+    content: ' *';
+    display:inline;
+}
+
+@media (min-width: 720px) {
+  .bigScreen {
+    overflow:hidden;
+
+  }
+}
+@media (max-width: 720px) {
+  .smallScreen {
+    overflow-x: auto;
+      display: block;
+  margin-left: auto;
+  margin-right: auto;
+  }
+}
+
+@media screen 
+  and (min-width: 980px)
+  and (max-width: 1200px){
+
+.inbetween {
+    left : 50px;
+  overflow-x: auto;
+  }
+
+  .emi-btn-between {
+    left : 50px;
+  }
+
+}
+
+
+</style>
+
+{% endblock %}
+
+{% block nav-links %}
+    <li>&nbsp;</li>
+{% endblock %}
+
+{%block titleOfContent %}Fee Payment{% endblock %}
+
+{% block container %}
+<br>
+
+<div class="container">
+  <form method="post" id="adhoc-form">
+      {% csrf_token %}
+    <div class="row">
+      <div class="col-md-offset-4 col-md-5">
+        <div class="col-md-4">
+          <b>Email ID:</b>
+        </div>
+        <div class="col-md-8">
+          {{ email }}
+        </div>
+      </div>
+    </div>
+    <br>
+    <div class="row">
+      <div class="col-md-offset-4 col-md-5">
+        <div class="col-md-4">
+          <b>Fee Type:</b>
+        </div>
+        <div class="col-md-8">
+          {{ feeType }}
+        </div>
+      </div>
+    </div> 
+    <br>
+    <div class="row">
+      <div class="col-md-offset-4 col-md-5">
+        <div class="col-md-4">
+          <b>Fee Amount:</b>
+        </div>
+        <div class="col-md-8">
+          {{ amount }}
+        </div>
+      </div>
+    </div>
+    <br>
+    <div class="row">
+      <div class="col-md-offset-4 col-md-5">
+        <div class="col-md-4">
+          <b>Application ID:</b>
+        </div>
+        <div class="col-md-8">
+          {{ sca.student_application_id|default:'' }}
+        </div>
+      </div>
+    </div>
+    <br>
+    <div class="row">
+      <div class="col-md-offset-4 col-md-5">
+        <div class="col-md-4">
+          <b>Student ID:</b>
+        </div>
+        <div class="col-md-8">
+          {{ cs.student_id|default:''}}
+        </div>
+      </div>
+    </div>
+    <br>
+    <div class="row">
+      <div class="col-md-offset-4 col-md-5">
+        <div class="col-md-4">
+          <b>{{form.full_name.label}}<p class="required"> *</p>:</b>
+          
+        </div>
+        <div class="col-md-8">
+          {{ form.full_name }}<br>
+          <p class="required"> {{form.full_name.errors|striptags}}</p>
+        </div>
+           
+      </div>
+    </div>
+    <br>
+    <div class="row">
+      <div class="col-md-offset-4 col-md-5">
+        <div class="col-md-4">
+           <b>{{form.mobile.label}}<p class="required"> *</p>:</b> 
+        </div>
+        <div class="col-md-8">
+          {{form.mobile}}<br>
+          <p class="required">{{form.mobile.errors|striptags}}</p>
+        </div>
+         
+      </div>
+    </div>
+    <br>
+    <div class="row">
+      <div class="col-md-offset-4 col-md-5">
+        <div class="col-md-4">
+           <b>{{form.pin_code.label}}<p class="required"> *</p>:</b> 
+        </div>
+        <div class="col-md-8">
+          {{form.pin_code}}<br>
+          <p class="required">{{form.pin_code.errors|striptags}}</p>
+        </div>
+         
+      </div>
+    </div>
+    <br>
+    <div class="row">
+      <div class="col-md-offset-4 col-md-8">
+        <div class="small">
+            <p>Please note that the entries you make above will be used for processing your fee payment only</p>
+            {% if form.errors %}
+             {% for key, value in form.errors.items %}
+             {% if key == "student_candidate_application" %}
+                
+                     <p class="alert" style="color: red">{{value}}</p>
+
+              {% endif %}
+            {% endfor %}
+           
+            {% endif %}
+            {% if messages %}
+    <ul class="messages" style="color: red">
+        {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+        </div>
+         
+      </div>
+    </div>
+
+    <div class="row table-responsive">
+      <div class="{% if emi_enabled and count %}col-sm-offset-1 col-sm-2{% elif emi_enabled %}col-sm-offset-2 col-sm-2 {%else%}col-sm-offset-3 col-sm-4{% endif %}">
+       <table class="table">
+          <tr>
+            <td>
+              <div class="col-md-offset-8 col-md-4">
+                  <input class="btn btn-primary" 
+                  type="submit" name="tpsl_submit" value="Pay Using Tech Process"
+                  {% if zest_emi_in_progress or get_eduvanz_inprogress or get_ezcred_inprogress %}disabled{% endif %}>
+              </div>
+
+           </td> 
+          </tr>
+        </table>
+    </div>
+
+    <div id='emi' class="col-md-offset-2 col-md-2 emi-btn-between">
+      <table id="emi_table" class="table table-responsive">
+          <tr>
+            {% if enable_zest_flag %}
+            <td>
+              {% if zest_emi_in_progress and zest_emi_link %}
+                   <a href="{{ zest_emi_link }}" target="_blank" class="btn btn-primary">Resume Your Zest EMI Loan Application</a>
+
+              {% elif  zest_emi_in_decline or get_eduvanz_inprogress or get_ezcred_inprogress or get_propelld_inprogress %}
+
+                <input class="btn btn-primary"
+                  type="submit" name="zest_submit" 
+                  value="{% if zest_emi_in_progress %}Resume Your Zest EMI Loan Application {% else %}Pay Using Zest {% endif %}"
+                  {% if zest_emi_in_decline or get_eduvanz_inprogress or get_ezcred_inprogress or get_propelld_innew %}disabled{% endif %}>
+
+              {% else %}
+                  <input class="btn btn-primary"
+                  type="submit" name="zest_submit" 
+                  value="{% if zest_emi_in_progress %}Resume Your Zest EMI Loan Application{%else%}Pay Using Zest {% endif %}"
+                  {% if zest_emi_in_decline or get_eduvanz_inprogress or get_ezcred_inprogress %}disabled{% endif %}>
+                  <br>
+                  {{form.terms_and_condition}}
+                  {{form.terms_and_condition.label}}
+
+                {% endif %}
+
+            </td>
+            {% endif %}
+
+          {% if enable_eduvenz_flag %}
+            <td>
+              {% if get_eduvanz_declined or zest_emi_in_progress or get_ezcred_inprogress or get_propelld_inprogress%}
+                <input class="btn btn-primary"
+                type="submit" name="eduvanz_submit" 
+                value="{% if get_eduvanz_inprogress %}Resume Your Eduvanz EMI Loan Application{% else %}Pay Using Eduvanz {% endif %}"
+                {% if get_eduvanz_declined or zest_emi_in_progress or get_ezcred_inprogress or get_propelld_innew%}disabled{% endif %}>
+ 
+              {% elif get_eduvanz_inprogress %}
+                <input class="btn btn-primary"
+                type="submit" name="eduvanz_submit" 
+                value="Resume Your Eduvanz EMI Loan Application"
+                {% if get_eduvanz_declined or zest_emi_in_progress or get_ezcred_inprogress  %}disabled{% endif %}>
+                  <div style="opacity:0; position:absolute; left:9999px;">
+                  {{form.terms_and_condition}}
+                <input id="id_terms_and_condition" name="terms_and_condition" type="checkbox" checked/>
+<!-- style="opacity:0; position:absolute; left:9999px;" -->
+              </div>
+              {% else %}
+                <input class="btn btn-primary"
+                type="submit" name="eduvanz_submit" 
+                value="{% if get_eduvanz_inprogress %}Resume Your Eduvanz EMI Loan Application{% else %}Pay Using Eduvanz {% endif %}"
+                {% if get_eduvanz_declined or zest_emi_in_progress or get_ezcred_inprogress%}disabled{% endif %}>
+                  <br>
+                  {{form.terms_and_condition}}
+                  {{form.terms_and_condition.label}}
+              {% endif %}
+            </td>
+          {% endif %}
+          {% if enable_ABFL_flag %}
+            <td>
+              {% if get_ezcred_inprogress and ezcred_link %}
+                <a href="{{ ezcred_link }}" target="_blank" class="btn btn-primary">Resume Your ABFL EMI Loan Application</a> 
+
+              {% elif get_eduvanz_declined or zest_emi_in_progress or get_eduvanz_inprogress or get_propelld_inprogress %}
+
+                  <input class="btn btn-primary" type="submit" name="ezcred_submit" value="{% if get_ezcred_inprogress %}Resume Your ABFL EMI Loan Application{% else %}Pay Using Ezcred {% endif %}"
+                  {% if get_eduvanz_declined or zest_emi_in_progress or get_eduvanz_inprogress or get_propelld_innew%}disabled{% endif %}>
+
+              {% else %}
+                  <input class="btn btn-primary" type="submit" name="ezcred_submit" value="{% if get_ezcred_inprogress %}Resume Your ABFL EMI Loan Application{% else %}Pay Using Ezcred {% endif %}"
+                  {% if get_eduvanz_declined or zest_emi_in_progress or get_eduvanz_inprogress %}disabled{% endif %}>
+                  <br>
+                  {{form.terms_and_condition}}
+                  {{form.terms_and_condition.label}}
+
+              {% endif %}
+              </td>
+          {% endif %}
+
+          
+
+
+
+          {% if enable_propelld_flag %}
+            <td>
+             {% if get_propelld_inprogress and propelld_link and not propelld_status == "REJECTED" and not propelld_status == "DROPPED" %}
+
+                 <a href="{{ propelld_link }}" target="_blank" class="btn btn-primary">Resume Your Propelld Loan Application</a>
+
+              {% elif propelld_status == "REJECTED" %}
+
+                  <a href="#" class="btn btn-primary disabled">Propelld (EMI) is Rejected</a>
+
+            {% else %}
+
+              <input class="btn btn-primary" type="submit" name="propelld_submit" value="Pay Using Propelld">
+
+            {% endif %}
+                  
+              </td>
+        {% endif %}
+
+
+
+
+            </tr>
+      </table>
+    </div>
+
+  </form>
+
+</div> 
+  <div class="col-md-offset-6 col-md-5">
+    <span style="color:red">
+      {{form.terms_and_condition.errors|striptags}}<br>
+    </span>
+  </div>
+  <br>
+  <br>
+<script type="text/javascript" 
+  src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js">    
+</script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    var tpsl_submit = 'tpsl_submit';
+    var zest_submit = 'zest_submit';
+    var eduvanz_submit = 'eduvanz_submit';
+    var ezcred_submit = 'ezcred_submit'
+    var propelld_submit = 'propelld_submit'
+    /*var zest_cookie = $.cookie('adhoc_secret');*/
+
+    $('#id_terms_and_condition').prop( "checked", {% if zest_emi_in_progress %}true{% else %}false{% endif %} );
+
+    $('#adhoc-form').submit(function(e) {
+      var submit = $(this.id).context.activeElement.name;
+      if($.cookie('adhoc_secret'))
+      {
+        if(submit == tpsl_submit)
+          $(this).attr('action', "{% url 'adhoc:pay-adhoc-fee-view-token-user' ofp.pk %}");
+        else if(submit == zest_submit)
+          $(this).attr('action', "{% url 'adhoc:zest-create-view-token' ofp.pk %}");
+        else if(submit == eduvanz_submit)
+          $(this).attr('action', "{% url 'adhoc:eduvanz:application' ofp.pk %}");
+        else if(submit == ezcred_submit)
+          $(this).attr('action', "{% url 'adhoc:ezcred:application' ofp.pk %}");
+        else if(submit == propelld_submit)
+          $(this).attr('action', "{% url 'adhoc:propelld:application' ofp.pk %}");
+        else
+          e.preventDefault();
+      }
+      else{
+
+        if(submit == tpsl_submit)
+          $(this).attr('action', "{% url 'adhoc:pay-adhoc-fee-view' ofp.pk %}");
+        else if(submit == zest_submit)
+          $(this).attr('action', "{% url 'adhoc:zest-create-view' ofp.pk %}");
+        else if(submit == eduvanz_submit)
+          $(this).attr('action', "{% url 'adhoc:eduvanz:application' ofp.pk %}");
+        else if(submit == ezcred_submit)
+          $(this).attr('action', "{% url 'adhoc:ezcred:application' ofp.pk %}");
+        else if(submit == propelld_submit)
+          $(this).attr('action', "{% url 'adhoc:propelld:application' ofp.pk %}");
+        else
+          e.preventDefault();
+
+      }
+    });
+  });
+</script>
+{% endblock %}

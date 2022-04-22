@@ -1,0 +1,154 @@
+{% extends 'reviewer/bits_base_reviewer.html' %}
+
+{% load static %}
+{% load widget_tweaks %}
+{% load admission_filter %}
+{% load super_reviewer_filter %}
+{% load table_tags %}
+
+{% block title %}Name Verifcation{% endblock %}
+
+{% block staticContent %}
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
+  <script>
+    $(document).ready(function(){
+    $("#idSync").click(function(e) {
+      e.preventDefault();
+
+      $("#popup").html("Are you sure you want to sync details with SDMS?");
+    
+      $("#popup").dialog({
+      modal: true,
+      width: 500,
+      resizable:false,
+      buttons: {
+        "YES": function(){
+          $("#nc_list_form").append($('<input>').attr('type', 'hidden').attr('name', 'sync')).submit();
+          $.post( "{% url 'reviewer:name-change-list' %}", { 'programs': $('#{{prog_form.programs.auto_id}}').val(),'admit_batch': $('#{{batch_form.admit_batch.auto_id}}').val(),'pg_type': $('#{{ptype_form.pg_type.auto_id}}').val(),
+            'csrfmiddlewaretoken':'{{ csrf_token }}',})
+            .done(function( data ) {
+              // $('#buffer').hide();
+
+              // if (data['sync_success'])
+
+              //   $('#sync_success_note').html("*Synced students list file:  <a href="+ "{% url 'bits_admin:sync-student-list' %}" +  ">Synced Students list</a>");
+
+              // if (data['sync_error'])
+              //   $('#sync_error_note').html("*To check errors found during SDMS sync. Click on this file: <a href="+ "{% url 'bits_admin:sdms-error-download' %}" + ">Error Log File</a>");
+              if (data['job_id']){
+                window.location.href = "{% url 'reviewer:sdms_progress' %}"+"?job="+data['job_id'];
+
+              }
+
+            });
+          $(this).dialog("close");
+          return true;
+         },
+        "NO": function(){
+         $(this).dialog("close");
+         },
+
+       }});
+
+      });
+      $('select[name=pg_type]').change(function(){
+      $.getJSON( "{% url 'bits_admin_payment:get-prog' %}", 
+        { 
+        pg_type : $('#id_pg_type').val() 
+        } ).done(function( data ) {
+        var fetched_data = JSON.parse(data['pg']);
+        $('select[name=programs]').empty();
+        $('select[name=programs]').append($('<option>',{value: '',text: 'Choose Program'}));
+        $.each(fetched_data,function(i,value){
+          $('select[name=programs]').append($('<option>',{value: value.pk, text: value.full_pg}));
+        });
+        });
+    });
+    });
+  </script>
+  <style type="text/css">
+      #sync_note{
+        color: blue;
+        font-weight:bold;
+        font-size:14px;
+      }
+      #popup{
+        font-weight:bold;
+        font-size:14px;
+      }
+        .form-inline .input-group > .form-control
+    {
+       width:150%;
+    }
+     @supports (-moz-appearance:none) {
+    .form-inline .input-group > .form-control
+    {
+      
+       width:180%;
+       
+    }
+    .input-group{
+      right:120px;
+    }
+  </style>
+{% endblock %}
+
+{%block titleOfContent %} 
+    Newly Admitted Students
+{% endblock %}
+
+{% block container %}
+<div class="container">
+  <span id="popup"></span>
+  {% if sync_success %}
+    <p id="sync_note">*Synced students list file:  
+      <a href="{% url 'bits_admin:sync-student-list' %}" target="_blank">Synced Students list</a>
+    </p>
+  {% endif %}
+  
+  {% if sync_error %}
+    <p id="sync_note">*To check errors found during SDMS sync. Click on this file: 
+      <a href="{% url 'bits_admin:sdms-error-download' %}" target="_blank">Error Log File</a>
+    </p>
+  {% endif %}
+
+  <br>
+  <form id="nc_list_form" class="my-form-class" method="post" action="{% url 'reviewer:name-change-list' %}">
+  
+    <div class="row container">
+      <div class="col-md-3">
+        <label><b>Program :</b></label>&nbsp&nbsp{{prog_form.programs}}
+        <p style="font-size: 9px;"><b>(Choose Program Type First) </b></p>
+      </div>
+     <div class="col-md-3">
+        <label><b>Admit Batch :</b></label>&nbsp&nbsp{{batch_form.admit_batch}}
+      </div>
+      <div class="col-md-3">
+          <label><b>Program Type :</b></label>&nbsp&nbsp{{ptype_form.pg_type}}
+        </div>
+      <div class="col-md-3">
+        <input class="btn btn-sm btn-primary" id="get_list" type="submit" value="Apply Filter" style="width:90px;">
+      </div>
+    </div>
+    <br>
+  {% render_table table %}
+
+
+   {% csrf_token %}
+    <div class="row container">
+      <div class="col-md-5">
+        <input id="idSync" class="btn btn-sm btn-primary" name="sync" type="submit" 
+          value="Sync Student Details with Student Data Management System"
+          style="margin-left: 57px;">
+        <input type="hidden" id="texens" name="user" value="" />
+      </div>
+      <div class="col-md-5">
+        <input id="idSync" class="btn btn-sm btn-primary" name="unsynceddetails" type="submit" value="Sync UnSynced Student Details with Student Data Management System">
+        <input type="hidden" id="texens" name="user" value="" />
+      </div>
+    </div>
+  </form> 
+</div>
+<br>
+{% endblock %}

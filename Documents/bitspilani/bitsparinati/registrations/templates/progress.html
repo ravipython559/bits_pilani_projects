@@ -1,0 +1,205 @@
+{% extends 'bits_base_admin.html' %}
+
+{% load static %}
+{% load widget_tweaks %}
+{% load admission_filter %}
+{% load super_reviewer_filter %}
+{% load table_tags %}
+
+{% block title %} Student Home {% endblock %}
+
+{% block staticContent %}
+  <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+
+  <script>
+    $(document).ready(function()
+    {
+     {% if  show_greeting_msg %}
+        {% include 'certificate/greeting_style.html' %}
+     {% endif %}
+    }); 
+  </script>
+  
+  <style>
+    table {
+      border-collapse: collapse;
+    }
+
+    body {
+      font-size: 13px;
+    }
+
+    td {
+      font-size: 14px;
+    }
+
+    tr:nth-child(even){background-color: rgb(233, 235, 245)}
+    tr:nth-child(odd){background-color:  rgb(207, 213, 234)}
+
+    th {
+      background-color:rgb(68, 114, 196);
+      color: white;
+      text-align: center; 
+    }
+    .aligncenterwu{
+      text-align: center;
+      font-weight: normal;
+      text-align: center;
+    }
+  </style>
+{% endblock %}
+
+{%block titleOfContent %} 
+    <b>4 simple steps to apply for your chosen work integrated learning programme</b>
+{% endblock %}
+
+{% block nav-links %}
+  {% include 'student_home_nav_bar.html' %} 
+{% endblock %}
+
+{% block container %}
+<div class="container">
+<br>
+  <div class="row">
+    <div class="col-md-offset-3 col-md-6">
+    <h5>
+    <!-- Click
+    {% if not user.email|is_specific_user %}
+      <a href={% static "static_pdf/How_to_Apply-NonSpecific.pdf" %} target="_blank">here</a>  
+      {% else %}
+      <a href={% static "How_to_Apply.pdf" %} target="_blank">here</a>
+      {% endif %}
+     for detailed instructions on How to Apply.<br/> -->
+    The steps below must be completed sequentially in the same order as they appear 
+    </h5>
+    </div>
+  </div>
+<center>
+  <table class="table table-bordered" style="width:50%">
+    <thead>
+    <tr>
+      <th>Sr. No.</th>
+      <th>Program Application Step</th>
+      <th>Status</th>
+    </tr>
+    </thead>
+
+   {%if user.email|get_payfee_permission %}
+     {% bits_fill_edit_submit_link  title="Fill / Edit and Submit Application Form" email=user.email sr_no="1" %}
+    {% elif user.email|is_specific_user %}
+      {% bits_specific_fill_edit_submit_link  title="Fill / Edit and Submit Application Form" email=user.email sr_no="1" %}
+    {% else %}
+      {% bits_fill_edit_submit_link  title="Fill / Edit and Submit Application Form" email=user.email sr_no="1" %}
+    {% endif %}
+
+    {% bits_app_pdf_link  title="Download Application PDF Copy" email=user.email sr_no="2" %}
+
+    {%if user.email|get_certificate_payfee_text %}
+      {% bits_payfee_link  title="Pay Blocking Amount" email=user.email sr_no="3" %}
+    {% else %}
+      {% bits_payfee_link  title="Pay Application Fees" email=user.email sr_no="3" %}
+    {% endif %}
+
+    {% bits_upload_link  title="Upload and Submit All required Documents" email=user.email sr_no="4" %}
+  </table>
+
+  {% if not document_submission_flag %}
+  <b style="color:red">Further upload of documents (except deferred documents) for applications for this program has now been stopped</b>
+  {% endif %}
+
+
+  {%if not user.email|get_reviewers_status and not user.email|get_certificate_payfee_text %}
+   <p><b>*In case the Application form doesnt download automatically, please click on Download Application PDF Copy Link to download the Application PDF</b></p>  
+  {% endif %}
+
+  {%if user.email|get_payfee_permission %}
+  <p>
+  {% with program=user.email|get_ELOA_program %}
+       Your email ID is registered for application fee waiver for the programme {{ program }} as your organization will bear the same
+  {% endwith %}
+  </p>
+  {% endif %}
+
+  {%if user.email|get_reviewers_status %}
+    {% bits_reviewed_status email=user.email  %}   
+  {% endif %}
+<br/>
+  {% is_emi_in_progress  email=user.email  %}
+
+  {% if user.email|is_emi_status_declined %}
+  <p>
+    <b>Your loan application to zest has been rejected. Please use the self payment option to pay your admissions fees</b><br>
+  </p>
+  <br/>
+  {% endif %}
+
+
+  {% if user.email|get_deffered_mandatory_doc_status %}
+  <p class="text-center" style="font-size:14px; color:red;">
+    <b>You have documents that will need to be submitted at a later date. <br>
+    Please ensure that the same are submitted in stipulated time. Else your admission offer may get revoked</b><br>
+  </p>
+  {% endif %}
+
+
+  {% if user.email|get_deffered_mandatory_doc_submitted_status %}
+  <p class="text-center" style="font-size:14px; color:red;">
+    <b>You have documents that will need to be submitted at a later date. <br>
+    Please ensure that the same are submitted in stipulated time. Else your admission offer may get revoked</b><br>
+  </p>
+  {% endif %}
+  
+
+  {% if queryResult.0.id|stuID_exists %}
+    {% if user.email|is_verified %}
+      <div class="row container">
+        <div class="col-md-12" style="background-color:#CFD5EA;">
+          <b>Name verification by BITS completed. This is the name you will see in all communication sent to you by BITS and on your degree certificate. Your verified name is - <span style="font-size:16px;color:red;"><u>{% vr_name user.email %}</u></span>.</b>
+        </div>
+      </div>
+    {% else %}
+      <div class="row container ">
+        <div class="col-md-offset-4 col-md-4" 
+          style="background-color:#CFD5EA; font-size: 12px;">
+          <b>Name verification pending by BITS.</b>
+        {% endif %}
+        </div>
+      </div>
+  {% endif %}
+
+
+  {%if user.email|get_admission_fee_status %}
+    <p>
+      {% url 'registrationForm:pay-fee-adm' as the_url %}
+      {% url 'registrationForm:offer-letter' as offer_letter_url %}
+      {% with program=user.email|get_app_program  admission=the_url %} 
+        <b>
+          Welcome to the {{ program }} Program. You are now required to 
+          <a href="{{ admission }}">pay the admission fees</a> 
+          to complete your admission. Please download your Offer Letter 
+          <a href="{{offer_letter_url}}" target='_blank'>here</a>.
+          <br>
+          We wish you a great experience of learning in your association with BITS Pilani
+        </b>
+      {% endwith %}
+    </p>
+  {% endif %}
+
+  {%if user.email|is_ELOA_mail_send_shortlist %}
+  <p class="text-center"><b>
+    Your ID is registered for Admission Fee waiver. Your Admissions Fees will be paid by your employer
+  </b></p>
+  {%endif%}
+
+  {% if user.email|get_admission_permission or user.email|get_waiver_roll_no %}
+    <p class="text-center"><b>
+      Please note that the student ID mentioned above will be your ID throughout the duration of the program
+    </p></b>
+  {% endif %}
+</center>
+<br>
+<div id="dialog" class="ui-widget" style="display: none;">
+</div>
+<br>
+{% endblock %}

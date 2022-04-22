@@ -1,0 +1,49 @@
+{% extends 'sub_reviewer/application_view.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% load admission_filter %}
+
+{% block staticContent %}
+{{ block.super }}
+{% endblock %}
+
+{% block nav-links %}
+	{% include 'reviewer/reviewer_nav_bar.html' %} 
+{% endblock %}
+
+{% block id_display %}
+{% endblock %}
+
+{% block container %}
+	{% include 'reviewer/reviewer_student_info.html' %}
+	<br/>
+	<br/>
+	<br/>
+		<div class="container">
+			<div class="row">
+				<center>
+				  {% if form.id|is_pre_sel_rej_button %}
+				  <a 
+				  class="btn btn-primary btn-sm" 
+				  type="submit"
+				  onclick="show_alert('#dialogPreS','#dialogSelMailSent','SHORT');"
+				  style="width:400px;margin-bottom:4px;white-space: normal;">
+				  Pre-Select Candidate for Payment of Application / Booking Fees
+				  </a>
+
+				  <a 
+				  class="btn btn-primary btn-sm" 
+				  type="submit"
+				  onclick="show_alert('#dialogPreR','#dialogRejMailError','REJ');"
+				  style="width:300px;margin-bottom:4px;white-space: normal;">
+				  Reject Candidate Submission
+				  </a>
+				  {% endif %}
+				</center>
+				{% include 'registrations/pre_select_rej.html'%}
+			</div>
+		</div>
+		<br/>
+		<br/>
+	<br>
+{% endblock %}

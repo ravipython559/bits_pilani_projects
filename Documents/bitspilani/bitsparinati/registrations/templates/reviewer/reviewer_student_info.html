@@ -1,0 +1,289 @@
+{% load static %}
+{% load admission_filter %}
+
+
+  <div class="row" style="color:#D2691E; font-size:16px;">
+    <div class="col-md-4" >
+      <b><label>Application ID :</label> 
+        &nbsp&nbsp{{ form.student_application_id }}</b>
+    </div>
+    {% if candidate_selection.student_id %}
+    <div class="col-md-offset-5 col-md-3 text-right">
+      <b><label>Student ID :</label>
+      &nbsp&nbsp{{ candidate_selection.student_id }}</b>
+    </div>
+    {% endif %}
+  </div>
+
+  <table class="table table-bordered table-hover">
+    <div class="divInfoBlock">&nbsp;<span class="glyphicon glyphicon-star"></span> Personal Details </div></br>
+    <tr>
+      <td class="bold">Full Name (name as per your degree certificate)<p class="required"> *</p></td>
+      <td colspan="5">{{form.full_name}}</td>
+    </tr>
+
+    <tr>
+      <form id ="form_dob" method="post" action="{% url 'registrationForm:send_dob_details' form.pk %}">
+      {% csrf_token %}
+      <td class="bold">Date of birth<p class="required"> *</p></td>
+      <td class="DOB">{{dob_form.date_of_birth}}
+      <span style="color:red; font-weight:bold">{{dob_form.date_of_birth.errors|striptags}}</span></td>
+      </form>
+      <td class="bold">Gender<p class="required"> *</p></td>
+      <td>{{form.get_gender_display}}</td>
+      <td class="bold">Nationality<p class="required"> *</p></td>
+      <td>{{form.get_nationality_display}}</td>
+    </tr>
+
+    <tr>
+      <td class="bold">Father's Name<p class="required"> *</p></td>
+      <td>{{form.fathers_name}}</td>
+      <td class="bold">Mother's Name<p class="required"> *</p></td>
+      <td colspan="3">{{form.mothers_name}}</td>
+    </tr>
+  </table>
+    
+    <table class="table table-bordered table-hover" >
+      <tr>
+        <td class="col-md-1 bold" style="width:7.5%" > Applying for Programme <p class="required"> *</p></td>
+        <td class="col-md-2" id="appProgram" >{{form.program.program_name}}</td>
+        <td class="col-md-1 bold" style="width:8.5%" >Location <p class="required"> *</p> </td><td class="col-md-2" id="curentLocation">{{form.current_location}}</td>
+      </tr>
+    </table>
+
+    {% if 'teaching_mode' in teaching_mode_check %}
+    <table class="table table-bordered table-hover" >
+        <tr>
+            <td class="col-md-1 bold" style="width:6.5%" > Teaching mode <p class="required"> *</p></td>
+            <td class="col-md-2" id="teachingMode" >{{form.teaching_mode|default:'-'}}</td>
+        </tr>
+
+    </table>
+    {% endif %}
+
+    <table class="table table-bordered table-hover">
+      <tr>
+        <td class="bold" nowrap>Address line 1<p class="required"> *</p> </td><td class="addrInput">{{form.address_line_1}}</td>
+        <td nowrap>Address line 2</td><td class="addrInput">{{form.address_line_2}}</td>
+        <td nowrap>Address line 3</td><td colspan="3" class="addrInput">{{form.address_line_3}}</td>
+      </tr>
+
+      <tr>
+        <td class="bold">City<p class="required"> *</p> </td><td class="city">{{form.city}}</td>
+        <td class="bold">Pin Code<p class="required"> *</p></td> <td>{{form.pin_code|default:'-'}}</td>
+        <td class="bold">State<p class="required"> *</p> </td><td>{{form.get_state_display}}</td>
+        <td class="bold">Country<p class="required"> *</p> </td><td>{{form.get_country_display}}</td>
+      </tr>
+
+      <tr>
+        <td class="bold">Phone<p class="required"> *</p> </td><td class="col-md-3" id="phoneId">{{form.phone}}</td>
+        <td class="bold">Mobile<p class="required"> *</p> </td><td class="col-md-3" id="mobileId">{{form.mobile}}</td>
+        <td class="bold">Email ID<p class="required"> *</p> </td>
+        <td colspan="3" class="city">{{form.email_id}}</td>
+        </tr>
+        {% if 'alternate_email_id' in teaching_mode_check %}
+          <tr>
+            <td class="bold">Alternate Email Id<p class="required"> *</p> </td><td class="col-md-3" id="alternate_email_id">{{form.alternate_email_id|default:'-'}}</td>
+          </tr>
+        {% endif %}
+    </table>
+
+    <table class="table table-bordered table-hover"></br>
+      <div class="divInfoBlock">&nbsp;<span class="glyphicon glyphicon-star"></span> Current Employment Details</div>
+      </br>
+      </br>
+      <tr>
+        <td class="col-md-2 bold">Current Employment Status<p class="required"> *</p> </td>
+        <td class="col-md-2" >{{form.get_current_employment_status_display}}</td>
+        <td class="col-md-2 bold">Current Organization<p class="required"> *</p> </td>
+        <td>{{form.current_organization}}</td>
+      </tr>
+
+      <tr>
+        {% if is_specific %}
+        <td class="bold">Current Employee Number <p class="required"> *</p></td>
+        {% else %}
+        <td >Current Employee Number </td>
+        {% endif %}
+        <td class="current">{{form.current_org_employee_number}}</td>
+        <td class="bold">Current Designation <p class="required"> *</p> </td><td>{{form.current_designation}}</td>
+      </tr>
+
+      <tr>
+        <td class="bold">Current Work Location <p class="required"> *</p> </td><td id="work">{{form.work_location}}</td>
+        <td class="bold">Current Industry <p class="required"> *</p> </td><td id="industry"style="width: 99%;">{{form.current_org_industry}}</td>
+      </tr>
+
+      <tr>
+        <td class="bold">Date of Joining Current Organization <p class="required"> *</p> </td>
+        <td class="current">
+        {% if form.login_email.email|get_certificate_payfee_text %}
+            -----
+        {% else %}
+            {{form.current_org_employment_date|date:'d-m-Y'}}
+        {% endif %}
+        </td>
+        <td id="fee" class="bold">Fee Payment Entity <p class="required"> *</p> </td>
+        <td>{{form.get_fee_payment_owner_display}}</td>
+      </tr>
+
+      <tr>
+        <td class="bold">Total Work Experience In Months <p class="required"> *</p> </td>
+        <td class="current">
+            {% if form.login_email.email|get_certificate_payfee_text %}
+                  {{ form.total_work_experience_in_months }} Years
+            {% else %}           
+                  {% display_y_m_d form.login_email.email %}      
+            {% endif %}
+        </td>
+      </tr>
+      
+      <tr>
+        <td colspan="6">
+          <table>
+          {% if not form.employer_mentor_flag_hide %}
+            <tr>            
+              <td> <input type="checkbox" value="{{form.employer_mentor_flag}}" disabled 
+                        {% if form.employer_mentor_flag %}
+                          checked
+                        {% endif %}/>
+              </td>
+              <td class="bold">I confirm that I will be able to find a mentor before the programme begins. </td>
+            </tr>
+          {% endif %}
+
+          {% if not form.employer_consent_flag_hide %}
+            <tr>
+              <td> <input type="checkbox" value="{{form.employer_consent_flag}}" disabled
+                 {% if form.employer_consent_flag %}
+                    checked
+                 {% endif %}/> 
+              </td>
+                <td class="bold" style="padding-left: 0px;">I confirm that my employing organization will give consent for me to enroll for this programme.</td>
+            </tr>
+          {% endif %}
+          </table>
+        </td>
+      </tr>
+</table>
+
+<div class="divInfoBlock">&nbsp;<span class="glyphicon glyphicon-star"></span> Prior Employment Details</div><br/>
+  <div>
+  <div>
+  <div>
+  <div style="margin-left: 0px; ">
+    <table class="table table-bordered table-hover">
+      <thead>
+       <tr>
+           <th class="alignTh" style="width: 17%;"> Organization </th>
+           <th class="alignTh" style="width: 17%;">Designation Held </th>        
+           <th class="alignTh" style="width: 17%;">Start Date  </th>
+           <th class="alignTh" style="width: 17%;">End Date  </th>
+       </tr></thead>
+
+      {% for x in edu1 %}
+       <tr >
+
+           <td style="width: 17%;">{{x.organization}}</td>
+           <td style="width: 17%;">{{x.designations}}</td>        
+           <td style="width: 17%;">{{x.start_date|date:'d-m-Y'}}</td>
+           <td style="width: 17%;">{{x.end_date|date:'d-m-Y'}}</td>
+      </tr>
+       {% endfor %}
+    </table>
+  </div>
+  </div>
+  </div>
+  </div>
+</br>
+
+<div class="divInfoBlock">&nbsp; <span class="glyphicon glyphicon-star"></span>Education Details</div>
+</br>
+  <div>
+    <div style="overflow-x: auto;">
+    <div>
+      <table class="table table-bordered table-hover" id="tableedu">
+        <thead>
+          <tr>
+            <th class="alignTh" style="width: 16%;">Qualification Level<p class="required"> *</p></th>
+            <th class="alignTh" style="width: 17%;">Degree<p class="required"> *</p></th>
+            <th class="alignTh" style="width: 15%;">Board/University<p class="required"> *</p></th>
+            <th class="alignTh" style="width: 10%;">Duration<p class="required"> *</p></th>
+            <th class="alignTh" style="width: 28%;">Discipline<p class="required"> *</p></th>
+            <th class="alignTh" style="width: 7%;">Year of Passing<p class="required"> *</p></th>
+            <th class="alignTh" style="width: 6%;">% Marks / CGPA<p class="required"> *</p></th>
+            <th class="alignTh" style="width: 9%;">Division<p class="required"> *</p></th>       
+          </tr>
+      </thead>
+
+      {% for y in qual1 %}
+      <tr>
+        <td>
+   	      {{y.degree.qualification_category}}
+        </td>
+        <td id="degree" style="width: 15px;" >
+          {% if y.degree.degree_long_name == 'Others' %}
+             {{ y.other_degree }}
+            {% else %}
+             {{y.degree}}
+          {% endif %}
+        </td>
+        <td style="width: 15px;">{{y.school_college}}</td>
+        <td style="width: 7px;">{{y.get_duration_display}}</td>
+        <td style="width: 28px;" id="discipline">
+          {% if y.discipline.discipline_long_name == 'Others' %}
+           {{ y.other_discipline }}
+          {% else %}
+           {{y.discipline}}
+          {% endif %}
+        </td> 
+        <td id="hi12" style="width: 4px;">{{y.completion_year}}</td>
+        <td style="width: 5px;">{{y.percentage_marks_cgpa}}</td>
+        <td style="width: 7px;">{{y.get_division_display}}</td>
+      </tr>
+      {% endfor %}
+      </table>
+    </div>
+    </div>
+  </div>
+
+  <table class="table table-bordered table-hover">
+    {% if 'programming_flag' in teaching_mode_check %}
+      <tr>
+          <td class="bold" style="width:35%" > Do you have working knowledge of ANY programming language <p class="required"> *</p></td>
+          <td id="progFlag" >{{form.get_programming_flag_display|default:'-'}}</td>
+      </tr>
+    {% endif %}
+    <tr>
+      <td class="bold">Level of Studies in Mathematics <p class="required"> *</p> </td>
+      <td>{{form.get_math_proficiency_level_display}}</td>
+    </tr>
+
+    <tr>
+      <td class="bold">Are you a past student of Bits Pilani <p class="required"> *</p> </td>
+      <td>{{form.get_prior_student_flag_display}}</td>
+    </tr>
+
+    <tr>
+      <td>BITS ID Number (if past student)</td>
+      <td>{{form.bits_student_id}}</td>
+    </tr>
+  </table>
+
+  <table class="table table-bordered table-hover">
+    <tr>
+      <td class="bold">Are you currently pursuing studies in any other university or college<p class="required"> *</p> </td>
+      <td>{{form.get_parallel_studies_flag_display}}</td>
+    </tr>
+
+    <tr>
+      <td class="bold">Preferred Exam Location for Chosen Program</td>
+      <td>{{form.current_location}}</td>
+    </tr>
+
+    <tr>&nbsp;
+      <td class="bold" colspan="2"><input type="radio"  checked>&nbsp;&nbsp; I certify that the information provided by me in the application for is correct to the best of my knowledge.</td>
+    </tr>
+  </table>
+
+<div class="divInfoBlock">&nbsp;<span class="glyphicon glyphicon-star"></span> Uploaded Documents </div>

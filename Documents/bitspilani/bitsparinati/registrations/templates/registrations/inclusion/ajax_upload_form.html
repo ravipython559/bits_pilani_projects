@@ -1,0 +1,5 @@
+{% load static %}
+<form>
+	{% csrf_token %}
+	{% include 'registrations/inclusion/upload_form.html' with form=form %}
+</form>

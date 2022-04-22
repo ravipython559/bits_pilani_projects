@@ -1,0 +1,40 @@
+{% extends 'super_reviewer/application_form_view.html' %}
+{% load static %}
+{% load admission_filter %}
+
+{% block title %}Applicant Form{% endblock %}
+
+{% block nav-links %}
+	{% include 'business_dev/nav/business_user_nav.html' %} 
+{% endblock %}
+
+{% block id_display %}
+  <div class="row" >
+	  <div class="col-md-4" style="color:#D2691E; font-size:16px;">
+	    <b><label>Application ID :</label> 
+	      &nbsp&nbsp{{form.student_application_id}}</b>
+	  </div>
+
+	  {% if form.login_email.email|get_preview_offer_letter %}
+		  <div class="col-md-offset-3 col-md-5 text-right" style="font-size:14px;">
+		    <a 
+		      {% if form.login_email.email|offer_letter_assigned and form.login_email.email|pg_loc_assigned %} 
+		        href = "{% url 'registrationForm:preview-offer-letter-pdf' form.student_application_id %}" target='_blank'
+		      {% elif not form.login_email.email|offer_letter_assigned %}
+		        href ="#" onClick="off_let_pg_loc(1)"
+		      {% elif not form.login_email.email|pg_loc_assigned %}
+		        href ="#" onClick="off_let_pg_loc(2)" 
+		      {% endif %}
+		      >
+		      <u>Offer Letter preview (not yet released to student)</u>
+		    </a>
+		  </div>
+	  
+	  {% elif form.id|stuID_exists %}
+	  <div class="col-md-offset-5 col-md-3 text-right" style="color:#D2691E; font-size:16px;">
+	    <b><label>Student ID :</label>
+	    &nbsp&nbsp{% get_stu_id form.login_email.email %}</b>
+	  </div>
+	  {% endif %}
+	</div>
+{% endblock %}

@@ -1,0 +1,157 @@
+{% load static %}
+{% load admission_filter %}
+<script type="text/javascript">
+
+    $(document).ready(function(){
+        var bits_rejection_id = '#id_bits_rejection_reason';
+        var rejection_comments_id = '#id_selection_rejection_comments';
+
+        $('.DOB').children('input').datepicker({
+          dateFormat: 'dd-mm-yy',
+          changeMonth: true,
+          changeYear: true,
+          maxDate: '-1',
+          yearRange: "1900:nn",
+          showOn: "button",
+          buttonImage: "{% static "assets/images/img-calendar-lg.gif" %}",
+          buttonImageOnly: true,
+          buttonText: "Select date",
+        });
+
+        {% if alert_status %}
+            $('#id_gen p').text('Offer letter generated');
+              $('#id_gen').dialog({
+                width: 500,
+                resizable:false,
+                buttons: {
+                  "OK": function(){
+                   $(this).dialog("close");
+                   },
+              }});
+        {% endif %} 
+    });
+
+     function popP() {
+        var max_stuID = {% if form.id|chk_max_stuID %}true{% else %}false{% endif %};
+        var stuID_exists = {% if form.id|stuID_exists %}true{% else %}false{% endif %};
+        if(max_stuID)
+          $('#id_gen p').text('The program ID being used for generating student ID has crossed its limit. Please define a new program ID and regenerate the student ID');
+        else if (stuID_exists)
+          $('#id_gen p').text('The student ID for this student is already generated');
+        else if({% if form.id|status_check_student_id %}true{% else %}false{% endif %})
+          $('#id_gen p').text('The student ID for the applicant cannot be generated. The applicant has to accept the admission offer and have an admission fee waiver OR the applicant should have paid his admission fees');
+
+          $('#id_gen').dialog({
+          width: 500,
+          resizable:false,
+          buttons: {
+            "OK": function(){
+             $(this).dialog("close");
+             },
+          }});
+    }
+
+    function noPLD_record(){
+        $('#id_gen p').text('All source fields are null or blank. Process aborted');
+        $('#id_gen').dialog({
+          width: 500,
+          resizable:false,
+          buttons: {
+          "OK": function(){
+           $(this).dialog("close");
+           },
+        }});
+    }
+
+    function reject_pop(){
+      var total_form = $('#id_doc-TOTAL_FORMS').val();
+      var prefix = 'doc';
+      var id_prefix = '#id_' + prefix;
+      var rejected_flag = 'rejected_by_bits_flag';
+      var is_checked = false;
+      for(var i=0; i<total_form; i++)
+      {
+        var rejected_flag_id = id_prefix + '-' + i + '-' + rejected_flag;
+        if($(rejected_flag_id).is(':checked') && 
+          $('#id_application_status option:selected').text() == 'Shortlisted')
+        {
+          is_checked = true;
+          break;
+        }
+      }
+        if(is_checked)
+        {
+          $('#id_gen p').text('Rejected documents are not allowed while shortlisting a candidate.Rejected documents have to be resubmitted and then approved.');
+          $('#id_gen').dialog({
+            width: 500,
+            resizable:false,
+            buttons: {
+            "OK": function(){
+             $(this).dialog("close");
+             },
+          }});
+        }
+    }
+
+{% include "inclusions/offer_pgl_error.html" %}
+
+</script>
+
+<div id="dialog" title="Fees Paid" style="display:none;">
+  <p>
+    Please shortlist the applicant before sending out the confirmation email.
+  </p>
+</div>
+
+<div id="dialogRej" title="Message" style="display:none">
+  <p style= "font-size:17px;">
+    <b>
+      Please reject the applicant before sending out the rejection email.
+    </b>
+  </p>
+</div>
+
+<div id="dialogShort" title="Message" style="display:none"> 
+  <p style= "font-size:17px;">
+    <b>
+      Please shortlist the applicant before sending out the confirmation email.
+    </b>
+  </p>
+</div>
+
+<div id="dialogMailSent" title="Message" style="display:none"> 
+  <p style= "font-size:17px;">
+    <b>
+      Mail has been sent Succesfully !! 
+    </b>
+  </p>
+</div>
+
+<div id="dialogMailError" title="Message" style="display:none"> 
+  <p style= "font-size:17px;">
+    <b>
+      Error occured while sending the mail. 
+    </b>
+  </p>
+</div>
+
+<div style= "display:none;" id="dialogS" >
+  <p style= "font-size:17px;">
+    <b>
+      Are you sure you want to send out the Shortlisting email? Please note that once the email is sent, no further updates to the application will be allowed. Please click on YES to confirm sending of email
+    </b>
+  </p>
+</div>
+
+<div style= "display:none;" id="dialogR" >
+  <p style= "font-size:17px;">
+    <b>
+      Are you sure you want to send out the Rejection email? Please note that once the email is sent, no further updates to the application will be allowed.Please click on YES to confirm sending of email
+    </b>
+  </p>
+</div>
+
+
+<div style= "display:none;" id="id_gen" >
+  <p style= "font-size:17px;" ></p>
+</div>

@@ -1,0 +1,19 @@
+{% load static %}
+{% load admission_filter %}
+
+
+  $("#dialog").html("<p style='float:left;'>Greetings Applicant,</p><p style='float:left;'>You have successfully submitted your application for the {{ user.email|get_app_program }}. The Admission Cell will now review your application, and send you further communication within 2-3 working days. If found eligible to join the programme, you will receive a Provisional Letter of Admission, and you will need to pay a block amount of INR 25,000 and submit copies of academic documents.</p><p style='text-align:right; float:right'>Regards,<br>BITS WILP Admissions Team</p>");
+          $("#dialog").dialog({
+          modal: true,
+          autoOpen: true,
+          height: 275,
+          width: 600,
+          modal: false,
+          draggable: false,
+          resizable: false,
+          buttons: {
+            "OK": function(){
+             $(this).dialog("close");
+             },
+
+           }});

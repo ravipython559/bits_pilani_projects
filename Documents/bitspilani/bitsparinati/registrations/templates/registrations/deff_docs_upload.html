@@ -1,0 +1,139 @@
+{% extends 'bits_BaseTemp.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+
+{% block title %}
+	{{ block.super }} - Submit Deferred Documents
+{% endblock %}
+
+
+{% block navigationLinks %}
+	<li><a href="{% url 'registrationForm:applicantData'%}">Home</a></li>
+    <li><a href="{% url 'registrationForm:applicantView'%}" TARGET="_blank">Download Application PDF</a></li>
+    <li><a href={% url 'auth_logout'%}>Log Out</a></li>
+{% endblock %}
+
+
+{% block titleOfContent %}
+	Upload Application Documents - Deferred Submission Documents
+{% endblock %}
+
+{% block staticContent %}
+	<script>
+	function InvalidSize(file){
+	  	var id = file.id.split('-')[1];
+		var filetypes = ['pdf', 'jpeg', 'jpg', 'png', 'tiff', 'tif', 'zip', 'doc', 'docx', 'DOC', 'DOCX'];
+		var imgfiletypes = ['jpeg', 'jpg','JPEG' , 'JPG', 'png', 'PNG'];
+		var temp = file.value.split(".");
+		var ext = temp[temp.length - 1];
+
+		if(file.files[0].size>10485760){
+			var req_size = bytesToSize(10485760);
+			var given_size = bytesToSize(file.files[0].size);
+			var error_message = '* Please keep file size under ';
+			error_message+=req_size;
+			error_message+='. Current file size is ';
+			error_message+=given_size;
+			$(file).siblings( "span" ).html(error_message);
+			$(file).val("");
+			return false;
+		}
+		else if($('#id_defuploadFormset-'+id+'-document_name').val().search('APPLICANT PHOTOGRAPH') != -1){
+			if($.inArray(ext, imgfiletypes) == -1){
+				$(file).siblings( "span" ).html("* Please upload only JPEG, PNG format images only.");
+				$(file).val("");
+				return false
+			}
+			else if(file.files[0].name.split('.')[0].length>25){
+		        $(file).siblings( "span" ).html("* File Name length should be less then 25.");
+		        $(file).val("");
+      		}
+      		else $(file).siblings( "span" ).html("");
+		}
+		else if($.inArray(ext, filetypes) == -1){
+			$(file).siblings( "span" ).html("* Incorrect file formats selected for upload, please ensure that only PDF, JPEG, PNG, TIFF, ZIP and DOC are chosen for upload.");
+			$(file).val("");
+		}
+		else if(file.files[0].name.split('.')[0].length>25){
+	        $(file).siblings( "span" ).html("* File Name length should be less then 25.");
+	        $(file).val("");
+      	}
+		else $(file).siblings( "span" ).html("");
+	}
+
+	function bytesToSize(bytes) {
+		var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+		if (bytes == 0) return 'n/a';
+		var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+		return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
+	}
+
+	</script>
+{% endblock %}
+
+
+{% block container %}
+<div class="container table-responsive">
+	<b>
+	<h1 style="font-size: large;">
+		Application ID - {{ query.student_application_id }}
+	</h1>
+	</b>
+	<br/>
+	<p style="font-size: x-small;">
+		<b>
+			Please note that the documents below needs to be submitted by the applicant ASAP. If not submitted, the admission offer may be revoked.
+		</b>
+	</p>
+	<br/>
+	<center>
+	<form method='post' enctype="multipart/form-data">
+	{% csrf_token %}
+	{{ formset.non_form_errors }}
+	{{ formset.form_errors }}
+		<table class="table table-bordered table-hover ">
+		{{ formset.management_form }}
+		<tr>
+            <th><b>Document Name</b></th>
+            <th><b>Status</b></th>
+            <th><b>Rejection Reason</b></th>
+            <th><b>Upload New Document</b></th>
+        </tr>
+		{% for form in formset.forms %}
+		{{ form.id }}
+
+ 		<tr>
+   			<td>
+				{{ form.exist_file }}
+				{{ form.exist_file_pk }}
+				{{ form.document_name }}
+				{{ form.document }}
+				{{ form.document_name.value|safe }}:<br/>
+			</td>
+			<td>{{ form.status.value }}</td>
+			<td>{{ form.rej_reason.value|default:'-' }}{{ form.rej_reason }}</td>
+
+   			<td>
+				{{form.file|attr:'onchange:InvalidSize(this);'}} 
+				{{form.file.errors}}
+				<a href="{% if form.exist_file.value %}{% url 'registrationForm:document-view' form.exist_file_pk.value  %}{% else %}#{% endif %}" 
+				   target="_blank">
+				{{ form.exist_file.value|default:"" }}
+				</a>
+				<span style="color:red" ></span>
+				{{ form.x }}{{ form.y }}{{ form.width }}{{ form.height }}{{ form.rotate }}
+			</td>
+		</tr>
+		{% endfor %}
+		</br>
+		</table>
+	<input type="submit" class="btn btn-sm btn-primary" value="Upload Documents" />
+	</form>
+	</center>
+</div>
+<br>
+
+{% include 'inclusions/image_cropper.html' with formset_prefix=formset_prefix %}
+
+{% endblock %}

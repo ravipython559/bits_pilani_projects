@@ -1,0 +1,230 @@
+{% load static %}
+{% load i18n %}
+{% load widget_tweaks %}
+{% load admission_filter %}
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+
+
+
+<!-- <link rel="stylesheet" type="text/css" href="{% static "assets/css/style.css"%}"> -->
+<link href="{% static "assets/css/bootstrap.min.css"%}" rel="stylesheet">
+<link href="{% static "assets/css/ie10-viewport-bug-workaround.css"%}" rel="stylesheet">
+
+  <script src="{% static "assets/js/jquerynew.min.js"%}"></script>
+    <!-- Custom styles for this template -->
+<link href="{% static "assets/css/signin.css"%}" rel="stylesheet">
+<link href="{% static "assets/css/style.css"%}" rel="stylesheet">
+<script src="{% static "assets/js/ie-emulation-modes-warning.js"%}"></script>
+ <script src="{% static "assets/js/bootstrap.min.js"%}"></script>
+ <link rel="stylesheet" href="{% static "assets/css/jquery-ui.css" %}"> 
+
+<script src="{% static "assets/js/jquery-1.11.1.min.js" %}"></script>
+<script src="{% static "assets/js/jquery-ui.js" %}"></script>
+<script src="{% static "assets/js/jquery.validate.min.js" %}"></script>
+<script src="{% static "assets/js/additional-methods.min.js" %}"></script>
+<link rel="stylesheet" type="text/css" href="{% static "assets/css/jquery.dataTables.min.css" %}">
+<script src="{% static "assets/js/jquery.dataTables.min.js" %}"></script>
+<script src="{% static "assets/js/datepicker.js" %}"></script>
+<link rel="stylesheet" href="{% static "assets/css/datepicker.css" %}"> 
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<script src="https://code.jquery.com/jquery-1.12.3.js"></script>
+<script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+
+    {{ form.media }}
+
+<script type="text/javascript">
+  
+  $(document).ready(function(){
+   
+    
+   $('#example').DataTable( {
+    
+        "footerCallback": function ( row, data, start, end, display ) {
+            var api = this.api(), data;
+ 
+            // Remove the formatting to get integer data for summation
+            var intVal = function ( i ) {
+                return typeof i === 'string' ?
+                    i.replace(/[\$,]/g, '')*1 :
+                    typeof i === 'number' ?
+                        i : 0;
+            };
+          
+            // Total over all pages
+            for(var i =2;i<=6;i++ )
+            {
+            total = api
+                .column( i )
+                .data()
+                .reduce( function (a, b) {
+                    return intVal(a) + intVal(b);
+                }, 0 );
+ 
+            // Total over this page
+            pageTotal = api
+                .column( i, { page: 'current'} )
+                .data()
+                .reduce( function (a, b) {
+                    return intVal(a) + intVal(b);
+                }, 0 );
+ 
+            // Update footer
+            $( api.column( i ).footer() ).html(
+               pageTotal +' ( '+ total +' total )'
+                // total
+            );
+          }
+        }
+});
+});
+</script>
+
+<style>
+
+a{
+    color: #656565;
+}
+        .dataTables_filter label{
+          display:none;
+          }
+        #example_filter{
+          margin-bottom: 2%;
+        }
+
+        #example_wrapper{
+          margin-top: 2%;
+        }
+
+        #example_length label{
+        display:none;
+        }
+
+        #example
+        {
+            margin-top: 5%;
+        }
+
+</style>
+
+
+
+            <title>BITS WILP</title>
+            <div class="headerWrapper" style=" height: 167px;">
+
+            <h1 class="hidden">BITS Pilani</h1>
+            <div class="logoWrapper" padding-top: 17px;>
+                <img src="{% static "assets/images/BIts_Logo-01.png" %}" id="headercontrol_imgu" alt="BITS Pilani logo" class="logoFunc" >
+
+                <h2 class="appCentre" ><i>Application Centre</i></h2>
+                 <div id="tag"  >
+                            <a href="{% url 'registrationForm:instruction-update'%}" >
+                          Modify Application Instruction Text</a>&nbsp|&nbsp
+                          <a href="/admin/registrations/applicationpayment/update/">
+                          Upload Payment Data</a>&nbsp|&nbsp
+                          <a href={% url 'bits_admin:userdataview'%} 
+                      style="text-decoration:none">
+                          {% trans 'Download User Data' %}</a>
+                        &nbsp|&nbsp
+                          <a href={% url 'bits_admin:applicantData'%} style="text-decoration:none">Download Applicant Data</a>&nbsp|&nbsp
+                          <a href="{% url 'admin:index' %}registrations/" style="text-decoration:none">Manage Master Data</a>&nbsp|&nbsp
+                          <a href={% url 'auth_logout'%}> Log out</a>
+                    </div>
+
+                </div>
+            </div>
+
+<body>
+<br>
+
+<center>
+ <h3 style="font-size: x-large;text-align: center;margin-top: 2%;">APPLICATION STATISTICS REPORT</h3>
+ <br>
+<br>
+<form class="form-inline" action="{% url 'bits_admin:application_status_report' %}" method="post" style="font-size:13px;">
+  {% csrf_token %}
+  
+  
+  <table>
+    <tr>
+      <td style="padding: 8px;">{{form.from_date.label}}: </td>
+      <td style="padding: 4px;">{{form.from_date}}</td>
+      <td style="padding: 8px;">{{form.to_date.label}}: </td>
+      <td style="padding: 4px;">{{form.to_date}}</td>
+      <td style="padding: 8px;"><input type="submit" value="Search"/></td>
+    </tr>
+  </table>
+
+</form>
+</center>
+<div class="container">
+
+{% if sca %}
+  <br/>
+  <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered" id="example">
+      <thead>
+
+          <tr>
+              <th style="width: 25%;">Program </th>
+              <th style="width: 10%;"> Admit Batch </th>
+                <th style="width: 12.5%;"> Documents Uploaded </th>
+                <th style="width: 12.5%;"> Documents Uploaded In Progress </th>
+                <th style="width: 12.5%;"> Application Fees Paid</th>
+                <th style="width: 12.5%;"> Submitted </th>
+                <th style="width: 15%;"> Total Result </th>
+                
+             
+          </tr>
+      </thead>
+      <tfoot>
+            <tr>
+                <th  style="text-align:left">Total Result:</th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+
+            </tr>
+        </tfoot>
+      <tbody>
+      {% for x in sca%}
+          <tr>
+              <td>{{x.program__program_code}}-{{x.program__program_name}}</td>
+              <td>{{x.admit_year}}</td>
+              <td>{{x.u_c}}</td>
+              <td>{{x.in_pg_c}}</td>
+              <td>{{x.f_p_c}}</td>
+              <td>{{x.s_c}}</td>
+              <td>{{x.g_total}}</td>
+          </tr>
+      {% endfor %}
+     
+   
+      </tbody>
+  </table>
+  {% else %}
+   <br><br><br><br>
+{% endif %}
+</div>
+ 
+    <div class="footerWrapper" style="margin-top: 148px;">
+
+
+<div class="cpInfoFixWrapper">
+    <div class="cpInfoFix">
+        <p class="info">
+            Admissions Office, BITS, Pilani - 333 031 (Rajasthan) India.<br>
+            Call us on: +91-80-48767777</p>
+
+    </div>
+
+</div>
+
+
+</div>
+</body>
+

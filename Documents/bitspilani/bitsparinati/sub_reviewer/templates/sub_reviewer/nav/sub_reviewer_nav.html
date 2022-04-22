@@ -1,0 +1,54 @@
+<!-- <li>
+  <a href="{% url 'sub_reviewer:review_applicant_data' %}">Application List for Review</a>
+</li>
+ -->
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" 
+  aria-expanded="false">View Applicants Data
+  <span class="caret"></span></a>
+  <ul class="dropdown-menu dropdown-menu-right" role="menu">
+    <li>
+      <a href="{% url 'sub_reviewer:review_applicant_data' %}">Application List for Review</a>
+    </li>
+    <li>
+      <a href="{% url 'sub_reviewer:deferred-docs-app' %}">View Deferred Documents Missing</a>
+    </li>
+    <li>
+      <a href="{% url 'sub_reviewer:deferred-docs-sub' %}">View Deferred Document Submissions</a>
+    </li>
+  </ul>
+</li>
+
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" 
+  aria-expanded="false">Reports
+  <span class="caret"></span></a>
+  <ul class="dropdown-menu dropdown-menu-right" role="menu">
+    <li><a href="{% url 'sub_reviewer:dmr-non-spec'%}">
+    DMR Report - Program wise - NonSpecific Programs</a></li>
+    <li><a href="{% url 'sub_reviewer:dmr-daily-non-spec'%}">
+    DMR Report - Daily Movement - NonSpecific Programs</a></li>
+    <li><a href="{% url 'sub_reviewer:dmr-daily-cluster'%}">
+    DMR Report - Daily Movement - Cluster Programs</a></li>
+    <li><a href="{% url 'sub_reviewer:dmr-daily-certification'%}">
+      DMR Report - Daily Movement - Certification Programs</a></li>
+    <li><a href="{% url 'sub_reviewer:dmr-daily-specific'%}">
+    DMR Report - Daily Movement - Specific Programs</a></li>
+    <li><a href="{% url 'sub_reviewer:dmr-spec'%}">
+    DMR Report - Specific Programs</a></li>
+    <li><a href="{% url 'sub_reviewer:dmr-cluster'%}">
+    DMR Report - Cluster Programs</a></li>
+    <li><a href="#" style="color:#bfb5b5">Program Summary Report</a></li>
+    <li><a href="{% url 'sub_reviewer:milestone-report'%}">Milestones Date Report</a></li>
+    <li><a href="{% url 'sub_reviewer:waiver-report'%}">Fee Waiver Report</a></li>
+    <li><a href="{% url 'sub_reviewer:prog-change-report'%}">Program Change Report</a></li>
+    <li><a href="{% url 'sub_reviewer:app-exp'%}">Applicant List with Internal Program Transfers</a></li>
+    <li><a href="{% url 'sub_reviewer:prog-loc-report-cluster'%}">Program Location Report (Cluster)</a></li>
+    <li><a href="{% url 'sub_reviewer:prog-loc-report-specific'%}">Program Location Report (Specific)</a></li>
+    <li><a href="{% url 'sub_reviewer:program-admissions-report'%}">Program Admissions Report</a></li>
+  </ul>
+</li>
+
+<li class="dropdown">
+  <a href="{% url 'auth_logout'%}">Logout</a>
+</li>

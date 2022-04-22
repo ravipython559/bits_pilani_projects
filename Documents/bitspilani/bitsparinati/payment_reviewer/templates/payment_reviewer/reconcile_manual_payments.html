@@ -1,0 +1,120 @@
+{% extends 'payment_reviewer/bits_base_payment_reviewer.html' %}
+{% load static %}
+{% load i18n %}
+{% load widget_tweaks %}
+{% load payment_reviewer_filter %}
+
+{% block staticContent %}
+
+<script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap.min.js"></script>
+
+<link href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
+
+<script>
+  $(document).ready(function(){
+    $('#form').on('submit',function(e) {
+      e.preventDefault();
+
+      var len = $("#form input:checked").length;
+
+      var btn = $(this).find("input[type=submit]:focus" );
+      buttonpressed = btn.attr("id");
+
+      if(buttonpressed == 'approve_sel' && len > 0)
+        {
+          $("#popUp").html("Are you sure you want to approve the selected transactions? Transactions once approved cannot be reverted");
+        }
+      else if(buttonpressed == 'reject' && len > 0)
+        {
+        $("#popUp").html("Are you sure you want to reject the selected transactions? Transactions once rejected cannot be approved later");
+        }
+      else if(buttonpressed == 'approve_all')
+        {
+          $("#popUp").html("Are you sure you want to approve ALL pending transactions? Transactions once approved cannot be reverted. PLEASE BE CAREFUL BEFORE YOU PROCEED");
+        }
+      else if (buttonpressed == 'approve_sel' && len == 0)
+        { 
+          $("#popUp").html("Please select at least one transaction to approve");
+        }
+      else
+        { 
+          $("#popUp").html("Please select at least one transaction to reject");
+        }
+
+      $("#popUp").dialog({
+      modal: true,
+      width: 500,
+      resizable:false,
+      buttons: {
+        "OK": function(){
+
+          if (len==0 && buttonpressed != 'approve_all')
+            {
+                $(this).dialog("close");
+                return false;
+            }
+
+         $("form").unbind("submit");
+         $('#'+ buttonpressed).click();
+         $(this).dialog("close");
+         
+         },
+        "Cancel": function(){
+          $(this).dialog("close");
+          },
+
+       }});
+
+    });
+  });
+  </script>
+
+  <style type="text/css">
+    #popUp{
+      font-weight:bold;
+      font-size:14px;
+    }
+    .ui-dialog-titlebar-close {
+    visibility: hidden;
+    }
+  </style>
+
+{% endblock %}
+
+{% block title %}Reconcile Manual Payment{% endblock %}
+
+{%block titleOfContent %}
+  Review Pending Manual Payments Uploaded
+{% endblock %}
+
+{% block container %}
+<br>
+
+
+<div class="container-fluid">
+  <span style ="color:red;font-size: 13px">{{ pfa_error }} </span>
+
+  <form id="form" method="post">
+    {% csrf_token %}
+    {{ form }}
+    {% bits_render_table table %}
+   <br><br>
+  <div class="row text-center">
+    <div class="col-md-4">
+      <input id="approve_sel" class="btn-sm btn-primary" type="submit" value="APPROVE Selected Transactions" name="approve">
+    </div>
+    <div class="col-md-4">
+      <input id="approve_all" class="btn-sm btn-primary" type="submit" value="APPROVE ALL Transactions" name="approve_all">
+    </div>
+    <div class="col-md-4">
+        <input id="reject" class="btn-sm btn-primary" type="submit" value="REJECT Selected Transactions" name="reject">
+    </div>
+  </div>
+  </form>
+<br><br><br><br>
+</div>
+<span id="popUp"></span>
+{% endblock %}

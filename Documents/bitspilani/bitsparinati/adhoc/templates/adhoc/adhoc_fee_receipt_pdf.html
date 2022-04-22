@@ -1,0 +1,82 @@
+{% extends "easy_pdf/base.html" %}
+{% load static %}
+{% load thumbnail %}
+{% load humanize %}
+
+<head>
+  <link href="{% static "assets/css/bootstrap.min.css" %}" rel="stylesheet">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head>
+
+{% block content %}
+<style> 
+  @page {
+    margin: 2cm;
+    @frame footer {
+      -pdf-frame-content: footerContent;
+      bottom: 2cm;
+      margin-left: 14cm;
+      margin-right: 1cm;
+      margin-top: 8cm; 
+      height: 10cm;
+    }
+  } 
+
+  	table.dataTable tr.odd { background-color:  #D3D3D3 }   
+	table.dataTable tr.even { background-color: #f2f2f2}
+
+	table {
+	    border-collapse: collapse;
+	    width: 100%;
+
+
+	}
+
+	th, td {
+	    padding: 8px;
+	    text-align: left;
+	    border-bottom: 1px solid #ddd;
+	}
+
+</style>
+<div style="font-family:'Times New Roman';">
+<div style="padding-bottom:25px; text-align:right;">
+    <img 
+    src="{% static "assets/images/BIts_Logo-01.png" %}" 
+      alt="BITS Pilani logo" width=400>
+ </div>
+ <br>
+
+ <center>
+
+    <h2 style=" font-size:20px"><b>Fee Payment Receipt</b></h2> 
+
+		<table style="font-size: 14px; font-weight: bold;" class="table">
+			<tr>
+			  <td>Fee Paid On:</td>
+			  <td>{{ofp.paid_on|date:'F d, Y, f a'}}</td>
+			</tr>
+
+			<tr>
+			  <td>Transaction ID:</td>
+			  <td>{{ofp.transaction_id}}</td>
+			</tr>
+
+			<tr>
+			  <td>Payment Bank:</td>
+			  <td>{{ofp.payment_bank}}</td>
+			</tr>
+			<tr>
+			    <td>Total Amount:</td>
+			    <td>{{ofp.gateway_total_amount}}</td>
+			</tr>  
+
+		</table>
+	</center>
+
+<footer>
+      <div id="footerContent">
+        <img src="{% static "assets/images/companyBranding.gif"%}" width="200" height="80">
+      </div>
+</footer>
+{% endblock %}

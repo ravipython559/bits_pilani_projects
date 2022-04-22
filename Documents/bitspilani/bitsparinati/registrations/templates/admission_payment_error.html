@@ -1,0 +1,114 @@
+{% load static %}
+
+{% load widget_tweaks %}
+{% load admission_filter %}
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<link rel="stylesheet" type="text/css" href="{% static "assets/css/style.css"%}">
+<link href="{% static "assets/css/bootstrap.min.css"%}" rel="stylesheet">
+<link href="{% static "assets/css/ie10-viewport-bug-workaround.css"%}" rel="stylesheet">
+
+
+    <!-- Custom styles for this template -->
+<link href="{% static "assets/css/signin.css"%}" rel="stylesheet">
+<script src="{% static "assets/js/ie-emulation-modes-warning.js"%}"></script>
+ <!--<script src="{% static "assets/js/bootstrap.min.js"%}"></script>-->
+  <script src="{% static "assets/js/jquerynew.min.js"%}"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+ <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css"> 
+
+<link href="{% static "assets/css/bootstrap-glyphicons.css"%}" rel="stylesheet">
+<!-- <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" rel="stylesheet"> -->
+<div class="jumbotron">
+<header>
+  <body>
+{% block content %}
+
+	<style>
+body {
+      min-height: 100%;
+      position: relative;
+    }
+    body:after {
+      content: '';
+      display: block;
+      height: 100px;
+     
+    }
+
+    </style>
+<title>BITS WILP</title>
+<div class="headerWrapper" style=" height: 167px;">
+
+<h1 class="hidden">BITS Pilani</h1>
+<div class="logoWrapper" padding-top: 17px;>
+<img src="{% static "assets/images/BIts_Logo-01.png" %}" id="headercontrol_imgu" alt="BITS Pilani logo" class="logoFunc" >
+
+<h2 class="appCentre" ><i>Application Centre</i></h2>
+ <div id="tag"  >
+<a href={% url 'registrationForm:applicantData'%}>Home</a> |
+
+{% if not user.email|is_specific_user %}
+  
+  <a href={% static "How_to_Apply-NonSpecific.pdf" %} target="_blank">How to Apply</a> | 
+  
+  {% else %}
+  
+  <a href={% static "How_to_Apply.pdf" %} target="_blank">How to Apply</a> |
+ 
+  {% endif %}
+
+
+
+         &nbsp|&nbsp
+<a href={% url 'registrationForm:applicantView'%} TARGET="_blank">Download Application PDF</a>&nbsp
+         |&nbsp<a href={% url 'registrationForm:payfee'%}>Download Fee Receipt</a>&nbsp|&nbsp<a style= "float:right; padding-right: 19px;" href={% url 'auth_logout'%}> Log out</a>
+
+                 
+ 
+                
+            </div>
+
+</div>
+</div>
+
+</tr>
+
+
+
+ <!-- Static navbar -->
+{% endblock %}
+</body>
+
+  </header>
+
+</div>
+
+	<div style="margin-top: 4%;">
+		<h1>Error has occured during Payment</h1>
+		<h4>Please Try after Some time or Contact Admin </h4>
+	
+		
+	</div>
+
+	<div style="padding:0px">
+        <div style="padding:0px"></div>
+    <div class="footerWrapper" style="margin-top: 16%;position:fixed;
+    bottom:0;width: 108%;margin-left: -102px;
+">
+
+<div class="cpInfoFixWrapper">
+    <div class="cpInfoFix">
+        <p class="info">
+            Admissions Office, BITS, Pilani - 333 031 (Rajasthan) India.<br>
+            For Assistance Call +91-80-48767777</p>
+
+    </div>
+    <!--<div style="height: 50px; width: 100%; background-color: #F5F5F5; margin-top: 0px">
+            </div>-->
+</div>
+
+
+</div>
+
+

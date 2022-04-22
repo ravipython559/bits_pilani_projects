@@ -1,0 +1,953 @@
+{% load static %}
+
+{% load widget_tweaks %}
+{% load static %}
+{% load admission_filter %}
+{% load widget_tweaks %}
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<link rel="stylesheet" type="text/css" href="{% static "assets/css/style.css"%}">
+<link href="{% static "assets/css/bootstrap.min.css"%}" rel="stylesheet">
+<link href="{% static "assets/css/ie10-viewport-bug-workaround.css"%}" rel="stylesheet">
+
+
+    <!-- Custom styles for this template -->
+
+<link href="{% static "assets/css/signin.css"%}" rel="stylesheet">
+<link rel="stylesheet" media="(max-width: 800px)" href="example.css" />
+<script src="{% static "assets/js/ie-emulation-modes-warning.js"%}"></script>
+ <!--<script src="{% static "assets/js/bootstrap.min.js"%}"></script>-->
+  <script src="{% static "assets/js/jquerynew.min.js"%}"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+
+
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+  <link rel="stylesheet" href="/resources/demos/style.css">
+ <!-- <script src="https://code.jquery.com/jquery-1.12.4.js"></script>-->
+  <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
+  <link rel="stylesheet" type="text/css" href="{% static "assets/css/jquery.dataTables.min.css" %}">
+  <script src="{% static "assets/js/jquery.dataTables.min.js" %}"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<div class="jumbotron">
+<header>
+
+
+
+<title>BITS WILP</title>
+<div class="header">
+  <div class="jumbotron">
+  <div class="container-fluid">
+    <div class="row">
+      <img class="img-responsive col-md-5 " src="{% static "assets/images/BIts_Logo-01.png" %}" width="483px"  height="103px">
+      <h2 class="col-md-6 "><i>Application Centre</i></h2>
+    </div>
+  </div>
+  </div>
+  </div>
+<div>
+<img class="img-responsive navImg" src="{% static "assets/images/navUp2.png" %}">
+</div>
+
+<!-- Navigation section starts here... -->
+<nav class="navbar transparent navbar-default navbar-static-top hr">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" 
+        data-target="#myNavbar">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+          </div>
+         <div class="collapse navbar-collapse" id="myNavbar">
+          <ul class="nav navbar-nav navbar-right" >
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" 
+            aria-expanded="false">Manage User and Applicant Data
+            <span class="caret"></span></a>
+            <ul class="dropdown-menu dropdown-menu-right" role="menu">
+              <li><a href="{% url 'registrationForm:review-applicant-data' %}">
+              Applicant List for Review</a></li>
+              <li><a href="{% url 'reviewer:sh-rej-list'%}">
+              Review Shortlisted and Rejected Candidates</a></li>
+              <li><a href="{% url 'registrationForm:review-applicant-list' %}">
+              Send Shortlist/Rejection Mail</a></li>
+              <li><a href="{% url 'reviewer:prog-change-list' %}">
+              Change Program Selection</a></li>
+              <li><a href="{% url 'reviewer:esc-applicant'%}">
+              Escalated Applications</a></li>
+              <li><a href="{% url 'reviewer:name-change-list' %}">
+              View Newly Admitted Students</a></li>
+            </ul>
+          </li>
+          
+          {% if user.reviewer.payment_reviewer %}
+            {% include 'payment_reviewer/manage_payment_nav_bar.html' %}
+          {% endif %}
+
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" 
+  aria-expanded="false">Reports
+  <span class="caret"></span></a>
+  <ul class="dropdown-menu dropdown-menu-right" role="menu">
+    <li><a href="{% url 'reviewer:dmr-non-spec'%}">
+    DMR Report - Program wise - NonSpecific Programs</a></li>
+    <li><a href="{% url 'reviewer:dmr-daily-non-spec'%}">
+    DMR Report - Daily Movement - NonSpecific Programs</a></li>
+    <li><a href="{% url 'reviewer:dmr-daily-cluster'%}">
+    DMR Report - Daily Movement - Cluster Programs</a></li>
+    <li><a href="{% url 'reviewer:dmr-daily-certification'%}">
+      DMR Report - Daily Movement - Certification Programs</a>
+    </li>
+    <li><a href="{% url 'reviewer:dmr-daily-specific'%}">
+      DMR Report - Daily Movement - Specific Programs</a>
+    </li>
+    <li><a href="{% url 'reviewer:dmr-spec'%}">DMR Report - Program wise - Specific Programs</a></li>
+    <li><a href="{% url 'reviewer:dmr-cluster'%}">DMR Report - Program wise - Cluster Programs</a></li>
+    <li><a href="#" style="color:#bfb5b5">Program Summary Reports</a></li>
+    <li><a href="{% url 'reviewer:milestone-report'%}">Milestones Date Reports</a></li>
+    <li><a href="{% url 'reviewer:waiver-report'%}">Fee Waiver Reports</a></li>
+    <li><a href="{% url 'reviewer:prog-change-report'%}">Program Change Report</a></li>
+    <li><a href="{% url 'reviewer:app-exp'%}">Applicant List with Internal Program Transfers</a></li>
+    <li><a href="{% url 'reviewer:prog-loc-report-cluster'%}">Program Location Report (Cluster)</a></li>
+    <li><a href="{% url 'reviewer:prog-loc-report-specific'%}">Program Location Report (Specific)</a></li>
+  </ul>
+</li>
+
+          <li class="dropdown">
+            <a href="{% url 'auth_logout'%}" aria-expanded="false">Logout</a>
+          </li>          
+          </ul>
+          </div> <!-- /.navbar-collapse -->
+      </div> <!-- /.container-fluid -->
+      <div>
+      <img class="img-responsive navImg" src="{% static "assets/images/navDown2.png" %}">
+      </div>
+</nav>
+<!-- Navigation section ends here... -->
+
+
+
+</header>
+
+</div>
+
+
+
+
+<style>
+.navbar-nav > li > a {
+  line-height: 4px;
+}
+
+.navbar-default .navbar-nav > li > a {
+    color: #337ab7;
+    font-size: 14px;
+}
+
+.required {
+    color: #e32;
+    content: ' *';
+    display:inline;
+}
+        ul {
+    list-style-type: none;
+    margin: 1px;
+padding: 3px;
+}
+
+li {
+    display: inline;
+}
+td, th {
+padding: 7px;
+}
+div#stuDiv{
+    padding: 10px;
+}
+.add-row{
+
+    padding: 8px 21px;
+    border-radius: 6px;
+    color:black;
+
+
+    background-size:  38px 34px;sorting_1
+    background-repeat: no-repeat;
+    position: relative;
+    left: 1%;
+}
+.delete-row{
+
+    padding: 8px 21px;
+    border-radius: 6px;
+    color:black;
+
+    position: relative;
+
+    background-size:  38px 34px;
+    background-repeat: no-repeat;
+
+}
+
+
+#work select{
+     width: 99%;
+
+}
+#industry select{
+    width: 76%;
+}
+.phone select{
+    width: 24%;
+}
+
+.table>tbody>tr>td{
+
+    border-top: 0px solid #ddd;
+}
+.table-bordered>tbody>tr>td{
+border-top: 0px solid #ddd;
+}
+#fee select{
+    width: 77%;
+    }
+
+.addrInput input{
+    width: 92%;
+}
+
+
+.bold{
+    font-weight: bold;
+}
+
+.alignTh{
+    font-weight: bold;
+    text-align: center;
+}
+.error{
+    font-weight: bold;
+    text-align: center;
+    color: red;
+}
+
+
+ .current input{
+  width: 99%;
+ }
+ .city input{
+    width: 93%;
+ }
+ #example_length label{
+display:none;
+}
+
+.dataTables_filter label{
+display:none;
+}
+select {
+  width: 136px;
+}
+
+.navbar-default .navbar-nav > li > a {
+    color: #337ab7;
+    font-size: 14px;
+}
+
+</style>
+
+<script type="text/javascript">
+$.ajaxPrefilter(function( options, originalOptions, jqXHR ) {
+    options.async = true;
+});
+
+$(document).ready(function(){
+  $("#form").submit(function () {
+    $("#form :input").prop('disabled', false);
+  });
+
+  $('.DOB').children('input').datepicker({
+        dateFormat: 'dd-mm-yy',
+        changeMonth: true,
+        changeYear: true,
+        maxDate: '-1',
+        yearRange: "1900:nn",
+        showOn: "button",
+        buttonImage: "{% static "assets/images/img-calendar-lg.gif" %}",
+        buttonImageOnly: true,
+        buttonText: "Select date",
+      });
+
+{% if alert_status %}
+    $('#id_gen p').text('Offer letter generated');
+      $('#id_gen').dialog({
+      width: 500,
+      resizable:false,
+      buttons: {
+        "OK": function(){
+         $(this).dialog("close");
+         },
+      }});
+  {% endif %}
+
+var textbox=$('#application_status_dropdown').val(); 
+     if(textbox != "rejected"){
+      $('#rejection_reason').val('');
+      $('#rejection_reason').prop('disabled',true);
+      $('#Rejection_comments').val('');
+      $('#Rejection_comments').prop('disabled',true);
+    }
+
+    var $appStatus=$("#appStatus").val();
+      
+   
+    if($appStatus=="Shortlisted. Offer Mail Sent"  || $appStatus=="Rejected. Reject Mail Sent" || 
+      $appStatus== "Accepted by Applicant" || $appStatus== "Declined by Applicant" || 
+      $appStatus== "Admission Fee Paid"){
+      $("#form :input[name!=update]").prop('disabled', true);
+        
+    }
+    
+    $('#example').dataTable( { "iDisplayLength": 100 } );
+    $('input[name=check1]').each(function(){
+      if(!$(this).is(":checked")){
+        var checkVal=$(this).val();
+        $("#dropd"+checkVal).val("");
+        $("#dropd"+checkVal).prop("disabled", true);
+        }
+        });
+
+   
+$("#validateForm1").click(function(){
+      
+      var flag=true,flag1=false,flag2=false;
+      var id,id1,id2;
+
+      $('input[name=uploadDoc]').each(function(){        
+        id=$(this).val();
+        //alert(id + $('#cbox1'+id).is(":checked"));
+        if(!$('#cbox1'+id).is(":checked")){
+          if(!$('#cbox2'+id).is(":checked")){          
+            var textbox=$('#application_status_dropdown').val();          
+            if(textbox != "selected"){
+              
+            }else{
+              $('#spanCbox1'+id).html("<br>Please Select CheckBox");
+              flag=false;
+              return false;
+            }
+            if(textbox != "rejected"){
+              $('#rejection_reason').val('');
+              $('#rejection_reason').prop('disabled',true);
+              $('#Rejection_comments').prop('disabled',true);
+            }
+
+          }else{
+            //alert('dd'+$("#dropd"+id).val());
+            if(!$("#dropd"+id).val()){
+              //alert('if');
+                $('#spanRejReason'+id).html('<br>Please Select Reason');
+                flag=false;
+                return false;
+              }else{
+               // alert('else');
+              }
+          }
+          
+        }
+    
+
+      });
+      //alert(flag);
+      if(flag){
+        var textbox=$('#application_status_dropdown').val();          
+          if(textbox == "rejected"){
+            var textbox1=$('#rejection_reason').val();
+            if(!textbox1){                
+                $('#spanAppRejReason').html("<br>Please Select Rejection Reason");
+                flag = false;
+                return false;
+            }
+      }
+    }
+      return flag;
+
+
+
+
+
+  });
+});
+
+   
+</script>
+
+
+        <script>
+        $(function() {
+   $('input[name=checks]').on('change',function() {
+        var checked = this.checked;
+
+  
+
+var atLeastOneIsChecked = $('input[name=checks]').is(":checked");
+
+        var checkVal=$(this).val();
+        $("#dropd"+checkVal).prop("disabled", "disabled");
+        $(this).closest('tr').find(':checkbox').not(this).prop('disabled',checked);
+
+if(atLeastOneIsChecked){
+
+        $(this).closest('tr').find('#dropd').not(this).prop("disabled", "disabled");
+
+}
+        else{
+             $(this).closest('tr').find('#dropd').not(this).prop("disabled", false);
+        }
+        $('#spanCbox1'+checkVal).html('');
+        $('#spanCbox2'+checkVal).html('');
+        $('#spanRejReason'+checkVal).html('');
+        $('#spanAppRejReason').html("");
+
+        });
+
+
+
+$('input[name=check1]').on('change',function() {
+        var checked = this.checked;
+         var checkVal=$(this).val();
+         // alert($("#dropd"+checkVal).val());
+          //alert(checked);
+        //$("#dropd"+checkVal).prop("disabled", false);
+        if(checked == true){
+           $("#dropd"+checkVal).prop("disabled", false); 
+           $("#cbox1"+checkVal).prop("disabled", true);
+
+        }else{
+          $("#dropd"+checkVal).val("");
+          $("#dropd"+checkVal).prop("disabled", true);
+        }
+        $('#spanCbox1'+checkVal).html('');
+        $('#spanCbox2'+checkVal).html('');
+        $('#spanRejReason'+checkVal).html('');
+        $('#spanAppRejReason').html("");
+
+        $(this).closest('tr').find(':checkbox').not(this).prop('disabled',checked);
+
+
+    });
+});
+//vaibhav
+function removeSpan(id){
+  if(id>0){
+    $('#spanCbox1'+id).html('');
+    $('#spanCbox2'+id).html('');
+    $('#spanRejReason'+id).html('');
+  }else if(id == -1){
+    var textbox=$('#application_status_dropdown').val(); 
+    if(textbox != "rejected"){
+      $('#rejection_reason').val('');
+      $('#rejection_reason').prop('disabled',true);
+      $('#Rejection_comments').val('');
+      $('#Rejection_comments').prop('disabled',true);
+    }else{
+      $('#rejection_reason').prop('disabled',false);
+      $('#Rejection_comments').prop('disabled',false);
+    }
+  }
+  $('#spanAppRejReason').html("");
+};
+
+        </script>
+        <script>
+        function show_alert(status, form1_id) {
+           $( "#dialogS" ).dialog({
+      modal: true,
+      width: 500,
+      buttons: {
+        "Yes": function(){
+          show_alert_dialog(status, form1_id);
+         $(this).dialog("close");
+
+         },
+        "Cancel": function(){
+          r = 2;
+          $(this).dialog("close");
+        }
+      }});
+          }
+
+        function show_alert_dialog(status, form1_id) {
+          
+/*    var txt;
+    var r = confirm("Are you sure you want to send out the shortlisting email? Please note that once the email is sent, no further updates to the application will be allowed.Please click on OK to confirm sending of email");*/
+var r = true;
+   
+    /*alert(r);*/
+    
+if (r) {
+   var flag='N';
+//   if (status != 'Select Application Status'){
+  
+if (status == 'Shortlisted'){
+function getCookie(c_name)
+{
+    if (document.cookie.length > 0)
+    {
+        c_start = document.cookie.indexOf(c_name + "=");
+        if (c_start != -1)
+        {
+            c_start = c_start + c_name.length + 1;
+            c_end = document.cookie.indexOf(";", c_start);
+            if (c_end == -1) c_end = document.cookie.length;
+            return unescape(document.cookie.substring(c_start,c_end));
+        }
+    }
+    return "";
+ }
+ $.ajaxSetup({
+        headers: { "X-CSRFToken": getCookie("csrftoken") }
+    });
+$.ajax({
+                    type: "POST",
+                url: "/registrations/send-confirmation-email/"+form1_id+"/",
+
+                //data: { CSRF: token},
+                cache: false,
+    async: true,
+               success: function(data){
+flag='Y';
+$( "#dialogMailSent" ).dialog();
+$("#form :input[name!=update]").prop('disabled', true); 
+               },
+               async:false,
+              failure: function(data) {
+                console.log(data);
+                    //alert('Got an error dude');
+                    }
+               });
+
+   } else {
+      //alert("Please shortlist the Applicant before sending out the confirmation emails or send a rejection email");
+        $( "#dialogShort" ).dialog({
+        modal: true,
+        width:500,
+        buttons:{
+          "OK":function(){
+            $(this).dialog("close");
+          }
+        }
+      });
+       
+       flag='N';
+       return false;
+         }
+ }
+
+ if(flag=='N'){
+    //alert(flag);
+    return false;
+ }
+}
+
+function show_alert1(status, form1_id) {
+           $( "#dialogR" ).dialog({
+      modal: true,
+      width: 500,
+      buttons: {
+        "Yes": function(){
+          show_alert1_dialog(status, form1_id);
+         $(this).dialog("close");
+
+         },
+        "Cancel": function(){
+          r = 2;
+          $(this).dialog("close");
+        }
+      }});
+          }
+
+
+function show_alert1_dialog(status, form1_id) {
+        
+    var txt;
+    var r = true;
+if (r) {
+   var flag='N';
+  
+if (status == 'Rejected'){
+function getCookie(c_name)
+{
+    if (document.cookie.length > 0)
+    {
+        c_start = document.cookie.indexOf(c_name + "=");
+        if (c_start != -1)
+        {
+            c_start = c_start + c_name.length + 1;
+            c_end = document.cookie.indexOf(";", c_start);
+            if (c_end == -1) c_end = document.cookie.length;
+            return unescape(document.cookie.substring(c_start,c_end));
+        }
+    }
+    return "";
+ }
+ $.ajaxSetup({
+        headers: { "X-CSRFToken": getCookie("csrftoken") }
+    });
+$.ajax({
+                    type: "POST",
+                url: "/registrations/send-rejection-email/"+form1_id+"/",
+
+                //data: { CSRF: token},
+                cache: false,
+    async: true,
+               success: function(data){
+flag='Y';
+$( "#dialogMailSent" ).dialog({
+  modal: true,
+  width:500,
+  buttons:{
+          "OK":function(){
+            $(this).dialog("close");
+          }
+        }
+});
+$("#form :input[name!=update]").prop('disabled', true); 
+               },
+               async:false,
+              failure: function(data) {
+/*alert('Got an error dude' + data);*/
+                console.log(data);
+                    
+                    }
+               });
+
+   } else {
+      //alert("please shortlist the Applicant before sending out the rejection emails or send a confirmation email");
+      $( "#dialogRej" ).dialog({
+        modal: true,
+        width:500,
+        buttons:{
+          "OK":function(){
+            $(this).dialog("close");
+          }
+        }
+      });
+       
+       flag='N';
+       return false;
+         }
+ }
+ if(flag=='N'){
+    //alert(flag);
+    return false;
+ }
+}
+
+
+ function popP() {
+  var max_stuID = {% if form.id|chk_max_stuID %}true{% else %}false{% endif %};
+  var stuID_exists = {% if form.id|stuID_exists %}true{% else %}false{% endif %};
+
+  if(max_stuID)
+    $('#id_gen p').text('The program ID being used for generating student ID has crossed its limit. Please define a new program ID and regenerate the student ID');
+  else if (stuID_exists)
+    $('#id_gen p').text('The student ID for this student is already generated');
+  else if({% if form.id|status_check_student_id %}true{% else %}false{% endif %})
+    $('#id_gen p').text('The student ID for the applicant cannot be generated. The applicant has to accept the admission offer and have an admission fee waiver OR the applicant should have paid his admission fees');
+   
+
+      $('#id_gen').dialog({
+      width: 500,
+      resizable:false,
+      buttons: {
+        "OK": function(){
+         $(this).dialog("close");
+         },
+      }});
+    }
+
+    function noPLD_record(){
+      $('#id_gen p').text('All source fields are null or blank. Process aborted');
+      $('#id_gen').dialog({
+      width: 500,
+      resizable:false,
+      buttons: {
+        "OK": function(){
+         $(this).dialog("close");
+         },
+      }});
+    }
+
+    {% include "inclusions/offer_pgl_error.html" %}
+
+</script>
+
+</head>
+<body >
+<form method="post" action="{%url 'registrationForm:review_application_details' form.id%}"  id="form" class="my-form-class">
+    {% csrf_token %}
+<div class="container-fluid">
+<!-- <h3 style="font-size: x-large;text-align: center;">Applicant Details</h3> -->
+<h2 style="text-align: center;color: rgb(12, 12, 112);">{{title}}</h2>
+
+
+<div id="stuDiv">
+{% if messages %}
+<div class="span12">
+{% for message in messages %}
+<div class="alert alert-danger">
+    {{ message|safe }}
+</div>
+
+{% endfor %}
+</div>
+
+{% endif %}
+
+
+<div style="text-align:right ; font-size:14px;">
+    <a href={% url 'registrationForm:reviewApplicantView' form.student_application_id %} target="_blank"><u>Download Application PDF</u></a>  
+
+    
+    {% if form.login_email.email|get_admission_reviewer_offer_letter %}
+
+      | <a 
+        href ="{% url 'registrationForm:offer_reviewer_redirect' form.student_application_id %}" target='_blank'>
+        <u>Download Offer Letter</u>
+      </a>
+    {% endif %}
+  </div>
+
+<br>
+
+<!-- Student basic info beginning -->
+  {% include 'reviewer/reviewer_student_info.html' %}
+<!-- Student basic info end -->
+
+
+</br>
+<table class="table table-bordered table-hover" id="example"style="margin-left: 6px;width:99.3%">
+<thead>
+
+    <tr >
+      <th class="tableHeader" style="width: 0px"><center>Document Name</center></th>
+        <th class="tableHeader" style="width: 0px">Link</th>
+        <th class="tableHeader" style="width: 97px">Reviewed and Verified?</th>
+        <th class="tableHeader" style="width: 0px">Rejected?</th>
+        <th class="tableHeader" style="width: 103px">Rejection Reason</th>
+        <th class="tableHeader" style="width: 242px"><center>Exception Note</center></th>
+        </tr>
+</thead>
+<tbody>
+
+      {% for x in uploadFiles %}
+      <tr>
+        <td>
+        {{x.document}}
+        </td>
+        <td>
+        <a href="{% if x.file %}{% url 'registrationForm:document-view' x.pk %}{% else %}#{% endif %}" TARGET="_blank">Doc Link</a>
+
+        </td>
+
+
+        
+
+        <td style="text-align: center;">
+          <input type="hidden" id="uploadDoc{{x.id}}" name="uploadDoc" value="{{x.id}}"/>
+          <input type="checkbox"  id="cbox1{{x.id}}" name="checks" value="{{x.id}}" {%if x.accepted_verified_by_bits_flag == 1%}checked="checked"{%endif%} {%if x.rejected_by_bits_flag == 1%} disabled {%endif%}>
+          <span id="spanCbox1{{x.id}}" class="error"></span>
+        </td>
+        <td style="text-align: center;"><input type="checkbox"  id="cbox2{{x.id}}" name="check1" value="{{x.id}}"{%if x.rejected_by_bits_flag == 1%}checked="checked"{%endif%} {%if x.accepted_verified_by_bits_flag == 1%} disabled {%endif%}>
+          <span id="spanCbox2{{x.id}}" class="error"></span>
+        </td>
+
+        <td> 
+            <select name="document_rejection_reason"  id = "dropd{{x.id}}" {%if x.accepted_verified_by_bits_flag == 1%} disabled {%endif%} onchange="removeSpan({{x.id}});">
+                <option value=''>Select Reason</option>
+            {% for entry in document_rejection_reason %}
+                <option value="{{ entry.id}}_{{x.id}}" {%if x.rejection_reason.id == entry.id %}selected {%endif%}>{{ entry.reason }}</option>
+            {% endfor %}
+            </select>
+            <span id="spanRejReason{{x.id}}" class="error"></span>
+        </td>
+        <td>
+        <textarea  id="exception_notes" cols="40" rows="2" name="exception_notes" value="{{x.exception_notes|default:''}}" >{{x.exception_notes|default:''}}</textarea>
+        <input type="hidden" id="id_{{x.id}}" name="exception_name" value="{{x.id}}"/>
+
+
+        </td>
+      </tr>
+
+      {% endfor %}
+</tbody>
+</table>
+</div>
+
+<div class="container row text-center">
+  <div class="col-md-3">
+    <label>Set Application Status</label> <br>
+    <select name='application_status_dropdown' id ="application_status_dropdown" onchange="removeSpan(-1);" style="width:70%">
+        <option selected="selected" value="">Select Application Status</option>
+        <option value="selected" {%if form.application_status == 'Shortlisted' or form.application_status == 'Shortlisted. Offer Mail Sent' %}selected {%endif%}>Shortlisted</option>
+        <option value="in review" {%if form.application_status == 'Application under Review' or form.application_status == 'Documents to be Resubmitted' or form.application_status == 'Documents resubmitted. Pending Review' %}selected {%endif%}>In review</option>
+        <option value="in review escalated" {%if form.application_status == 'Application under review. Requires Escalation' %}selected {%endif%}>In review - Escalated</option>
+        <option value="rejected" {%if form.application_status == 'Rejected' or form.application_status == 'Rejected. Reject Mail Sent' %}selected {%endif%}>Rejected</option>
+    </select>
+  </div>
+  <div class="col-md-7">
+    <label style="vertical-align: top;">Rejection Reason</label>
+    <select style="width:100%" multiple name="rejection_reason" id="rejection_reason" onchange="removeSpan(0);">
+            <option value='' disabled="disabled">Select Reason</option>
+             {% for entry in rejection_reason %}
+              <option value="{{ entry.reason }}"
+              {% for x in reasons%}
+                {% if x == entry.reason %} 
+                  selected="selected" style="font-weight:bold; background-color:#AECAAE;"
+                {% endif %}
+              {% endfor %}
+              >
+                {{ entry.reason }}
+              </option>
+            {% endfor %}
+        </select>
+        <span id="spanAppRejReason" class="error"></span>
+  </div>
+  <div class="col-md-2">
+    <label>Rejection Comments</label>
+    <textarea id="Rejection_comments" cols="30" rows="4" name="Rejection_comments">{{candidate_selection.selection_rejection_comments}}
+    </textarea>
+  </div>
+</div>
+<br>
+
+
+<input type="hidden" value="{{form.application_status}}" id="appStatus" />
+
+<div class="row container">
+  <div class="col-md-offset-2 col-md-2">
+    <input class="btn btn-sm btn-primary" type="submit"   value="Update Application Status" style="width: 200px;" id="validateForm1">
+  </div>
+<div class="col-md-offset-2 col-md-2">
+ <input class="btn btn-sm btn-primary" type="button"  value="Send Shortlisting Email" 
+ id="validateForm2" style="width: 200px;"
+
+{% if form.login_email.email|offer_letter_assigned and form.login_email.email|pg_loc_assigned %}
+   onclick="show_alert('{{form.application_status}}', '{{form.id}}');"
+{% elif not form.login_email.email|offer_letter_assigned %}
+   onClick="off_let_pg_loc(1)"
+{% elif not form.login_email.email|pg_loc_assigned %}
+   onClick="off_let_pg_loc(2)" 
+{% endif %}
+>
+</div>
+<div class="col-md-offset-2 col-md-2">
+
+<input class="btn btn-sm btn-primary" type="button"  value="Send Rejection email" id="validateForm3" style="width: 200px;" onclick="show_alert1('{{form.application_status}}', '{{form.id}}');">
+</div>
+</div>
+
+<br>
+<br>
+<div class="row container">
+<div class="col-md-offset-2 col-md-2">
+    <input class="btn btn-sm btn-primary" name="update" id="id_update" 
+        type="submit" value="Update" style="width: 200px;">
+  </div>
+    <div class="col-md-offset-2 col-md-2">
+      <a  class="btn btn-sm btn-primary" type="button" style="width: 200px;"
+      {% if form.id|stuID_exists  or  form.id|chk_max_stuID %}
+       onclick="popP()"
+      {% elif form.id|id_gen_st_check1 %}
+       href="{% url 'reviewer:man_id_gen' form.id %}" 
+      {% else %}
+        onclick="popP()"
+      {% endif %}>
+      Generate Student ID</a>
+    </div>
+    {% if form.login_email.email|get_preview_offer_letter %}
+          <div class = "col-md-offset-2 col-md-2">
+              <a class="btn btn-sm btn-primary" style="width: 200px;"
+                {% if form.login_email.email|offer_letter_assigned and form.login_email.email|pg_loc_assigned %}
+                   
+                  href = "{% url 'registrationForm:preview-offer-letter-pdf' form.student_application_id %}" target='_blank'
+                    
+                {% elif not form.login_email.email|offer_letter_assigned %}
+                   onClick="off_let_pg_loc(1)"
+                {% elif not form.login_email.email|pg_loc_assigned %}
+                   onClick="off_let_pg_loc(2)" 
+                {% endif %}
+                >
+                Preview Offer Letter
+                </a>
+          </div>
+    {% endif %}
+    {% if form.student_application_id|is_regen_offer_button %}
+    <div class="col-md-offset-2 col-md-2">
+      <a class="btn btn-sm btn-primary"
+      {% if form.student_application_id|is_pld_record %} 
+        href="{% url 'reviewer:rev_regen_offer' form.id %}"
+      {% else %}
+        onclick="noPLD_record()"
+      {% endif %}
+      >Regenerate Offer Letter</a>
+    </div>
+    {% endif %}
+</div>
+
+</form>
+</body>
+<div style="margin-left: 16px;
+">
+
+
+</div>
+<div id="dialog" title="Fees Paid" style="display:none;">
+       <p>
+      Please shortlist the applicant beforesendingout the confermation emails
+       </p>
+      </div>
+    <p></p>
+    <div style="padding:0px">
+        <div style="padding:0px"></div>
+  <div class="footerWrapper" style="margin-top:120px; padding-top:0px;width: 100%;">
+
+
+<div class="cpInfoFixWrapper">
+    <div class="cpInfoFix">
+        <p class="info">
+            Admissions Office, BITS, Pilani - 333 031 (Rajasthan) India.<br>
+            Call us on: +91-80-48767777</p>
+
+    </div>
+
+
+
+</div>
+
+<div id="dialogRej" title="Message" style="display:none">
+  <p style= "font-size:17px;"><b>Please reject the applicant before sending out the rejection email.</b></p>
+</div>
+
+<div id="dialogShort" title="Message" style="display:none"> 
+  <p style= "font-size:17px;"><b>Please shortlist the applicant before sending out the confirmation email.</b></p>
+</div>
+
+<div id="dialogMailSent" title="Message" style="display:none"> 
+  <p style= "font-size:17px;"><b>Mail has been sent Succesfully !! </b></p>
+</div>
+
+<div style= "display:none;" id="dialogS" >
+  <p style= "font-size:17px;"><b>Are you sure you want to send out the Shortlisting email? Please note that once the email is sent, no further updates to the application will be allowed. Please click on YES to confirm sending of email</b></p>
+</div>
+
+<div style= "display:none;" id="dialogR" >
+  <p style= "font-size:17px;"><b>Are you sure you want to send out the Rejection email? Please note that once the email is sent, no further updates to the application will be allowed.Please click on YES to confirm sending of email</b></p>
+</div>
+
+<div style= "display:none;" id="id_gen" >
+  <p style= "font-size:17px;" ></p>
+</div>

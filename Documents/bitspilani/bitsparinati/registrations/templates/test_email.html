@@ -1,0 +1,44 @@
+{% load i18n %}
+<!doctype html>
+<html lang="en">
+
+<body>
+<p>
+Dear {{applicant_name}}<br/><br/>
+
+Your application for {{program}} has been reviewed, and is currently on hold.<br/><br/>
+
+The undermentioned supporting documents submitted by you as a part of the application have been rejected as they do not meet the document submission standards:<br/>
+<ol type='a'>
+    {%for document, reason in documents%}
+    <li>{{document}} - {{reason}}</li>
+    {%endfor%}
+</ol><br/>
+
+To resolve this issue, please complete the following steps:
+<ol>
+<li>Arrange scans of the new & corrected copies of documents requested above</li>
+<li>Log into the <a href="https://admission-uat.ka-sites.space/accounts/login/">Application Center</a> using your registered Email ID and Password</li>
+<li>Upload the new documents again and submit. Only the documents mentioned above need to be uploaded</li>
+</ol>
+<br/>
+Kindly note that you must complete these steps within <b><u>3 days</u></b> of receipt of this email.
+<br/>
+Upon receipt of the correct documents, the Admission Cell will complete the application review process. Further instructions will be communicated through email.
+<br/>
+Should you have any queries, kindly write to admission@wilp.bits-pilani.ac.in or call +91-80-48767777.
+<br/><br/>
+
+Regards,<br/>
+<b>Admission Cell<br/>
+Work Integrated Learning Programmes<br/>
+Birla Institute of Technology & Science, Pilani<br/>
+</b>
+<br/>
+Visit: <a href="http://www.bits-pilani.ac.in/university/wilp/wilpoverview">bits-pilani.ac.in/wilp</a><br/>
+Write: admission@wilp.bits-pilani.ac.in<br/>
+Call: +91-80-48767777<br/>
+
+</p>
+</body>
+</html>

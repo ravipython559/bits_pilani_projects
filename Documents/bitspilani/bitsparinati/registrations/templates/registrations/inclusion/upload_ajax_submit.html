@@ -1,0 +1,80 @@
+{% load static %}
+
+{% for form in formset.forms %}
+	function document_ajax_{{forloop.counter}}() {
+		
+		var form = new FormData();
+		var url = "{% url 'registrationForm:doc-create' %}"; 
+		if($('#{{form.id.auto_id}}').val())
+			url += $('#{{form.id.auto_id}}').val() + '/';
+
+		form.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+		form.append('file', $("#{{form.file.auto_id}}").prop('files')[0]);
+		form.append('document', $("#{{form.document.auto_id}}").val());
+		form.append('id', $('#{{form.id.auto_id}}').val());
+		form.append('application', $("#{{form.application.auto_id}}").val());
+
+		{% if form.x.auto_id or form.y.auto_id %}
+			form.append('x', $("#{{form.x.auto_id}}").val());
+			form.append('y', $("#{{form.y.auto_id}}").val());
+			form.append('height', $("#{{form.height.auto_id}}").val());
+			form.append('width', $("#{{form.width.auto_id}}").val());
+			form.append('rotate', $("#{{form.rotate.auto_id}}").val());
+		{% endif %}
+
+		if ($("#{{form.file.auto_id}}").prop('files')[0]){
+		$('#{{form.id.auto_id}}_progress').css({"display":"inline"})
+		$('#{{form.id.auto_id}}_pb').html('Uploading ..')
+		}
+
+		$.ajax({
+			url: url,
+			async:false,
+			type: 'POST',
+			enctype: 'multipart/form-data',
+			data: form,
+			success: function (response) {
+				if (response['success'] && response['app_doc'])
+					$('#{{form.id.auto_id}}').val(response['app_doc']);
+				else{
+					error_render = '';
+					$.each( response['errors'], function( key, value ) {
+						error_render += key + ": " + value + '<br/>';
+					});
+					$('#{{form.id.auto_id}}' + "_errors").html(error_render);
+				}
+				
+			},
+			error: function (data) {
+				error_render = '';
+				$.each( data['errors'], function( key, value ) {
+						error_render += key + ": " + value + '<br/>';
+					});
+				$('#{{form.id.auto_id}}' + "_errors").html(error_render);
+			},
+			cache: false,
+			contentType: false,
+			processData: false
+		});
+
+		if ($("#{{form.file.auto_id}}").prop('files')[0]){
+		$('#{{form.id.auto_id}}_pb').css({'aria-valuenow':"100",'width':'100%'})
+		$('#{{form.id.auto_id}}_pb').html('Completed ..')
+		}
+
+		return true;
+	}
+
+{% endfor %}
+
+	if('{{document_submission_flag}}' == 'True'){
+
+$.when({% for form in formset.forms %}document_ajax_{{forloop.counter}}(){% if not forloop.last %}, {% endif %}{% endfor %}).done(
+	function({% for form in formset.forms %}a{{forloop.counter}}{% if not forloop.last %}, {% endif %}{% endfor %}){
+		window.location.href = '{% url 'registrationForm:student-upload-file-view' %}';
+});
+
+			}
+else{
+window.location.href = '{% url 'registrationForm:applicantData'%}'
+}

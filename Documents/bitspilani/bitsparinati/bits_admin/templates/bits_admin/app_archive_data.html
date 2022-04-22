@@ -1,0 +1,217 @@
+{% extends 'bits_base_admin.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% load admission_filter %}
+{% load super_reviewer_filter %}
+{% load bits_admin_filter %}
+
+{% block title %}Applicant Data Archival {% endblock %}
+
+{% block staticContent %}
+  <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css">
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
+
+  <script>
+  $(document).ready(function(){
+
+    if ( window.history.replaceState ) {
+      window.history.replaceState( null, null, window.location.href );
+    }
+
+    {% sca_exists_check form.from_date.value form.to_date.value form.programs.value as sca_check %}
+    {% if not sca_check %}
+    document.getElementById('status_pop1').innerHTML = 'No applications found for archival';
+
+      $('#status_pop1').dialog({
+              width: 500,
+              resizable:false,
+              buttons: {
+              "OK": function(){
+               $(this).dialog("close");
+               },
+              }});
+    
+    {% endif %}
+    {% if archive == 'yes' %}
+      document.getElementById('status_pop2').innerHTML = 'Archival Process Initiated. An alert email will be sent to you once the process completes OR there is a failure';
+
+        $('#status_pop2').dialog({
+                width: 500,
+                resizable:false,
+                buttons: {
+                "OK": function(){
+                 $(this).dialog("close");
+                 },
+                }});
+
+    {% endif %}
+    $('#sr_table').DataTable({
+        paging:false,
+        bInfo:false,
+    });
+  
+    $("#id_from_date").datepicker({
+          dateFormat: "dd-mm-yy",
+                numberOfMonths: 1,
+                changeMonth: true,
+                changeYear: true,
+                showOn: "button",
+                 maxDate: '0',
+      buttonImage: "{% static "assets/images/img-calendar-lg.gif" %}",
+      buttonImageOnly: true,
+        buttonText: "Select date",
+            onSelect: function(selected) {
+                  $("#id_to_date").datepicker("option","minDate", selected);
+                }
+            });
+
+    $("#id_to_date").datepicker({
+        dateFormat: "dd-mm-yy",
+            numberOfMonths: 1,
+            changeMonth: true,maxDate: '0',
+            changeYear: true,showOn: "button",
+      buttonImage: "{% static "assets/images/img-calendar-lg.gif" %}",
+      buttonImageOnly: true,
+        buttonText: "Select date",
+            onSelect: function(selected) {
+               $("#id_from_date").datepicker("option","maxDate", selected);
+
+            }
+        }); 
+
+  });
+  </script>
+
+  <style type="text/css">
+    
+      #id_programs{
+      vertical-align: top;
+      width: 80%;
+      height: 73px;
+    }
+    .dataTables_filter { display: none; }
+  </style>
+{% endblock %}
+
+{%block titleOfContent %} 
+    Applicant Data Archival
+{% endblock %}
+
+{% block container %}
+<br>
+<div class="container">
+  <center>
+        <h4 ><strong>Please choose a date range and/or programs for which applicant data is to be archived</strong></h4>
+  </center>
+  <br>
+  <br>
+  {% for error in form.non_field_errors %}<p style="color:red">{{error}}</p>{% endfor %}
+  <form method='post' action="{% url 'bits_admin:app-archive-data' %}">
+  {% csrf_token %}
+  <div class="row container">
+    <div class="col-md-4">
+      <label><b>Select From Date :</b></label>&nbsp&nbsp{{form.from_date}}
+    </div>
+
+    <div class="col-md-3">
+      <label><b>Select To Date :</b></label>&nbsp&nbsp{{form.to_date}}
+    </div>
+
+    <div class="col-md-5">
+      <p><font size="2">This filter when applied will archive applications made in between these date intervals</font></p>
+    </div>
+
+    <div class="row container">
+      <div class="col-md-3">
+        <label><b>Admit Batch :</b></label>&nbsp&nbsp{{form.admit_batch}}
+      </div>
+      <div class="col-md-4">
+        <p><font size="2">Choose the batch for which applications need to be archived</font></p>
+      </div>
+    </div>
+  </div>
+  <br>
+  <br>
+
+  <div class="row container">
+    <div class="col-md-6">
+    <label><b>Select Programs :</b>
+    </label>&nbsp&nbsp
+      {% archive_program_check as check %}
+      {% if check %}
+        {{form.programs}}
+      {% else %}
+      <span style="display:none">
+        {{ form.programs|attr:'disabled:disabled' }}
+        </span>
+        <span style="color:red">
+          All programs current in the system are open for admission. 
+          Hence no archival will happen
+        </span>
+      {% endif %}
+    </div>
+
+    <div class="col-md-6">
+    <p><font size="2">When one or more programs are chosen from this list, applicant data for ONLY the chosen program will be archived.<br>
+    Please note that only programs whose admission cycle is currently closed can be chosen. Programs with admissions still open will not be archived.<br>
+    Please note that once applicant data is archived, the corresponding log on data sent to salesforce will also be deleted.
+    </font>
+    </p>
+    </div>
+  </div>
+
+  <br>
+  <div class="text-center">
+
+    <input class="btn btn-sm btn-primary" name="archive" id="id_arch" 
+    type="submit" value="Start Archival of Applicant Data" style="width:25%"
+     {% if not check %}disabled{% endif %}>
+  </div>
+  <br>
+
+  </form>
+
+<h4>
+<strong>Details of Last Archival Exercise are mentioned in the list below</strong>
+</h4>
+
+  <table class="table table-striped table-bordered" id="sr_table" >
+    <thead>
+      <tr>
+        <th>Run ID</th>
+        <th>Table Name</th>
+        <th>Archival Start Date</th>
+        <th>Archival End Date</th>
+        <th>Archival filter</th>
+        <th>Archival failed</th>
+        <th>Rows Archived</th>
+        <th>Success</th>
+      </tr>
+    </thead>  
+  <tbody>
+  {% for x in aat %}
+      <tr>
+        <td> {{ x.run }} </td>
+        <td> {{ x.table_name }} </td>
+        <td> {{ x.archive_start_datetime }} </td>
+        <td> {{ x.archive_end_datetime }} </td>
+
+        <td> {% archive_filter x.arch_filter %} </td>
+        <td> {{ x.failed_result|default:'-' }} </td>
+
+
+        <td> {{ x.rows_inserted }} </td>
+        <td> {% if x.success_flag %}Yes{% else %}No{% endif %}  </td>
+      </tr>
+  {% endfor %}
+  </tbody>
+  </table>
+
+</div>
+<br>
+
+<p id="status_pop1" style="font-size:17px;font-weight: bold;"></p>
+<p id="status_pop2" style="font-size:17px;font-weight: bold;"></p>
+{% endblock %}

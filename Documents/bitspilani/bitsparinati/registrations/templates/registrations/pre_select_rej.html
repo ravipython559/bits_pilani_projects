@@ -1,0 +1,85 @@
+{% load static %}
+<script type="text/javascript">
+
+          function show_alert_dialog(dialogue,preStatus)
+          {
+              $.post('{{url_sel_rej}}',
+              {
+                'app_id':{{form.id}},
+                'do_status':preStatus,
+                'csrfmiddlewaretoken':'{{ csrf_token }}',
+              }).done(function(data) 
+              {
+                if (data["bits_success"] == 200)
+                {
+                  $( dialogue ).dialog({
+                      close:function(event,ui){
+                        location.reload();
+                        
+                      },
+                  });
+                }
+                else $( "#dialogMailError" ).dialog();
+              }).fail(function(data) 
+              {
+                $( "#dialogMailError" ).dialog();
+              });
+          }
+
+
+          function show_alert(dialogue_warn,dialogue,preStatus) 
+          {
+            $(dialogue_warn).dialog({
+              modal: true,
+              width: 500,
+              buttons: {
+                "Yes": function(){
+                  show_alert_dialog(dialogue,preStatus);
+                  $(this).dialog("close");
+                },
+                "Cancel": function(){ $(this).dialog("close"); }
+              }
+            });
+         }
+
+</script>
+
+<div style= "display:none;" id="dialogPreS" >
+  <p style= "font-size:17px;">
+    <b>
+      Are you sure you want to send the confirmation email? Once sent it wont be possible de-select the applicant
+    </b>
+  </p>
+</div>
+
+<div style= "display:none;" id="dialogPreR" >
+  <p style= "font-size:17px;">
+    <b>
+      Are you sure you want to send the rejection email? Once sent it wont be possible re-select the applicant
+    </b>
+  </p>
+</div>
+
+<div id="dialogSelMailSent" title="Message" style="display:none"> 
+  <p style= "font-size:17px;">
+    <b>
+      Pre-Selection email Sent 
+    </b>
+  </p>
+</div>
+
+<div id="dialogRejMailError" title="Message" style="display:none"> 
+  <p style= "font-size:17px;">
+    <b>
+      Rejection email Sent
+    </b>
+  </p>
+</div>
+
+<div id="dialogMailError" title="Message" style="display:none"> 
+  <p style= "font-size:17px;">
+    <b>
+      Error occured while sending the mail. 
+    </b>
+  </p>
+</div>

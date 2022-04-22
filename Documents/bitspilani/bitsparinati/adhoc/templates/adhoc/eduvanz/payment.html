@@ -1,0 +1,28 @@
+{% extends 'adhoc/pay_adhoc_fee.html' %}
+{% load static %}
+
+{% block title %}Eduvanz Payment{% endblock %}
+{%block titleOfContent %}
+Eduvanz Payment
+{% endblock %}
+
+{% block container %}
+	<center><br><br><h3> BITS.!!!  Merchant Check Out Page</h3></center></br>
+	<div class="progress">
+		<div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:100%">
+		  Please Do Not Refresh The Page
+		</div>
+	</div>
+	<form method="post" action="{{EDUVANZ_URL}}" name="f1">
+		<table border="1">
+			<tbody>
+			{% for key,value in eduvanzdict.items %}
+				<input type="hidden" name="{{key}}" value="{{value}}">
+			{% endfor %}
+			</tbody>
+		</table>
+		<script type="text/javascript">
+			document.f1.submit();
+		</script>
+	</form>
+{% endblock %}

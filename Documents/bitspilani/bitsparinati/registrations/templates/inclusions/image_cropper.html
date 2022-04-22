@@ -1,0 +1,143 @@
+{% block extrastyle %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropper/4.0.0/cropper.min.css" integrity="sha256-/KLAk4A9xEOKGyr4umt11boYQJtP40gBLT+WrfWImuY=" crossorigin="anonymous" />
+<link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">{% endblock%}
+
+{% block cropperjs %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropper/4.0.0/cropper.min.js" integrity="sha256-QT8oUxSZbywEwAPBgej6iNFH1ephgQV3q2pzjIso5pk=" crossorigin="anonymous"></script>
+{% endblock %}
+
+<script>
+	$(document).ready(function () {
+		// It is the js for Crop Window --
+		var app_photo_id;
+		var app_photo_file;
+		var doc_name;
+		var prefix = '{{ formset_prefix }}';
+
+
+		if(prefix == 'rej_form'){
+			doc_name = 'doc_type';
+		}
+		else{
+			doc_name = 'document_name';
+		}
+		$(".filecss").each(function(){
+			file_id = $(this).attr('id').split('-')[1];
+			if($('#id_'+prefix+'-'+file_id+'-'+doc_name).val().search('APPLICANT PHOTOGRAPH') != -1){
+				app_photo_id = file_id;
+			}
+		});
+
+		/* SCRIPT TO OPEN THE MODAL WITH THE PREVIEW */
+		$('#id_'+prefix+'-'+app_photo_id+'-file').change(function () {
+			if (this.files && this.files[0]) {
+				app_photo_file = this;
+				var reader = new FileReader();
+				reader.onload = function (e) {
+					$("#image").attr("src", e.target.result);
+					$("#modalCrop").modal("show");
+				}
+				reader.readAsDataURL(this.files[0]);
+			}
+		});
+
+		/* SCRIPTS TO HANDLE THE CROPPER BOX */
+		var $image = $("#image");
+		var cropBoxData;
+		var canvasData;
+		$("#modalCrop").on("shown.bs.modal", function () {
+			$image.cropper({
+				viewMode: 1,
+				aspectRatio: 1/1,
+				minCropBoxWidth: 100,
+				minCropBoxHeight: 100,
+				cropBoxResizable: false,
+				zoomable: true,
+				zoomOnWheel: true,
+				// ready: function () {
+				// 	$image.cropper("setCanvasData", canvasData);
+				// 	$image.cropper("setCropBoxData", cropBoxData);
+				// }
+			});
+		}).on("hidden.bs.modal", function () {
+			cropBoxData = $image.cropper("getCropBoxData");
+			canvasData = $image.cropper("getCanvasData");
+			$image.cropper("destroy");			
+		}).on("hide.bs.modal", function () {
+			if(!$('#id_'+prefix+'-'+app_photo_id+'-x').val()){
+				$(app_photo_file).val("");
+			}			
+		});
+
+		$(".js-zoom-in").click(function () {
+			$image.cropper("zoom", 0.1);
+		});
+
+		$(".js-zoom-out").click(function () {
+			$image.cropper("zoom", -0.1);
+		});
+		$(".js-rotate-c").click(function () {
+			$image.cropper("rotate", 90);
+		});
+
+		$(".js-rotate-ac").click(function () {
+			$image.cropper("rotate", -90);
+		});
+
+		/* SCRIPT TO COLLECT THE DATA AND POST TO THE SERVER */
+		$(".js-crop-and-upload").click(function () {
+			var cropData = $image.cropper("getData");
+			$('#id_'+prefix+'-'+app_photo_id+'-x').val(cropData["x"]);
+			$('#id_'+prefix+'-'+app_photo_id+'-y').val(cropData["y"]);
+			$('#id_'+prefix+'-'+app_photo_id+'-height').val(cropData["height"]);
+			$('#id_'+prefix+'-'+app_photo_id+'-width').val(cropData["width"]);
+			$('#id_'+prefix+'-'+app_photo_id+'-rotate').val(cropData["rotate"]);
+			$("#modalCrop").modal("hide");
+		});
+
+		$(".crop_close").click(function () {
+			$('#id_'+prefix+'-'+app_photo_id+'-x').val('');
+			$('#id_'+prefix+'-'+app_photo_id+'-y').val('');
+			$('#id_'+prefix+'-'+app_photo_id+'-height').val('');
+			$('#id_'+prefix+'-'+app_photo_id+'-width').val('');
+			$('#id_'+prefix+'-'+app_photo_id+'-rotate').val('');
+		});
+
+	});
+</script>
+
+{% block content %}
+<!-- MODAL TO CROP THE IMAGE -->
+<div class="modal fade" id="modalCrop">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close crop_close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title"><b>PHOTO CROP(Please ensure your face is fully fitted in the photo sizing window)</b></h4>
+      </div>
+      <div class="modal-body" style="padding-left:0">
+        <img src="" id="image" style="max-width: 100%;">
+      </div>
+      <div class="modal-footer">
+        <div class="btn-group pull-left" role="group">
+          <button type="button" class="btn btn-default js-zoom-in">
+            <span class="fa fa-search-plus"></span>
+          </button>
+          <button type="button" class="btn btn-default js-zoom-out">
+            <span class="fa fa-search-minus"></span>
+          </button>
+          <button type="button" class="btn btn-default js-rotate-ac">
+            <span class="fa fa-rotate-left"></span>
+          </button>
+          <button type="button" class="btn btn-default js-rotate-c">
+            <span class="fa fa-rotate-right"></span>
+          </button>
+        </div>
+        <button type="button" class="btn btn-primary js-crop-and-upload">Crop</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

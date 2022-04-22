@@ -1,0 +1,27 @@
+{% load static %}
+{% load admission_filter %}
+
+{% if user.email|is_CIOT_user %}
+	<li><a href={% static "static_pdf/How_to_Apply_IoT.pdf" %} target="_blank">How to Apply</a></li>
+{% elif not user.email|is_specific_user %}
+	<li><a href={% static "static_pdf/How_to_Apply-NonSpecific.pdf" %} target="_blank">How to Apply</a></li>
+{% else %}
+<li><a href={% static "How_to_Apply.pdf" %} target="_blank">How to Apply</a></li>
+{% endif %}
+
+
+<li>
+  <a href={% url 'registrationForm:applicantData'%}>Home</a>
+</li>
+{%if user.email|get_admission_stsc_status %}
+	<li>
+	  <a href={% url 'registrationForm:offer-letter'  %} target="_blank">Download Offer letter</a>
+	</li>
+{%elif user.email|get_admission_fee_payed_status %}
+	<li><a href={% url 'registrationForm:offer-letter'  %} target="_blank">Download Offer letter</a></li>
+	<li><a href={% url 'registrationForm:pay-admission-fee'  %} target="_blank">Download Admission Fee Receipt</a></li>
+{% endif %}
+
+<li class="dropdown">
+  <a href={% url 'auth_logout'%}> Log out</a>
+</li>

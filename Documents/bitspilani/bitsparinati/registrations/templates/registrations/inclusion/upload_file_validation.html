@@ -1,0 +1,133 @@
+{% load static %}
+
+var $image = $("#image");
+var cropBoxData;
+var canvasData;
+
+$(".js-zoom-in").click(function () {
+	$image.cropper("zoom", 0.1);
+});
+
+$(".js-zoom-out").click(function () {
+	$image.cropper("zoom", -0.1);
+});
+$(".js-rotate-c").click(function () {
+	$image.cropper("rotate", 90);
+});
+
+$(".js-rotate-ac").click(function () {
+	$image.cropper("rotate", -90);
+});
+
+{% for form in formset.forms %}
+	file_error["{{form.file.auto_id}}"] = false;
+
+	if("{{form.document.label}}".search('APPLICANT PHOTOGRAPH') != -1)
+	{
+
+		$("#modalCrop").on("shown.bs.modal", function () {
+			$image.cropper({
+				viewMode: 1,
+				aspectRatio: 1/1,
+				minCropBoxWidth: 100,
+				minCropBoxHeight: 100,
+				cropBoxResizable: false,
+				zoomable: true,
+				zoomOnWheel: true,
+				// ready: function () {
+				// 	$image.cropper("setCanvasData", canvasData);
+				// 	$image.cropper("setCropBoxData", cropBoxData);
+				// }
+			});
+		}).on("hidden.bs.modal", function () {
+			cropBoxData = $image.cropper("getCropBoxData");
+			canvasData = $image.cropper("getCanvasData");
+			$image.cropper("destroy");			
+		}).on("hide.bs.modal", function () {
+			if(!$('#{{form.file.auto_id}}').val())
+				$('#{{form.file.auto_id}}').val("");			
+		});
+
+		/* SCRIPT TO COLLECT THE DATA AND POST TO THE SERVER */
+		$(".js-crop-and-upload").click(function () {
+			var cropData = $image.cropper("getData");
+			$('#{{form.x.auto_id}}').val(cropData["x"]);
+			$('#{{form.y.auto_id}}').val(cropData["y"]);
+			$('#{{form.height.auto_id}}').val(cropData["height"]);
+			$('#{{form.width.auto_id}}').val(cropData["width"]);
+			$('#{{form.rotate.auto_id}}').val(cropData["rotate"]);
+			$("#modalCrop").modal("hide");
+		});
+
+		$(".crop_close").click(function () {
+			$('#{{form.x.auto_id}}').val('');
+			$('#{{form.y.auto_id}}').val('');
+			$('#{{form.height.auto_id}}').val('');
+			$('#{{form.width.auto_id}}').val('');
+			$('#{{form.rotate.auto_id}}').val('');
+		});
+
+	}
+
+	$("#{{form.file.auto_id}}").change(function() {
+		if($(this).prop('files')[0].size>actual_size) {
+			$('#{{form.id.auto_id}}' + "_errors").html(
+				'* Please keep file size under ' + 
+				Math.round((actual_size/1024)/1024, 2) +
+				' MB. Current file size is' +
+				Math.round(($(this).prop('files')[0].size/1024)/1024, 2) +
+				' MB.'
+			);
+			$(this).val('');
+			file_error[$(this).attr('id')] = true;
+		}
+		else if($(this).prop('files')[0].name.split('.')[0].length>25){
+			$('#{{form.id.auto_id}}' + "_errors").html("* File Name length should be less then 25.");
+			$(this).val('');
+			file_error[$(this).attr('id')] = true;
+		}
+		else if(
+			$(this).prop('files')[0].type.split('/')[0]!='image' &&
+			"{{form.document.label}}".search('APPLICANT PHOTOGRAPH') != -1
+		) {
+			$('#{{form.id.auto_id}}' + "_errors").html(
+				'* Photo has incorrect format. ' + 
+				'Please read the instructions on the right' + 
+				' to know about acceptable photo formats.'
+			);
+			$(this).val('');
+			file_error[$(this).attr('id')] = true;
+			  
+		}
+		else if (
+			$.inArray(
+				$(this).val().substr(
+					$(this).val().lastIndexOf('.')+1
+				).toLowerCase(), 
+				['pdf', 'jpeg', 'jpg', 'png', 'tiff', 'tif', 'zip', 'doc', 'docx']
+			) == -1
+		) {
+			$('#{{form.id.auto_id}}' + "_errors").html("* Incorrect file formats selected for upload, please ensure that only PDF, JPEG, PNG, TIFF, ZIP and DOC are chosen for upload.");
+			$(this).val('');
+			file_error[$(this).attr('id')] = true;
+
+		}
+		else if(
+			$(this).val() &&
+			"{{form.document.label}}".search('APPLICANT PHOTOGRAPH') != -1
+		)
+		{
+			var reader = new FileReader();
+			reader.onload = function (e) {
+				$("#image").attr("src", e.target.result);
+				$("#modalCrop").modal("show");
+			}
+			reader.readAsDataURL($(this).prop('files')[0]);
+			file_error[$(this).attr('id')] = false;
+		}
+		else{
+			$('#{{form.id.auto_id}}' + "_errors").html('');
+			file_error[$(this).attr('id')] = false;
+		}		
+	});
+{% endfor %}

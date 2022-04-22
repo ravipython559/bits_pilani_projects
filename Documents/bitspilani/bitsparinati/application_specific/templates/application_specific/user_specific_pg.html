@@ -1,0 +1,205 @@
+{% load static %}
+
+{% load widget_tweaks %}
+{% load admission_specific_filter %}
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<link rel="stylesheet" type="text/css" href="{% static "assets/css/style.css"%}">
+<link href="{% static "assets/css/bootstrap.min.css"%}" rel="stylesheet">
+<link href="{% static "assets/css/ie10-viewport-bug-workaround.css"%}" rel="stylesheet">
+
+
+    <!-- Custom styles for this template -->
+<link href="{% static "assets/css/signin.css"%}" rel="stylesheet">
+<script src="{% static "assets/js/ie-emulation-modes-warning.js"%}"></script>
+ <!--<script src="{% static "assets/js/bootstrap.min.js"%}"></script>-->
+  <script src="{% static "assets/js/jquerynew.min.js"%}"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+
+<div class="jumbotron">
+<header>
+
+<tr>
+
+<title>BITS WILP</title>
+<div class="headerWrapper" style=" height: 167px;">
+
+<h1 class="hidden">BITS Pilani</h1>
+<div class="logoWrapper" padding-top: 17px;>
+<img src="{% static "assets/images/BIts_Logo-01.png" %}" id="headercontrol_imgu" alt="BITS Pilani logo" class="logoFunc" >
+
+<h2 class="appCentre" ><i>Application Centre</i></h2>
+ <div id="tag"  >
+<a href={% url 'registrationForm:applicantData'%}>Home</a> |
+
+ <a href={% static "How_to_Apply.pdf" %} target="_blank">How to Apply</a> |
+<a href={% url 'auth_logout'%}> Log out</a>
+
+                 
+ 
+                
+            </div>
+
+</div>
+</div>
+
+</tr>
+
+
+
+ <!-- Static navbar -->
+
+
+  </header>
+
+</div>
+<style>
+div#stuDiv{
+    padding: 8px;
+}
+</style>
+ 
+
+<style>
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th, td {
+    text-align: left;
+    padding: 8px;
+
+}
+
+tr:nth-child(even){background-color: rgb(233, 235, 245)}
+tr:nth-child(odd){background-color:  rgb(207, 213, 234)}
+
+th {
+    background-color:rgb(68, 114, 196);
+    color: white;
+        text-align: center; 
+}
+
+.aligncenter{
+  text-align: center;
+    text-decoration: underline;
+  font-weight: bold;
+  color: #337ab7; 
+  text-align: center;
+}
+.aligncenterwu{
+  text-align: center;
+  font-weight: normal;
+  text-align: center;
+}
+</style>
+
+<br>
+
+
+<h1 style="font-size: x-large;text-align:center;"><b >Apply to the Program of Your Choice 
+</b></h1>
+<h5 style="    text-align: center;">(You should apply to only those programs offered in the location you reside in)
+</h5>
+<br>
+<br>
+
+
+
+
+<div id="stuDiv" >
+  <table class="table table-bordered" style="width: 50%;margin-left: 28%;">
+
+
+  <thead>
+   <tr>
+  <th style="width:5%;">Sr. No.</th>
+      <th style="width: 45%;">Location</th>
+<th style="width: 45%;">Program Offered</th>
+<th>Application Link</th>
+    </tr>
+  
+<tr>
+  {% for x in pg%}
+    <td class="aligncenterwu">{{forloop.counter}}</td>
+    <td>{% specific_location x.program.available_in_cities.all%}</td>
+    <td>{{x.program.program_name}} </td>
+    <td class="aligncenter"><a href="{% url 'application_specific:specific_form_add' x.program.program_code %}">Apply</a></td>
+
+</tr>
+
+  {% endfor %}
+
+ 
+
+
+ 
+
+
+
+   
+
+
+
+
+    
+
+   
+
+
+    
+
+   
+
+
+   
+
+   
+        
+        
+        
+       
+  
+       
+          
+
+ 
+
+
+</thead>
+
+
+</table>
+</div>
+<br>
+<br>
+  <input type="hidden" name="next" value="{{ next }}" />
+ <div style="text-align:center;">
+ 
+</div>
+<footer class="footer">
+      <div  style="width: 100%;">
+
+    <div class="footerWrapper" style="margin-top: 95px;">
+
+
+<div class="cpInfoFixWrapper">
+    <div class="cpInfoFix">
+        <p class="info">
+            Admissions Office, BITS, Pilani - 333 031 (Rajasthan) India.<br>
+            For Assistance Call +91-80-48767777</p>
+
+    </div>
+    <!--<div style="height: 50px; width: 100%; background-color: #F5F5F5; margin-top: 0px">
+            </div>-->
+</div>
+
+
+
+       </div>
+
+   
+      </div>
+    </footer>

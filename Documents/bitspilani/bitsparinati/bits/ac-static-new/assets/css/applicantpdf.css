@@ -1,0 +1,32 @@
+#rectangle1{border:1px solid blue; }
+#rectangle1 h5{border:none;}
+#title{
+text-align:center;
+}
+
+#form_name{
+text-align:center;
+}
+
+/*table, th, td {
+    border: 1px solid blue;
+    border-collapse: collapse;
+}
+*/
+th{
+padding:10px;
+}
+
+.footer span {
+width:3cm;
+border-bottom:0.1em solid #000;
+display:inline-block;
+}
+
+.main span{
+width:3cm;
+border-bottom:0.1em solid #000;
+display:inline-block;
+
+}
+img{zoom:80%;}

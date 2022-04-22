@@ -1,0 +1,88 @@
+{% extends 'bits_base_admin.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% load table_tags %}
+
+
+{% block title %}Follow Up Mail Logs{% endblock %}
+
+{% block staticContent %}
+  <link rel="stylesheet" href="/static/assets/css/jquery-ui.css">
+  <script src="/static/assets/js/jquery-ui.js"></script>
+  <script src="/static/assets/js/datepicker.js"></script>
+
+  <script type="text/javascript">
+  $(document).ready(function(){  
+      $("#csv").click(function(){
+         var search=$('input[type=search]').val();
+         var to_date=$("#id_to_date").val();
+         var from_date=$("#id_from_date").val();
+         var st=$("#id_status").val();
+         $("#texens").val(search);
+         $("#fromDate").val(from_date);
+         $("#toDate").val(to_date);
+         $("#stat").val(st);
+        });
+
+    $("#id_from_date").datepicker({
+            dateFormat: "dd-mm-yy",
+                  numberOfMonths: 1,
+                  changeMonth: true,
+                  changeYear: true,
+                  showOn: "button",
+                   maxDate: '0',
+        buttonImage: "{% static "assets/images/img-calendar-lg.gif" %}",
+        buttonImageOnly: true,
+          buttonText: "Select date",
+              onSelect: function(selected) {
+                    $("#id_to_date").datepicker("option","minDate", selected);
+                  }
+              });
+
+      $("#id_to_date").datepicker({
+          dateFormat: "dd-mm-yy",
+              numberOfMonths: 1,
+              changeMonth: true,maxDate: '0',
+              changeYear: true,showOn: "button",
+        buttonImage: "{% static "assets/images/img-calendar-lg.gif" %}",
+        buttonImageOnly: true,
+          buttonText: "Select date",
+              onSelect: function(selected) {
+                 $("#id_from_date").datepicker("option","maxDate", selected);
+
+              }
+          }); 
+
+  });
+  </script> 
+
+{% endblock %}
+
+{%block titleOfContent %} 
+    Follow Up Mail Logs
+{% endblock %}
+
+{% block container %}
+  <br>
+  <div class="container">
+    <form action="{% url 'bits_admin:followup-mail-logs' %}" method="get" id="myform">
+      <table>
+            <tr>
+              <td style="width:25%; font-weight:bold;padding:20px">
+              From Date :{{form.from_date|attr:'maxlength:0'}}</td>
+              
+              <td style="width:25%;font-weight:bold;">
+              To Date :{{form.to_date|attr:'maxlength:0'}}</td>
+           
+              <td style="padding:2px">
+              <input class="btn btn-xs btn-primary" type="submit" value="Filter" style="width:100px">
+              </td>
+            </tr>
+          </table>
+    </form>
+
+    {% render_table table %}
+
+  </div>
+  <br>
+{% endblock %}

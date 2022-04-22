@@ -1,0 +1,114 @@
+{% extends 'adm_payment/bits_base_payment_reviewer.html' %}
+{% load static %}
+{% load i18n %}
+{% load widget_tweaks %}
+
+{% block staticContent%}
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
+
+  <style type="text/css">
+    #popUp{
+      font-weight:bold;
+      font-size:14px;
+    }
+    .ui-dialog-titlebar-close {
+    visibility: hidden;
+    }
+  </style>
+  <script>
+  	$(document).ready(function(){
+  		{% if messages %} 
+	        $("#popUp").html('{{ messages }}');
+	        $("#popUp").dialog({
+	        modal: true,
+	        width: 500,
+	        resizable:false,
+	        buttons: {
+	          "OK": function(){
+	           $(this).dialog("close");
+	           
+	           },
+
+	         }});
+      {% endif %} 
+
+  	});
+  </script>
+{% endblock %}
+
+{% block title %}Manual Payment Upload{% endblock %}
+
+{%block titleOfContent %} 
+  Upload Manual Payment File
+{% endblock %}
+
+{% block container %}
+<br>
+<br>
+<span id="popUp"></span>
+<form action="{% url 'bits_admin_payment:upload-manual-payments-home' %}" method="post" enctype="multipart/form-data" style="font-size: 13px;" >
+	{% csrf_token %}
+	<div class="container-fluid ">
+		<div class="row">
+			<div class="col-md-offset-5 col-md-2" >
+				{{ form.non_field_errors }}
+			</div>
+		</div>
+		<div class="row ">
+			<div class="col-md-offset-1 col-md-3 text-right" >
+				{{ form.file.label_tag }}
+			</div>
+
+			<div class="col-md-3" >
+				{{ form.file }}
+
+				<span style="color:red;">
+					<strong>
+						{% for x in form.file.errors %}
+							{{ x }} &nbsp;
+						{% endfor %}
+					</strong>
+				</span>
+			</div>
+
+			<div class="col-md-offset-1 col-md-3" >
+				<a class="btn btn-info" role="button" href="{% static 'sample-manual-payments.csv' %}" target="_blank">	Download Sample Format</a>
+			</div>
+		</div>
+		<br><br><br>		
+		<div class="row">
+			<div class="col-md-offset-5 col-md-2" >
+				<input type="submit" value="Submit" class="btn btn-primary" style="width:80%" />
+			</div>
+		</div>
+	</div>
+</form>
+
+{% if result %}
+	{% if result.has_errors %}
+		<h2>Errors</h2>
+		<ul>
+			{% for error in result.base_errors  %}
+			<li>
+			{{ error.error }}
+			</li>
+			{% endfor %}
+			{% for line, errors in result.row_errors %}
+			{% for error in errors %}
+				<li>
+					Line number: {{ line }} - {% if error.error.messages %}
+					{{ error.error.messages|join:", " }}
+					{% else %}
+					{{ error.error}}
+					{% endif %}
+					<div><code>{{ error.row.values|join:", " }}</code></div>
+
+				</li>
+			{% endfor %}
+			{% endfor %}
+		</ul>
+	{% endif %}
+{% endif %}
+
+{% endblock %}

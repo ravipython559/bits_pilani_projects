@@ -1,0 +1,211 @@
+{% load static %}
+
+{% load widget_tweaks %}
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<link rel="stylesheet" type="text/css" href="{% static "assets/css/style.css"%}">
+<link href="{% static "assets/css/bootstrap.min.css"%}" rel="stylesheet">
+<link href="{% static "assets/css/ie10-viewport-bug-workaround.css"%}" rel="stylesheet">
+
+
+    <!-- Custom styles for this template -->
+<link href="{% static "assets/css/signin.css"%}" rel="stylesheet">
+<script src="{% static "assets/js/ie-emulation-modes-warning.js"%}"></script>
+ <!--<script src="{% static "assets/js/bootstrap.min.js"%}"></script>-->
+  <script src="{% static "assets/js/jquerynew.min.js"%}"></script>
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<style type="text/css">
+.tableHeader{
+text-align: center
+
+
+}
+#example_length label{
+display:none;
+}
+
+.dataTables_filter label{
+display:none;
+}
+
+
+#example
+{
+    margin-top: 5%;
+}
+</style>
+
+<div class="jumbotron">
+<header>
+
+<tr>
+
+<title>BITS WILP</title>
+<div class="headerWrapper" style=" height: 167px;">
+
+<h1 class="hidden">BITS Pilani</h1>
+<div class="logoWrapper" padding-top: 17px;>
+<img src="{% static "assets/images/BIts_Logo-01.png" %}" id="headercontrol_imgu" alt="BITS Pilani logo" class="logoFunc" >
+
+<h2 class="appCentre" ><i>Application Centre</i></h2>
+<div id="tag"  >
+  <a href={% url 'registrationForm:applicantData'%}>Home</a>
+
+  {% if queryResult.0.application_status == "Submitted" %}
+
+    &nbsp|&nbsp
+    <a href={% url 'registrationForm:applicantView'%} TARGET="_blank">Download Application PDF</a>
+    &nbsp|&nbsp
+    <a href={% url 'registrationForm:payfeeview'%}>Pay Fees</a>
+
+  {% elif  queryResult.0.application_status ==  "Application Fee Paid,Documents Uploaded" %}
+
+    &nbsp|&nbsp
+    <a href={% url 'registrationForm:applicantView'%} TARGET="_blank">Download Application PDF</a>
+    &nbsp|&nbsp
+    <a href={% url 'registrationForm:payfee'%} TARGET="_blank">Download Fee Receipt</a>
+
+  {% elif queryResult.0.application_status == 'Application Fee Paid,Documents Uploaded In Progress' %}
+
+      &nbsp|&nbsp
+      <a href={% url 'registrationForm:applicantView'%} TARGET="_blank">Download Application PDF</a>
+      &nbsp|&nbsp
+      <a href={% url 'registrationForm:payfee'%} TARGET="_blank">Download Fee Receipt</a>
+
+      &nbsp|&nbsp
+      <a href="{% url 'registrationForm:student-upload-edit'%}" style="text-decoration:none">
+      Edit Upload Documents</a>
+
+  {% elif queryResult.0.application_status == 'Fees Paid' %}
+
+    &nbsp|&nbsp
+    <a href={% url 'registrationForm:applicantView'%} TARGET="_blank">Download Application PDF</a>
+    &nbsp|&nbsp
+    <a href={% url 'registrationForm:payfee'%} TARGET="_blank">Download Fee Receipt</a>
+    &nbsp|&nbsp
+    <a href="{% url 'registrationForm:student-upload'%}" style="text-decoration:none">
+    Upload Documents</a>
+
+  {% endif %}
+
+  &nbsp|&nbsp
+  <a href={% url 'auth_logout'%}> Log out</a>
+
+</div>
+</div>
+
+</tr>
+
+
+
+ <!-- Static navbar -->
+
+
+  </header>
+
+</div>
+
+
+
+
+
+
+
+<link rel="stylesheet" href="{% static "assets/css/applicantView.css" %}" type="text/css" media="all">
+
+<link rel="stylesheet" href="{% static "assets/css/jquery-ui.css" %}">
+
+<script src="{% static "assets/js/jquery-ui.js" %}"></script>
+<script src="{% static "assets/js/jquery-1.9.1.min.js" %}"></script>
+
+<script src="{% static "assets/js/jquery-1.11.1.min.js" %}"></script>
+<script src="{% static "assets/js/jquery.validate.min.js" %}"></script>
+<script src="{% static "assets/js/additional-methods.min.js" %}"></script>
+<link rel="stylesheet" type="text/css" href="{% static "assets/css/jquery.dataTables.min.css" %}">
+<script src="{% static "assets/js/jquery.dataTables.min.js" %}"></script>
+<head>
+<script type="text/javascript">
+$(document).ready(function(){
+
+    $('#example').DataTable();
+
+
+
+});
+</script>
+
+
+
+
+<div class="container">
+
+<h3 style="font-size: x-large;text-align: center;">Applicant Data View </h3>
+
+<div style="margin-top: -54px;">
+
+<table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered" id="example">
+<thead>
+
+        <tr >
+            <th class="tableHeader">Application ID</th>
+            <th class="tableHeader">Name</th>
+            <th class="tableHeader">Applied On</th>
+            <th class="tableHeader">Program Applied for</th>
+            <th class="tableHeader">Application Status</th>
+
+
+        </tr>
+</thead>
+<tbody>
+
+
+    {%for element1 in queryResult%}
+        <tr>
+
+               {% if queryResult.0.application_status == "Submitted" %}
+            <td class="tableHeader"><a href={% url 'registrationForm:student-application-edit'%} >{{element1.application_id}}</a></td>
+             {% elif  queryResult.0.application_status == "Fees Paid" or "Application Fee Paid,Documents Uploaded"%}
+             <td class="tableHeader"> <a href={% url 'registrationForm:student-application-views'%}>{{element1.application_id}}</a></td>
+               {% endif %}
+            <td> {{element1.fullname}}</td>
+            <td> {{element1.created_on_datetime|date:'d-m-Y'}}</td>            <td> {{element1.program.program_name}}</td>
+            <td class="tableHeader">
+{% if element1.application_status == "Fees Paid" %}
+Application Fees Paid
+{% else %}
+{{element1.application_status}}
+{% endif %}
+            </td>
+
+
+
+
+
+        </tr>
+    {% endfor %}
+
+</tbody>
+</table>
+    </div>
+</div>
+<div style="padding:0px">
+        <div style="padding:0px"></div>
+  <div class="footerWrapper" style="margin-top:120px; padding-top:0px;width: 100%;">
+
+
+<div class="cpInfoFixWrapper">
+    <div class="cpInfoFix">
+        <p class="info">
+            Admissions Office, BITS, Pilani - 333 031 (Rajasthan) India.<br>
+            Call us on: +91-80-48767777</p>
+
+    </div>
+</div>
+
+
+</div>
+</div>
+
+
+
+

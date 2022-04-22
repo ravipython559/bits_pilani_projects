@@ -1,0 +1,132 @@
+{% extends 'reviewer/bits_base_reviewer.html' %}
+
+{% load static %}
+{% load widget_tweaks %}
+{% load admission_filter %}
+{% load super_reviewer_filter %}
+
+{% block title %}Escalate Program Change{% endblock %}
+
+{% block staticContent %}
+  <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css">
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
+
+  <script>
+  $(document).ready(function(){
+  $('#sr_table').DataTable();
+
+  $('#escB').click(function(e) {
+
+  if($('#id_es_comments').val() != "")
+  {
+    e.preventDefault();
+    $("#popup").dialog({
+    modal: true,
+    width: 500,
+    resizable:false,
+    buttons: {
+      "OK": function(){
+       escalate();
+       $("form").submit();
+       $(this).dialog("close");
+       },
+      "Cancel": function(){
+       $(this).dialog("close");
+       },
+
+     }
+  });
+    
+    }
+
+    function escalate(){
+    $('#extra_form').empty();
+   $('#sr_table').DataTable().$('input, select, textarea').each(function(index, value){
+
+      if(!$.contains(document, this)){
+
+         if(!$(this).is('input[type="checkbox"]') || this.checked){
+            $('#extra_form').append(
+               $('<input>')
+                  .attr('type', 'hidden')
+                  .attr('name', this.name)
+                  .val(this.value)
+            );
+            
+         }
+      }
+   });
+}
+  });
+
+  });
+  </script>
+
+  <style type="text/css">
+      textarea{
+      vertical-align: top;
+    }
+    .dataTables_filter { display: none; }
+  </style>
+{% endblock %}
+
+{%block titleOfContent %} 
+    Applicant List for Super Reviewer Escalation (Program Change)
+{% endblock %}
+
+{% block container %}
+
+<div class="container">
+  
+  <form action="{% url 'reviewer:final-pc-list' %}" id ='form'  method="post">
+  {% csrf_token %}
+  {{ cs_formset_red.management_form }}
+  {{ cs_formset_red.non_form_errors }}
+  {{ cs_formset_red.form_errors }}
+  <p >{{cs_formset_red.total_form_count}} Applicants Selected for Escalation</p>
+
+  <table class="table table-striped table-bordered" id="sr_table" >
+  <thead>
+    <tr>
+      <th>Application ID</th>
+      <th>Name</th>
+      <th>Applied On</th>
+      <th>Current Program</th>
+      <th>Application Status</th>
+      <th>New Program</th>
+    </tr>
+  </thead>
+  <tbody>
+    {%for form in cs_formset_red.forms %}
+      {% bits_offer_status_td  app_stud_id=form.app_id %}
+        <td>
+        {% for hidden in form.hidden_fields %} {{ hidden }} {% endfor %}
+        {% display_new_program form.program %}
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+  </table>
+  <br>
+
+  <div>
+    {{es_comment}}
+  </div>
+  <br>
+  <br>
+
+  
+    <div class="text-center">
+    <input class="btn btn-sm btn-primary"  type="submit" value="Submit"  
+    style="width:30%" id="escB">
+    </div>
+    <div id ="extra_form"></div>
+  </form> 
+</div>
+<br>
+<div style="display:none; font-weight:bold; font-size:14px;" id="popup">
+ {{cs_formset_red.total_form_count}} applicants escalated for super reviewer review.
+</div>
+{% endblock %}

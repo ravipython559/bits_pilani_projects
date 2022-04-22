@@ -1,0 +1,125 @@
+{% extends 'bits_BaseTemp.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% load admission_filter %}
+
+
+{% block title %}
+  {{ block.super }} - Pay Application Fees
+{% endblock %}
+
+
+{% block staticContent %}
+
+<style type="text/css">
+  .container{font-size: medium;}
+</style>
+
+{% endblock %}
+
+
+{% block navigationLinks %}
+  <li><a href="{% url 'registrationForm:applicantData'%}">Home</a></li>
+
+  {% if user.email|is_CIOT_user %}
+    <li><a href="{% static "static_pdf/How_to_Apply_IoT.pdf" %}" target="_blank">
+    How to Apply</a></li>
+  {% elif not user.email|is_specific_user %}
+    <li><a href={% static "static_pdf/How_to_Apply-NonSpecific.pdf" %} target="_blank">
+    How to Apply</a></li>
+  {% else %}
+    <li><a href={% static "How_to_Apply.pdf" %} target="_blank">
+    How to Apply</a></li>
+  {% endif %}
+
+  {% if pg_type %}
+    <li><a href="{% url 'registrationForm:applicantView'%}" TARGET="_blank">
+    Download Application PDF</a></li>
+  {% endif %}
+
+  <li><a href={% url 'auth_logout'%}>Log Out</a></li>
+{% endblock %}
+
+
+{% block titleOfContent %}
+  Pay Application Fees
+{% endblock %}
+
+{% block container %}
+<div class="container table-responsive">
+  <h1 style="font-size: large;">
+    <b>Application ID - {{ queryResult.ap_id }}</b>
+  </h1>
+  <br>
+
+  <div class="row">
+  <div class="col-md-offset-2 col-md-5">
+      <div class="col-md-6">
+        <b>Program Applied For:</b>
+      </div>
+      <div class="col-md-6">
+        {{queryResult.ap_program}}
+      </div>
+    </div>
+  </div>
+  <br>
+
+  <div class="row">
+    <div class="col-md-offset-2 col-md-5">
+      <div class="col-md-6">
+        <b>Fee Amount:</b>
+      </div>
+      <div class="col-md-6">
+        {{queryResult.ap_fee_amount}}
+      </div>
+    </div>
+  </div>
+
+  <br><br>
+  <div class="row">
+    {% if queryResult.is_paytm %}
+
+      <div class="col-md-offset-3 col-md-4">
+        <a  class="btn btn-sm btn-primary" class="btn btn-primary" href="{% url 'bits_rest:paytm:app_payment' %}" {{queryResult.disable}}
+        style="width: 60%;">Pay through PayTm Gateway</a>
+        <br>
+        <span style="font-size: smaller;">
+          <a href={% static "static_pdf/Paytm.pdf" %} target="_blank"><u>View Payment Charge Details</u></a>
+        </span>
+      </div>
+
+    {% endif %}
+    {% if queryResult.pay_now %}
+    <div class="col-md-4">
+      <a id="payNow" class="btn btn-sm btn-primary" href="{{queryResult.pay_fee}}" {{queryResult.disable}}
+      style="width: 60%;">Pay through Tech Process Gateway</a>
+      <br>
+      <span style="font-size: smaller;">
+        <a href={% static "static_pdf/Techprocess.pdf" %} target="_blank"><u>View Payment Charge Details</u></a>
+      </span>
+    </div>
+    {% else %}
+      {% include 'inclusions/unavailable_location_payment_msg.html' %}
+    {% endif %}
+
+  </div>
+
+  
+
+  
+
+  {% if queryResult.is_pg_inactive %}
+    <br>
+    <div class="row">
+      <div class="col-md-offset-2 col-md-5">
+          {% include 'inclusions/deactivate_prog_msg.html' %} 
+      </div>
+    </div>
+
+  {%endif%}
+  
+  <br><br>
+
+
+</div>
+{% endblock %}

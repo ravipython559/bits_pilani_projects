@@ -1,0 +1,430 @@
+{% load static %}
+{% load widget_tweaks %}
+{% load admission_specific_filter %}
+{% load admission_filter %}
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<link rel="stylesheet" type="text/css" href="{% static "assets/css/style.css"%}">
+<link href="{% static "assets/css/bootstrap.min.css"%}" rel="stylesheet">
+<link href="{% static "assets/css/ie10-viewport-bug-workaround.css"%}" rel="stylesheet">
+
+
+    <!-- Custom styles for this template -->
+<link href="{% static "assets/css/signin.css"%}" rel="stylesheet">
+<script src="{% static "assets/js/ie-emulation-modes-warning.js"%}"></script>
+  <script src="{% static "assets/js/jquerynew.min.js"%}"></script>
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
+
+
+<div class="jumbotron">
+<header>
+
+<tr>
+
+<title>BITS WILP</title>
+<div class="headerWrapper" style=" height: 167px;">
+
+<h1 class="hidden">BITS Pilani</h1>
+<div class="logoWrapper" padding-top: 17px;>
+<img src="{% static "assets/images/BIts_Logo-01.png" %}" id="headercontrol_imgu" alt="BITS Pilani logo" style="
+height: 96px; padding-top: 15px;" >
+
+<h2 class="" style="
+    text-align: center;
+    margin-top: -50px;
+    font-size: 30px;
+    font-weight: bolder;
+    color: #02024D;
+"><i>Application Centre</i></h2>
+
+ <div id="tag"  >
+<a href={% url 'registrationForm:applicantData'%}>Home</a> |
+
+ <a href={% static "How_to_Apply.pdf" %} target="_blank">How to Apply</a>
+         &nbsp|&nbsp
+                {% if queryResult.0.application_status == "Submitted" %}
+         <a href={% url 'registrationForm:applicantView'%} TARGET="_blank">Download Application PDF</a>&nbsp
+         |&nbsp<a href={% url 'registrationForm:payfeeview'%}>Pay Fees</a>&nbsp|&nbsp<a style= "float:right; padding-right: 19px;" href={% url 'auth_logout'%}> Log out</a>
+  {% elif  queryResult.0.application_status == "Application Fees Paid" or "Application Fee Paid,Documents Uploaded"%}
+  <a href={% url 'registrationForm:applicantView'%} TARGET="_blank">Download Application PDF</a>
+         &nbsp|&nbsp<a href={% url 'registrationForm:payfee'%} TARGET="_blank">Download Fee Receipt</a>&nbsp|&nbsp<a href={% url 'auth_logout'%}> Log out</a>
+  {% endif %}
+
+
+
+            </div>
+
+</div>
+</div>
+
+</tr>
+
+
+  </header>
+
+</div>
+
+
+
+
+<style>
+.required {
+    color: #e32;
+    content: ' *';
+    display:inline;
+}
+ul {
+    list-style-type: none;
+    margin: 1px;
+    padding: 3px;
+}
+
+
+td, th {
+padding: 7px;
+}
+
+div#stuDiv{
+    padding: 10px;
+}
+
+.add-row{
+    padding: 8px 21px;
+    border-radius: 6px;
+    background-size:  38px 34px;
+    background-repeat: no-repeat;
+    position: relative;
+    left: 1%;
+}
+
+.delete-row{
+
+    border-radius: 6px;
+    position: relative;
+    background-size:  38px 34px;
+    background-repeat: no-repeat;
+
+}
+
+a{
+  color: #23527C;
+
+}
+
+#work select{
+     width: 99%;
+}
+
+#industry select{
+    width: 76%;
+}
+
+.phone select{
+    width: 24%;
+}
+
+.table>tbody>tr>td{
+
+    border-top: 0px solid #ddd;
+}
+
+.table-bordered>tbody>tr>td{
+border-top: 0px solid #ddd;
+}
+
+#fee select{
+    width: 77%;
+    }
+
+.addrInput input{
+    width: 92%;
+}
+  
+
+.tooltip1 {
+     color:red;
+     font-size:12px Arial;
+}
+
+.tooltipdiv{
+    padding-top: 8px;
+    padding-right: 4px;
+    padding-left: 5px;
+    padding-bottom: 8px;
+    height: 30px;
+    z-index: 9999;
+}
+
+
+.bold{
+    font-weight: bold;
+}
+
+.alignTh{
+    font-weight: bold;
+    text-align: center;
+}
+
+@media only screen 
+and (max-width : 1662px) {
+
+background-color:red;
+font-size: 20px;
+width: 100%;
+}
+ .current input{
+  width: 52%;  
+ }
+ .city input{
+    width: 93%;
+ }
+ #tableedu tr:first-child td:last-child{
+ display: none;
+ } 
+ .formwidth1 input{
+width: 101%;
+
+ }
+  .formwidth2 input{
+width: 106%;
+ }
+.alignTh1{
+ width: 33%;
+ text-align: center;
+}
+.alignTh2{
+width: 27%;
+ text-align: center;
+}
+.alignThno{
+    
+    text-align: center;
+}
+
+.datepicker:read-only { 
+    background-color: yellow;
+}
+.alignTh8 input{
+  width: 51%
+
+  }
+
+ .filecss {
+    border: #e1e1e1 solid 1px;
+    background: white;
+  }
+
+  li {
+    display: grid;
+}
+
+.container {
+    width: 1096px;}
+
+</style>
+</head>
+<body >
+<div class="container">
+<h2 class="form-signin-heading" style="font-size: medium;">
+<h3 style="text-align:center ;font-size:29px;">Upload Application Documents</h3>
+<div style="font-weight: bold;
+font-size: 19px;    color: darkblue;">
+<label>Application ID - </label>
+<label>{{queryResult.student_application_id}}</label>
+</div>
+      <table style="    margin-top: -54px;"> 
+    <tr>
+    <td style="padding-left: 7%;width: 50%;">
+<div style="
+margin-left: 2%;">
+
+
+<form method='post' enctype="multipart/form-data" 
+action="{% url 'application_specific:student_upload_form'%}"
+>
+<h6 style="     margin-left: -5%;">Document Names with a RED asterisk are mandatory. For final upload confirmation, all mandatory documents should be submitted. Please refer the Document Upload Guidelines on the right hand side to ensure complete and correct submission of documents.</h6>
+<h6 style="     margin-left: -5%;">Please ensure the total size of all files you upload doesn't exceed 32 MB.</h6>
+<span id="error_msg" style="color:red; font-weight: bold"></span>
+   {% csrf_token %}
+   {{ studentMedUploadFormSet.non_form_errors }}
+   {{ studentMedUploadFormSet.form_errors }}
+<table class="table table-bordered table-hover" style="    margin-left: -4%;">
+
+{{ studentMedUploadFormSet.management_form }}
+ {% for form in studentMedUploadFormSet.forms %}
+ {{ form.id }}
+ <tr>
+   <td>{{form.document_name}}
+   <lable>{{form.document_name.value}}:</lable>
+   {% if form.document_name.value in mandatory_doc_type %}
+    <span style="color:red">*</span>
+   {% endif %}
+   &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>
+
+   <td >
+    {{form.file|attr:'onchange:InvalidSize(this);'}} 
+    {{form.file.errors}}
+    <span style="color:red" ></span>
+   </td>
+
+
+  <td>
+     {{form.document_id}}
+    
+   </td>
+
+  
+ </tr>
+ {% endfor %}
+</br>
+
+ </table>
+
+ </div>
+ <div style="    margin-left: 39%;    margin-top: 4%;">
+<input class="btn btn-sm btn-primary"type="submit" value="Upload Documents"/>
+
+<img id='photo' src='' style='display:none;'></img>
+
+</div>
+ </td>
+ 
+
+</br>
+</br>
+<td>
+<div style="background: whitesmoke;
+    color: darkblue;    padding-left: 8%;">
+  <h3>INSTRUCTIONS FOR UPLOADING  </h3>
+<p style="font-size: small;">Before uploading scanned copies of the mandatory supporting documents listed below, please ensure that they are complete in all respects, failing which your application will be considered as incomplete and rejected. <b>Please SELF ATTEST each document you upload using your FULL SIGNATURE. Please attest every page of the documents uploaded (Except Application Form and Photograph).</b></p><p style="font-size: small;"><b>
+For certain documents such as marksheets where multiple pages may need to be uploaded, you may scan multiple pages into a single pdf file and upload it. Alternatively, you may scan different pages as separate pdf files, then create a zip file of these pdf files and upload it as a single zip file.
+</b></p>
+<p><u>Documents to be uploaded</u></p>
+{% autoescape off%}
+  {% include e_c_g|document_path %}
+{% endautoescape %}
+</div>
+</td>
+</tr>
+
+
+
+
+
+  </table>
+ 
+
+        <div style="padding:0px"></div>
+
+    <div class="footerWrapper" style="margin-top: 95px;    
+    width: 119%;
+    margin-left: -110px;">
+
+
+<div class="cpInfoFixWrapper">
+    <div class="cpInfoFix">
+        <p class="info">
+            Admissions Office, BITS, Pilani - 333 031 (Rajasthan) India.<br>
+            Call us on: +91-80-48767777
+        </p>
+
+    </div>
+</div>
+
+
+</div>
+
+</form>
+</div>
+
+<script >
+
+$(document).ready(function () {
+  
+      $("form").on('submit',function(e) {
+        $("#error_msg").html("");
+        var total_forms = $('#id_medForm-TOTAL_FORMS').val();
+        for (var a=0; a<total_forms; a++)
+        {
+          var file = $("#id_medForm-"+a+"-file").val();
+          if (file)
+            return true;
+        }
+        $("#error_msg").html("Please upload atleast one document.");
+        return false;  
+      });
+    });
+
+function InvalidSize(file){      
+      var id = file.id.split('-')[1];
+      var filetypes = ['pdf', 'jpeg', 'jpg', 'png', 'tiff', 'tif', 'zip', 'doc', 'docx', 'DOC', 'DOCX'];
+      var imgfiletypes = ['jpeg', 'jpg' ,'JPEG' , 'JPG', 'png', 'PNG'];
+      var temp = file.value.split(".");
+      var ext = temp[temp.length - 1];
+     
+      if(file.files[0].size>10485760){
+        var req_size = bytesToSize(10485760);
+        var given_size = bytesToSize(file.files[0].size);
+        var error_message = '* Please keep file size under ';
+        error_message+=req_size;
+        error_message+='. Current file size is ';
+        error_message+=given_size;
+        $(file).siblings( "span" ).html(error_message);
+        $(file).val("");
+        return false;
+      }
+      else if($('#id_medForm-'+id+'-document_name').val().search('APPLICANT PHOTOGRAPH') != -1){
+          $(file).siblings( "span" ).html("");
+          $("#photo").fadeIn("fast").attr('src',URL.createObjectURL(file.files[0]));
+          $("#photo").attr('style','display:none');
+
+          // const range = [...Array(161 - 140)].map((_, i) => 140 + i);
+
+          setTimeout(function(){
+
+               // if(
+               //      (($.inArray($('#photo').width(), range) == -1) ||
+               //      ($.inArray($('#photo').height(), range) == -1)) || 
+               //      ($.inArray(ext, imgfiletypes) == -1)
+               //    )
+               //     {
+               //        $(file).siblings( "span" ).html("* Photo has incorrect format or size. Please read the instructions on the right to know about acceptable photo formats and size.");
+               //        $(file).val("");
+               //      }
+
+               if ($.inArray(ext, imgfiletypes) == -1){
+                    $(file).siblings( "span" ).html("* Photo has incorrect format. Please read the instructions on the right to know about acceptable photo formats.");
+                      $(file).val("");
+
+               }
+               else if(file.files[0].name.split('.')[0].length>25){
+                $(file).siblings( "span" ).html("* File Name length should be less then 25.");
+                $(file).val("");
+              }
+               else $(file).siblings( "span" ).html("");
+               }, 200);
+        }
+        
+      else if($.inArray(ext, filetypes) == -1){
+        $(file).siblings( "span" ).html("* Incorrect file formats selected for upload, please ensure that only PDF, JPEG, PNG, TIFF, ZIP and DOC are chosen for upload.");
+        $(file).val("");
+      }
+      else if(file.files[0].name.split('.')[0].length>25){
+        $(file).siblings( "span" ).html("* File Name length should be less then 25.");
+        $(file).val("");
+      }
+     else $(file).siblings( "span" ).html("");
+
+    }
+
+  function bytesToSize(bytes) {
+    var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    if (bytes == 0) return 'n/a';
+    var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+    return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
+}
+</script>
+

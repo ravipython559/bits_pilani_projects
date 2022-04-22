@@ -1,0 +1,27 @@
+{% extends 'bits_base_admin.html' %}
+{% load static %}
+{% load table_tags %}
+
+{% block title %} {{title}} {% endblock %}
+
+{% block staticContent %}
+  <link rel="stylesheet" href="/static/assets/css/jquery-ui.css">
+	<style type="text/css">
+		.margin{
+			margin: 10px;
+		}
+	</style>
+
+{% endblock %}
+
+{%block titleOfContent %} 
+    {{title}}
+{% endblock %}
+
+{% block container %}
+
+    <div class="container">
+        {% render_table table %}
+    </div>
+
+{% endblock %}

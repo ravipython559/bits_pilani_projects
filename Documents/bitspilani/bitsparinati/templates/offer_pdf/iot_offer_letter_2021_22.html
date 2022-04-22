@@ -1,0 +1,102 @@
+{% extends "easy_pdf/base.html" %}
+{% load static %}
+{% load i18n %}
+{% load widget_tweaks %}
+{% load admission_filter %}
+{% load humanize %}
+<head>
+<link href="{% static "assets/css/bootstrap.min.css" %}" rel="stylesheet">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head>
+
+
+{% block content %}
+<style>
+  table, th, td{
+    border: 1px solid black; 
+    border-collapse: collapse;
+    }
+  th{
+    text-align: left;
+    }
+  th, td{
+    padding: 2px;
+  }
+  .tableNB{
+    border: none;
+  }
+@page {
+  margin: 2cm;
+  @frame footer {
+    -pdf-frame-content: footerContent;
+    left: 450pt;
+    width: 512pt;
+    bottom: 20pt; 
+    height: 40pt;
+  }
+} 
+  </style>
+ <div style="padding-bottom:25px; text-align:right;">
+    <img src="{% static "assets/images/BIts_Logo-01.png" %}" alt="BITS Pilani logo" width=400>
+ </div>
+    <div style="clear:right;">
+    <h3 style="text-align:center;"><b><u>Final Admission Letter - Post Graduate Programme in Internet of Things</u></b></h3> 
+    </div>
+      <br>
+      <p>
+
+          Dear {{ cs.application.full_name }},<br>
+     
+      </p>
+      <p>
+
+        Congratulations! Your admission to {{ program_name }} has been confirmed.
+      </p>
+      <p>
+
+        Over the course of next 11 months,you will interact with BITS Pilani faculty to learn the latest developments in key areas of IoT such as End device development, Cloud computing, Network design & management, Application interface design & UI, and Distributed & big data management.
+
+      </p>
+      <p>
+
+        Upon successful completion of the program, you will receive a Post Graduate Certificate in Internet of Things from BITS Pilani.
+
+      </p>
+      <p>
+        To confirm your acceptance of the offer, please submit the balance fees (INR {{ cs.adm_fees|intcomma }})
+          by {{ cs.fee_payment_deadline_dt|date:'F d, Y' }}.
+      </p>
+
+       <p>
+        To pay the balance fees (INR {{ cs.adm_fees|intcomma }}), visit the <a target="_blank" href="https://wilpadmissions.bits-pilani.ac.in/">Online Application Center</a>. The online payment can be made through  PayTm, debit card, credit card or net banking. You may also submit the fee using EMIs with 0% interest.
+      </p>
+
+      <p>
+        Kindly note that your admission to this programme is conditional upon the authenticity of the information provided by you in the application form and the authenticity of the documents submitted by you during the admissions process.In case any discrepancy is found later in the documents submitted by you, the admission offer may be cancelled and your fees will be duly refunded as per the standard <a target="_blank" href="http://www.bits-pilani.ac.in/university/wilp/IotFeesStructure">cancellation and refund policy</a>.
+
+      </p>
+      <p>
+        Please note that the Institute offers a choice between taking the examination Online or taking them at a designated examination center. When the examination schedule is announced during the programme, the student will be able to choose one of these options depending on his or her own preference and circumstances. For more information, please refer to the programme brochure.
+      </p>
+
+      <p>
+      We once again welcome you to BITS Pilani Post Graduate Programme in Internet of Things.
+      <br>Should you have any queries, kindly write to <a href="mailto:admission@wilp.bits-pilani.ac.in" target="_top">admission@wilp.bits-pilani.ac.in</a> or call +91-67874600.
+      </p> 
+
+      With Best Wishes,
+      <br>
+      <img src="{% static "organization/images/oracle_dean_sign.jpg"%}" width=100 height=30>
+      <br>
+      <br>
+      Prof S. Gurunarayanan
+      <br>
+      (Dean, WILP - BITS Pilani)
+     
+      <footer>
+      <div id="footerContent">
+        <img src="{% static "assets/images/companyBranding.gif"%}" width="200" height="80" >
+      </div>
+      </footer>
+
+{% endblock %}

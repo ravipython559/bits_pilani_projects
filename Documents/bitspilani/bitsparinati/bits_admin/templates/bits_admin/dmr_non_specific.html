@@ -1,0 +1,68 @@
+{% extends 'bits_base_admin.html' %}
+{% load static %}
+
+{% block title %}DMR-DM-NonSpecific{% endblock %}
+
+{%block titleOfContent %} 
+    DMR - Daily Movement - Non-Specific Programs
+{% endblock %}
+
+{% block container %}
+<br>
+<div class="container">
+  <div class="row">
+      <center>
+        <form method="get">
+          {% csrf_token %}
+          <div class="col-md-2"></div>
+        <div class="col-md-6" id="filter">
+          <b>{{form.program.label}}:</b>{{form.program}}
+        </div>
+        <div class="col-md-1">
+          <input class="btn btn-sm btn-primary" type="submit" value="Filter">
+        </div>
+      </center>
+      
+    </div>
+    <br>
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      {% for x in data.headers %}
+        <th> {{ x }}</th>
+      {% endfor %}
+    </tr>
+  </thead>
+ 
+  <tbody>
+    {% for tr in data %}
+        <tr>
+          {% for td in tr %}
+              {% if forloop.counter == 1 %}
+                <td> {{ td }}</td>
+                  {% else %}
+                <td align="right">{{ td }}</td>
+              {% endif %}
+          {% endfor %}
+        </tr>
+      {% endfor %}
+  </tbody>
+</table>
+
+<b>Total Admissions made will be = Total Admission Acceptances with Admission Fee waiver + Total Admissions Fees Paid(without fee waiver)</b>
+<br>
+<b>Total Admissions with Admission loans and total Admissions with PayTm payments are also included in Total Admissions Fees Paid(without fee waiver)</b>
+<br>
+<b>Total Admissions with Admission Loans is equal to the Sum of all the admissions for each loan provider listed in the table</b>
+
+<div class="text-center">
+  <br>
+<form action="" method="get" > 
+      {% csrf_token %}
+      <input class="btn btn-sm btn-primary" name="report_xls" type="submit" 
+        value="Download Excel" id="xls" style="width:15%"> 
+  </form> 
+  </div> 
+</div>
+<br>
+{% endblock %}

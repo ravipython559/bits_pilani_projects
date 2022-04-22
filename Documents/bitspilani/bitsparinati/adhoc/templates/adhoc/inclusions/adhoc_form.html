@@ -1,0 +1,64 @@
+{% load static %}
+
+{% if form.non_field_errors %}
+	<div style="color:red;">
+		<strong>
+			{{ form.non_field_errors }}
+		</strong>
+	</div>
+{% endif %}
+
+
+{% for field in form %}
+	<div class="form-group">
+		
+		{{ field.label_tag }} {{ field }}
+		
+		{% if field.help_text %}
+			<p class="help" style="font-size:14px;">{{ field.help_text|safe }}</p>
+		{% endif %}
+
+		{% if field.errors %}
+			{% for error in field.errors %}
+				<div style="color:red
+		;">
+					<strong>{{ error|escape }}</strong>
+				</div>
+			{% endfor %}
+
+		{% endif %}
+	</div>
+{% endfor %}
+
+<script type="text/javascript">
+
+	if(!$('#id_email').val().length)
+		{
+			$('#id_fee_type').prop('disabled', true);
+			$('#id_program').prop('disabled', true);
+		}
+
+	function ajax_render() {
+		
+		$.get(
+			"{% url 'adhoc:adhoc-ajax-validation' %}",
+			{
+				'fee_type':$('#id_fee_type').val(),
+				'program':$('#id_program').val(),
+				'email':$('#id_email').val(),
+			}
+		).done(
+			function(data) {
+				$('#adhoc-search-form').html(data['form']);
+			}
+		);
+	}
+
+
+	$("#id_email, #id_program").change(
+		function() {
+			
+			ajax_render();
+		}
+	);
+</script>

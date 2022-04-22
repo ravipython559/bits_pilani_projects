@@ -1,0 +1,210 @@
+{% extends 'sub_reviewer/application_view.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% load admission_filter %}
+
+{% block staticContent %}
+{{ block.super }}
+	<link rel="stylesheet" type="text/css" href="{% static "assets/css/jquery.dataTables.min.css" %}">
+	<script src="{% static "assets/js/jquery.dataTables.min.js" %}"></script>
+	<script type="text/javascript">
+	var form_to_be_enabled = false;
+	$(document).ready(function(){
+		form_to_be_enabled = {% if form_to_be_enabled %}true{% else %}false{% endif %};
+		{% if form_to_be_enabled %}
+          $("#doc-form :input").prop("disabled", true);
+        {% endif %}
+
+	});
+	</script>
+{% endblock %}
+
+
+{% block nav-links %}
+	{% include 'reviewer/reviewer_nav_bar.html' %} 
+{% endblock %}
+
+{% block id_display %}
+{% endblock %}
+
+{% block container %}
+	{% include 'reviewer/reviewer_student_info.html' %}
+	<br/>
+	<form method="post" id="doc-form" action="{% url 'registrationForm:review_application_details' form.pk %}">
+		{% csrf_token %}
+		{{ doc_form.management_form }}
+
+		{{ doc_form.media }}
+		
+		<table id="example" class="table table-bordered">
+		<thead>
+		<tr>
+			<th>Document Name</th>
+			<th>Link</th>
+			<th>Reviewed and Verified?</th>
+			<th>Rejected?</th>
+			<th>Deferred for Later Submission</th>
+			<th>Rejection Reason</th>
+			<th>Exception Notes</th>
+		</tr>
+		</thead>
+
+		<tbody>
+		{% for form in doc_form %}
+				<tr>
+					<td>{{form.id}} {{form.application}} {{form.document_name}} <br><span style='color: red'></span></td>
+					<td>{{form.file_link}} <br><span style='color: red'></span></td>
+					<td>{{form.accepted_verified_by_bits_flag}} <br><span style='color: red'></span></td>
+					<td>
+						{{form.rejected_by_bits_flag}} <br><span style='color: red'></span>
+					</td>
+					<td>{{form.deffered_submission_flag}} <br><span style='color: red'></span></td>
+					<td>{{form.rejection_reason}} <br><span style='color: red'></span></td>
+					<td>{{form.exception_notes}} <br><span style='color: red'></span></td>
+				</tr>
+			{% endfor %}
+
+		</tbody>
+		
+		<tbody>
+			{% for form in document_not_submitted %}
+				<tr>
+					<td>{{form.document_type.document_name}} <br><span style='color: red'></span></td>
+					<td> <br><span style='color: red'></span></td>
+					<td><br><span style='color: red'></span></td>
+					<td> <br><span style='color: red'></span></td>
+					<td><br><span style='color: red'></span></td>
+					<td> <br><span style='color: red'></span></td>
+					<td><br><span style='color: red'></span></td>
+				<tr>
+		{% endfor %}
+		</tbody>
+
+		</table>
+		<br>
+		<div class="container">
+
+			<div class="row">
+				<div class="col-md-2">
+					<label style="vertical-align: top;">
+						{{ app_form.application_status.label }}
+					</label><br>
+					{{ app_form.application_status }}
+					<span id="id_app_form_error" style='color: red; font-weight: bold'>
+						
+					</span>
+				</div>
+				<div class="col-md-6">
+					<label style="vertical-align: top;">
+						{{ app_form.bits_rejection_reason.label }}
+					</label>
+					{{ app_form.bits_rejection_reason }}
+					<span id="id_bits_rejection_reason_error" 
+						style='color: red; font-weight: bold'>
+						
+					</span>
+				</div>
+				<div class="col-md-3">
+					<label style="vertical-align: top;">
+						{{ app_form.selection_rejection_comments.label }}
+					</label>
+					{{ app_form.selection_rejection_comments }}
+					<span id="id_selection_rejection_comments_error" 
+						style='color: red; font-weight: bold'>
+						
+					</span>
+				</div>
+			</div>
+		</div>
+		</br>
+		{% if not document_submission_flag %}
+			<center>
+				<b style="color:red">Rejection of Documents (except deferred documents)  is now Disabled as Document Submissions are not Allowed anymore for this program for current batch</b>
+			</center>
+		{% endif %}
+		<br>
+		<div class="container">
+			<div class="row">
+			
+				<div class="col-md-3">
+					 <input class="btn btn-sm btn-primary btn-block" type="button"
+						value="Update Deferred Doc Review" id="id_update_deferred" name="update_deferred" disabled>
+
+				</div>
+
+				<div class="col-md-2">
+					<input class="btn btn-sm btn-primary btn-block" type="submit" 
+						value="Update Application Status" name="Update"
+						onclick="reject_pop()">
+				</div>
+				</form>
+				{% include 'registrations/reviewer_ajax.html' with email=form.login_email.email application_status=form.application_status app_pk=form.pk shortlisted=shortlisted rejected=rejected def_check=def_check %}
+			</div>
+		</div>
+		<br/>
+		<br/>
+
+	<div class="container">
+		<div class="row">
+			<div class="col-md-offset-3 col-md-2">
+				<input class="btn btn-sm btn-primary btn-block" name="update_dob" id="id_update" 
+				type="button" value="Update Date Of Birth" 
+				onclick="document.getElementById('form_dob').submit();">
+			</div>
+
+			<div class="col-md-2">
+				<a  class="btn btn-sm btn-primary btn-block" type="button"
+					{% if form.id|stuID_exists  or  form.id|chk_max_stuID %}
+						onclick="popP()"
+					{% elif form.id|id_gen_st_check1 %}
+						href="{% url 'reviewer:man_id_gen' form.pk %}" 
+					{% else %}
+						onclick="popP()"
+					{% endif %}>
+      					Generate Student ID
+      			</a>
+  			</div>
+
+      		{% if form.login_email.email|get_preview_offer_letter %}
+          		<div class = "col-md-offset-1 col-md-2">
+              		<a class="btn btn-sm btn-primary btn-block"
+                		{% if form.login_email.email|offer_letter_assigned and form.login_email.email|pg_loc_assigned %}
+                  			href = "{% url 'registrationForm:preview-offer-letter-pdf' form.student_application_id %}" target='_blank'
+                		{% elif not form.login_email.email|offer_letter_assigned %}
+                   			onClick="off_let_pg_loc(1)"
+                		{% elif not form.login_email.email|pg_loc_assigned %}
+                   			onClick="off_let_pg_loc(2)" 
+                		{% endif %}
+                	>
+                		Preview Offer Letter
+                	</a>
+          		</div>
+    		{% endif %}
+
+    		{% if form.student_application_id|is_regen_offer_button %}
+     			<div class="col-md-offset-1 col-md-2">
+        			<a class="btn btn-sm btn-primary btn-block"
+        				{% if form.student_application_id|is_pld_record %} 
+          					href="{% url 'reviewer:rev_regen_offer' form.pk %}"
+        				{% else %}
+          					onclick="noPLD_record()"
+        				{% endif %}
+        			>
+        				Regenerate Offer Letter
+        			</a>
+      			</div>
+    		{% endif %}
+    		
+		</div>
+	</div>
+	<br>
+	{% if  is_transfer_program_admission_active_disable %}
+		    <div class="row">
+			    <div class="col-md-offset-4 col-md-4">
+		        	{% include 'inclusions/deactivate_prog_msg.html' %} 
+			    </div>		
+		    </div>
+
+	{%endif%}
+	{% include 'registrations/pop_up.html' with form_to_be_enabled=form_to_be_enabled %}
+{% endblock %}

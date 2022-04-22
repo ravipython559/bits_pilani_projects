@@ -1,0 +1,180 @@
+{% extends 'bits_BaseTemp.html' %}
+{% load static %}
+{% load i18n %}
+{% load widget_tweaks %}
+{%block titleOfContent %}
+
+{% endblock %}
+
+{% block navigationLinks %}
+	
+	<a href="{% url 'registrationForm:applicantData'%}">{% trans 'Home' %}</a> 
+	&nbsp;|&nbsp;
+	<a href="{% url 'registrationForm:applicantView'%}" TARGET="_blank">
+	{% trans 'Download Application PDF' %}</a> 
+	&nbsp;|&nbsp;
+	<a href="{% url 'registrationForm:payfee'%}" TARGET="_blank">
+	{% trans 'Download Fee Receipt' %}</a>
+	&nbsp;|&nbsp;
+	<a href="{% url 'auth_logout'%}"> {% trans 'Log out' %}</a>
+	
+{% endblock %}
+
+{% block container %}
+
+ <div class="container"> <!-- class Container starts here-->
+
+<script >
+$(function() {
+       if('{{document_submission_flag}}' == 'False'){
+				$('#upload_doc_sub').prop('disabled', true);
+			}
+		})
+  function InvalidSize(file){
+      var id = file.id.split('-')[1];
+      var filetypes = ['pdf', 'jpeg', 'jpg', 'png', 'tiff', 'tif', 'zip', 'doc', 'docx', 'DOC', 'DOCX'];
+      var imgfiletypes = ['jpeg', 'jpg','JPEG' , 'JPG', 'png', 'PNG'];
+      var temp = file.value.split(".");
+      var ext = temp[temp.length - 1];
+     
+      if(file.files[0].size>10485760){
+        var req_size = bytesToSize(10485760);
+        var given_size = bytesToSize(file.files[0].size);
+        var error_message = '* Please keep file size under ';
+        error_message+=req_size;
+        error_message+='. Current file size is ';
+        error_message+=given_size;
+        $(file).siblings( "span" ).html(error_message);
+        $(file).val("");
+        return false;
+      }
+      else if($('#id_rej_form-'+id+'-doc_type').val().search('APPLICANT PHOTOGRAPH') != -1){        
+        if($.inArray(ext, imgfiletypes) == -1){
+          $(file).siblings( "span" ).html("* Please upload only JPEG, PNG format images only.");
+          $(file).val("");
+          return false
+        }
+        else if(file.files[0].name.split('.')[0].length>25){
+	        $(file).siblings( "span" ).html("* File Name length should be less then 25.");
+	        $(file).val("");
+      	}
+      	else $(file).siblings( "span" ).html("");
+       /* else {
+          $(file).siblings( "span" ).html("");
+          $("#photo").fadeIn("fast").attr('src',URL.createObjectURL(file.files[0]));
+          $("#photo").attr('style','display:none');
+          setTimeout(function(){
+           
+           if($('#photo').width()!=150 && $('#photo').height()!=150){
+            $(file).siblings( "span" ).html("* Please upload a proper passport size photo of yours (Photo dimension should be exact 2x2 inches)");
+            $(file).val("");
+          }
+         else $(file).siblings( "span" ).html("");
+         }, 200);
+
+          
+        }*/
+      }
+      else if($.inArray(ext, filetypes) == -1){
+        $(file).siblings( "span" ).html("* Incorrect file formats selected for upload, please ensure that only PDF, JPEG, PNG, TIFF, ZIP and DOC are chosen for upload.");
+        $(file).val("");
+      }
+      else if(file.files[0].name.split('.')[0].length>25){
+        $(file).siblings( "span" ).html("* File Name length should be less then 25.");
+        $(file).val("");
+      }
+     else $(file).siblings( "span" ).html("");
+
+    }
+  function bytesToSize(bytes) {
+    var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    if (bytes == 0) return 'n/a';
+    var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+    return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
+}
+</script>
+
+	<b>
+	<h1 style="font-size: large;">
+		{% blocktrans   %}
+			Application ID - {{ app_id }}
+		{% endblocktrans %}
+	</h1>
+	</b>
+	<br/>
+	<p style="font-size: x-small;">
+		<b>
+			{% blocktrans %}
+				Please note the documents in the table below that have been rejected. Please re-submit these documents asap. Please provide all rejected documents to complete your upload
+			{% endblocktrans %}
+		</b>
+	</p>
+	<br/>
+	<center>
+	<form method='post' enctype="multipart/form-data" action="{%url 'registrationForm:reload-documentation' %}">
+		{% csrf_token %}
+		{{ RAF.non_form_errors }}
+		{{ RAF.form_errors }}
+		{{ RRF.form_errors }}
+   		{{ RRF.form_errors }}
+   		{{ RAF.management_form }}
+   		{{ RRF.management_form }}
+		<table class="table table-striped table-bordered" >
+			<tr>
+		        <th><b>{% trans 'Document Name' %}</b></th>
+		        <th><b>{% trans 'Status' %}</b></th>
+		        <th><b>{% trans 'Rejection Reason' %}</b></th>
+		        <th><b>{% trans 'Document Link' %}</b></th>
+		        <th><b>{% trans 'Upload New Document' %}</b></th>
+		    </tr>
+		    {% for form in RAF.forms %}
+		    	<tr>
+		    		<td>{{ form.doc_type.value }}</td>
+		    		<td>{{ form.status.value }}</td>
+		    		<td>{{ form.rejection_reason.value|default:'' }}</td>
+		    		<td>
+    				       <a href="{% if form.doc_link.value %}{% url 'registrationForm:document-view' form.doc_link.value %}{%else%}#{%endif%}" target="_blank">{{ form.doc_name.value }}</a>    
+		    		</td>
+		    		<td></td>
+		    	</tr>
+		    {% endfor %}
+		    {% for form in RRF.forms %}
+		    	<tr>
+		    		<td>{{ form.doc_type.value }}{{ form.doc_type }}</td>
+		    		<td>{{ form.status.value }}</td>
+		    		<td>{{ form.rejection_reason.value|default:'' }}</td>
+		    		<td>
+		    			<a href="{% if form.doc_link.value %}{% url 'registrationForm:document-view' form.doc_link.value %}{%else%}#{%endif%}" target="_blank">
+		    				{{ form.doc_name.value }}
+		    			</a>
+		    		</td>
+		    		<td>
+		    			{{form.file|attr:'onchange:InvalidSize(this);'}}
+		    			{{form.file.errors}}
+		    			{{form.doc_id}}
+					<span style="color:red" ></span>
+					{{form.x}}{{form.y}}{{form.width}}{{form.height}}{{form.rotate}}
+		    		</td>
+		    	</tr>
+		    {% endfor %}
+
+		</table>
+		 {% if not document_submission_flag %}
+			<b style="color:red">Further submission or re-submission of documents for this program has now been disabled as admissions for this program has been closed or is near closure for the current batch</b>
+		 {% endif %}<br>
+		<input type="submit" class="btn btn-sm btn-primary" value="Upload Documents" id="upload_doc_sub"/>
+
+		<img id='photo' src='' style='display:none;'></img>
+	</form>
+	</center>
+    <br>
+    <br>
+        
+
+</div> <!-- class Container ends here-->
+
+{% include 'inclusions/image_cropper.html' with formset_prefix=formset_prefix %}
+
+{% endblock %}
+
+

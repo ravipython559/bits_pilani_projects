@@ -1,0 +1,779 @@
+{% load static %}
+
+{% load widget_tweaks %}
+{% load admission_filter %}
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<link rel="stylesheet" type="text/css" href="{% static "assets/css/style.css"%}">
+<link href="{% static "assets/css/bootstrap.min.css"%}" rel="stylesheet">
+<link href="{% static "assets/css/ie10-viewport-bug-workaround.css"%}" rel="stylesheet">
+
+
+    <!-- Custom styles for this template -->
+<link rel="icon" href="{% static "assets/images/BITSFavicon.png" %}">    
+<link href="{% static "assets/css/signin.css"%}" rel="stylesheet">
+<script src="{% static "assets/js/ie-emulation-modes-warning.js"%}"></script>
+ <!--<script src="{% static "assets/js/bootstrap.min.js"%}"></script>-->
+  <script src="{% static "assets/js/jquerynew.min.js"%}"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
+  
+<script>
+
+  $(document).ready(function(){
+
+    $('.DOB').children('input').datepicker({
+        dateFormat: 'dd-mm-yy',
+        changeMonth: true,
+        changeYear: true,
+        maxDate: '-1',
+        yearRange: "1900:nn",
+        showOn: "button",
+        buttonImage: "{% static "assets/images/img-calendar-lg.gif" %}",
+        buttonImageOnly: true,
+        buttonText: "Select date",
+      });
+
+
+    {% if alert_status %}
+      $('#id_gen p').text('Offer letter generated');
+        $('#id_gen').dialog({
+        width: 500,
+        resizable:false,
+        buttons: {
+          "OK": function(){
+           $(this).dialog("close");
+           },
+        }});
+    {% endif %}
+  });
+
+  function popP() {
+  var max_stuID = {% if form.id|chk_max_stuID %}true{% else %}false{% endif %};
+  var stuID_exists = {% if form.id|stuID_exists %}true{% else %}false{% endif %};
+
+
+  if(max_stuID)
+    $('#id_gen p').text('The program ID being used for generating student ID has crossed its limit. Please define a new program ID and regenerate the student ID');
+  else if (stuID_exists)
+    $('#id_gen p').text('The student ID for this student is already generated');
+  else if( {% if form.id|status_check_student_id %}true{% else %}false{% endif %} )
+    $('#id_gen p').text('The student ID for the applicant cannot be generated. The applicant has to accept the admission offer and have an admission fee waiver OR the applicant should have paid his admission fees');
+
+
+      $('#id_gen').dialog({
+      width: 500,
+      resizable:false,
+      buttons: {
+        "OK": function(){
+         $(this).dialog("close");
+         },
+      }});
+    }
+
+    function noPLD_record(){
+      $('#id_gen p').text('All source fields are null or blank. Process aborted.');
+      $('#id_gen').dialog({
+      width: 500,
+      resizable:false,
+      buttons: {
+        "OK": function(){
+         $(this).dialog("close");
+         },
+      }});
+    }
+
+    {% include "inclusions/offer_pgl_error.html" %}
+    
+</script>
+
+
+<div class="jumbotron">
+<header>
+
+<title>BITS WILP</title>
+
+<div class="header">
+  <div class="jumbotron">
+  <div class="container-fluid">
+    <div class="row">
+      <img class="img-responsive col-md-5 " src="{% static "assets/images/BIts_Logo-01.png" %}" width="483px"  height="103px">
+      <h2 class="col-md-6 "><i>Application Centre</i></h2>
+    </div>
+  </div>
+  </div>
+  </div>
+<div>
+<img class="img-responsive navImg" src="{% static "assets/images/navUp2.png" %}">
+</div>
+
+
+<!-- Navigation section begins here... -->
+<nav class="navbar transparent navbar-default navbar-static-top hr">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" 
+        data-target="#myNavbar">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+          </div>
+         <div class="collapse navbar-collapse" id="myNavbar">
+          <ul class="nav navbar-nav navbar-right" >
+          {% if user.is_staff %}   <!-- admin navigation -->
+            {% include 'admin_nav_bar.html' %}
+          {% elif user|pr_check_in_admin %}  <!-- payment reviewer navigation -->
+            {% include 'payment_reviewer/payment_reviewer_nav_bar.html' %}
+          {% elif  user.is_staff == False%}   <!-- student navigation -->
+            {% include 'student_nav_bar.html' %}
+          {% endif %}
+          </ul>
+          </div> <!-- /.navbar-collapse -->
+      </div> <!-- /.container-fluid -->
+      <div>
+      <img class="img-responsive navImg" src="{% static "assets/images/navDown2.png" %}">
+      </div>
+  </nav>
+<!-- Navigation section ends here... -->
+
+  </header>
+
+</div>
+
+
+<style>
+.header h2 {
+    font-size: 30px;
+    font-weight: bolder;
+    color: #02024D;
+}
+
+#stuNav{
+  line-height: 40px;
+}
+
+#stuNav a{
+  font-size: 14px;
+}
+
+.navbar-nav > li > a {
+  line-height: 4px;
+}
+.required {
+    color: #e32;
+    content: ' *';
+    display:inline;
+}
+        ul {
+    list-style-type: none;
+    margin: 1px;
+padding: 3px;
+}
+
+li {
+    display: inline;
+}
+td, th {
+padding: 7px;
+}
+div#stuDiv{
+    padding: 10px;
+}
+.add-row{
+
+    padding: 8px 21px;
+    border-radius: 6px;
+    color:black;
+
+
+    background-size:  38px 34px;
+    background-repeat: no-repeat;
+    position: relative;
+    left: 1%;
+}
+.delete-row{
+
+    padding: 8px 21px;
+    border-radius: 6px;
+    color:black;
+    
+    position: relative;
+   
+    background-size:  38px 34px;
+    background-repeat: no-repeat;
+
+}
+
+
+#work select{
+     width: 99%;
+
+}
+#industry select{
+    width: 76%;
+}
+.phone select{
+    width: 24%;
+}
+
+.table>tbody>tr>td{
+
+    border-top: 0px solid #ddd;
+}
+.table-bordered>tbody>tr>td{
+border-top: 0px solid #ddd;
+}
+#fee select{
+    width: 77%;
+    }
+  
+.addrInput input{
+    width: 92%;
+}
+  
+
+.bold{
+    font-weight: bold;
+}
+
+.alignTh{
+    font-weight: bold;
+    text-align: center;
+}
+
+
+ .current input{
+  width: 99%;  
+ }
+ .city input{
+    width: 93%;
+ }
+ .navbar-default .navbar-nav > li > a {
+    color: #337ab7;
+    font-size: 14px;
+}
+
+
+</style>
+</head>
+<body >
+
+
+
+<h3 style="text-align: center;color: rgb(12, 12, 112);">
+{{form.program.form_title}}
+  </h3>
+
+
+
+<div style="text-align:right ; font-size:14px;">
+
+  {% if form.login_email.email|get_admission_reviewer_offer_letter and user.is_staff %}
+
+    <a 
+      href ="{% url 'registrationForm:offer_reviewer_redirect' form.student_application_id %}" target='_blank'>
+      <u>Download Offer Letter</u>
+    </a>
+  {% endif %}
+</div>
+
+
+<div id="stuDiv">
+<div>
+
+</br>
+
+ 
+<div class="row" >
+  <div class="col-md-4" style="color:#D2691E; font-size:16px;">
+    <b><label>Application ID :</label>   
+      &nbsp&nbsp{{form.student_application_id}}</b>
+  </div>
+
+  {% if form.login_email.email|get_preview_offer_letter and user.is_staff %}
+  <div class="col-md-offset-3 col-md-5 text-right" style="font-size:14px;">
+    <a 
+      {% if form.login_email.email|offer_letter_assigned and form.login_email.email|pg_loc_assigned %} 
+        href = "{% url 'registrationForm:preview-offer-letter-pdf' form.student_application_id %}" target='_blank'
+      {% elif not form.login_email.email|offer_letter_assigned %}
+        href ="#" onClick="off_let_pg_loc(1)"
+      {% elif not form.login_email.email|pg_loc_assigned %}
+        href ="#" onClick="off_let_pg_loc(2)" 
+      {% endif %}
+      >
+      <u>Offer Letter preview (not yet released to student)</u>
+    </a>
+  </div>
+  {% elif form.id|stuID_exists %}
+  <div class="col-md-offset-5 col-md-3 text-right" style="color:#D2691E; font-size:16px;">
+    <b><label>Student ID :</label>
+    &nbsp&nbsp{% get_stu_id form.login_email.email %}</b>
+  </div>
+  {% endif %}
+</div>
+<form method="post" action="{% url 'bits_admin:admin-application-views' form.id %}">
+{% csrf_token %}
+    <table class="table table-bordered table-hover">
+      <div class="divInfoBlock">&nbsp;<span class="glyphicon glyphicon-star"></span> Personal Details</div>
+      </br>
+      <tr>
+        <td class="bold">Full Name (name as per your degree certificate)<p class="required"> *</p></td>
+        <td colspan='5'>{{form.full_name}}</td>
+      </tr>
+
+      <tr>
+        <td class="bold">Date of birth<p class="required"> *</p></td>
+        {% if user.is_staff %}
+        <td class="DOB">{{form1.date_of_birth}}
+        <span style="color:red; font-weight:bold">{{form1.date_of_birth.errors|striptags}}</span>
+        </td>
+
+        {% else %}
+        <td class="DOB">{{form.date_of_birth|date:'d-m-Y'}}</td>
+        {% endif %}        
+        <td class="bold">Gender<p class="required"> *</p></td>
+        <td>{{form.get_gender_display}}</td>
+        <td class="bold">Nationality<p class="required"> *</p></td>
+        <td>{{form.get_nationality_display}}</td>
+      </tr>
+
+      <tr>
+        <td class="bold">Father's Name<p class="required"> *</p></td>
+        <td>{{form.fathers_name}}</td>
+        <td class="bold">Mother's Name<p class="required"> *</p></td>
+        <td colspan="3" >{{form.mothers_name}}</td>
+      </tr>
+    </table>
+    
+
+
+            <table class="table table-bordered table-hover" >
+                <tr>
+                    <td class="col-md-1 bold" style="width:6.5%" > Applying for Programme <p class="required"> *</p></td>
+                    <td class="col-md-2" id="appProgram" >{{form.program.program_name}}</td>
+                    <td class="col-md-1 bold" style="width:6.5%" >Location <p class="required"> *</p> </td><td class="col-md-2" id="curentLocation">{{form.current_location}}</td>
+                </tr>
+            </table>
+
+            {% if 'teaching_mode' in teaching_mode_check %}
+            <table class="table table-bordered table-hover" >
+                <tr>
+                    <td class="col-md-1 bold" style="width:6.5%" > Teaching mode <p class="required"> *</p></td>
+                    <td class="col-md-2" id="teachingMode" >{{form.teaching_mode|default:'-'}}</td>
+                </tr>
+
+            </table>
+            {% endif %}
+
+            <table class="table table-bordered table-hover">
+            <tr>
+                <td class="bold" nowrap>Address line 1<p class="required"> *</p> </td><td class="addrInput">{{form.address_line_1}}</td>
+                <td nowrap>Address line 2</td><td class="addrInput">{{form.address_line_2}}</td>
+                <td nowrap>Address line 3</td><td colspan="3" class="addrInput">{{form.address_line_3}}</td>
+            </tr>
+            <tr>
+ <td class="bold">City<p class="required"> *</p> </td><td class="city">{{form.city}}</td>
+ <td class="bold">Pin Code<p class="required"> *</p></td> <td>{{form.pin_code|default:'-'}}</td>
+ <td class="bold">State<p class="required"> *</p> </td><td>{{form.get_state_display}}</td>
+ <td class="bold">Country<p class="required"> *</p> </td><td>{{form.get_country_display}}</td>
+            </tr>
+
+            <tr>
+            <td class="bold">Phone<p class="required"> *</p> </td><td class="col-md-3" id="phoneId">{{form.phone}}</td>
+            <td class="bold">Mobile<p class="required"> *</p> </td><td class="col-md-3" id="mobileId">{{form.mobile}}</td>
+            <td class="bold">Email ID<p class="required"> *</p> </td>
+            <td colspan="3" class="city">{{form.email_id}}</td>
+            </tr>
+
+            {% if 'alternate_email_id' in teaching_mode_check %}
+                <tr>
+                    <td class="bold" style="width:35%" >Alternate Email ID<p class="required"> *</p></td>
+                    <td id="altEmail" >{{form.alternate_email_id|default:'-'}}</td>
+                </tr>
+            {% endif %}
+            
+            </table>
+
+
+                <table class="table table-bordered table-hover">
+                </br>
+                <div class="divInfoBlock">&nbsp;<span class="glyphicon glyphicon-star"></span> Current Employment Details
+
+
+    </div>
+</br>
+</br>
+                    <tr>
+                    <td  class="col-md-2 bold">Current Employment Status<p class="required"> *</p> </td><td class="col-md-2" >{{form.get_current_employment_status_display}}</td>
+                    <td class="col-md-2 bold">Current Organization<p class="required"> *</p> </td><td>{{form.current_organization|default:''}}</td></tr>
+                    <tr>
+                    {% if is_specific %}
+                      <td class="bold">Current Employee Number <p class="required"> *</p></td>
+                    {% else %}
+                      <td >Current Employee Number </td>
+                    {% endif %}
+                      <td class="current">{{form.current_org_employee_number|default:''}}</td>
+                        <td class="bold">Current Designation <p class="required"> *</p> </td><td>{{form.current_designation|default:''}}</td></tr><tr>
+                        <td class="bold">Current Work Location <p class="required"> *</p> </td><td id="work">{{form.work_location|default:''}}</td>
+                        <td class="bold">Current Industry <p class="required"> *</p> </td><td id="industry"style="width: 99%;">{{form.current_org_industry|default:''}}</td></tr>
+
+
+            <tr>
+                <td class="bold">Date of Joining Current Organization <p class="required"> *</p> </td><td class="current">
+                  {% if form.login_email.email|get_certificate_payfee_text %}
+                     -----
+                  {% else %}
+                    {{form.current_org_employment_date|date:'d-m-Y'}}
+                  {% endif %}
+                </td>
+                <td id="fee" class="bold">Fee Payment Entity <p class="required"> *</p> </td><td>{{form.get_fee_payment_owner_display}}</td>
+            </tr>
+            <tr>
+              <td class="bold">Total Work Experience<p class="required"> *</p> 
+              </td><td class="current">
+            {% if form.login_email.email|get_certificate_payfee_text %}
+                    {{ form.total_work_experience_in_months }} Years
+            {% else %}           
+                    {% display_y_m_d form.login_email.email %}      
+            {% endif %}
+              </td>
+            </tr>
+            <tr>
+                <td colspan="6">
+                    <table>
+                      <tr>
+                         
+                            <td> <input type="checkbox" value="{{form.employer_mentor_flag}}" disabled 
+
+                                    {% if form.employer_mentor_flag %}
+                                          checked
+                                    {% endif %}/> 
+                            </td>
+                            <td class="bold">I confirm that I will be able to find a mentor before the programme begins.
+                            </td>
+                        </tr>
+                      <tr>
+                          <td> <input type="checkbox" value="{{form.employer_consent_flag}}" disabled
+                          {% if form.employer_consent_flag %}
+                              checked
+                          {% endif %}/> 
+                          </td>
+                          <td class="bold" style="padding-left: 0px;">I confirm that my employing organization will give consent for me to enroll for this programme.  </td>
+                      </tr>
+                    </table>
+                </td>
+            </tr>
+
+            </table>
+
+            </tr>
+            </table>
+
+<div class="divInfoBlock">&nbsp;<span class="glyphicon glyphicon-star"></span> Prior Employment Details
+
+
+    </div>
+
+<br/>
+            <div>
+            <div>
+
+             
+             <div >
+                 <div style="margin-left: 0px; ">
+                     <table class="table table-bordered table-hover">
+                        <thead>
+                         <tr>
+                             <th class="alignTh" style="width: 17%;"> Organization </th>
+                             <th class="alignTh" style="width: 17%;">Designation Held </th>        
+                             <th class="alignTh" style="width: 17%;">Start Date  </th>
+                             <th class="alignTh" style="width: 17%;">End Date  </th>
+                         </tr></thead>
+
+                        {% for x in edu1 %}
+                         <tr >
+
+                             <td style="width: 17%;">{{x.organization}}</td>
+                             <td style="width: 17%;">{{x.designations}}</td>        
+                             <td style="width: 17%;">{{x.start_date|date:'d-m-Y'}}</td>
+                             <td style="width: 17%;">{{x.end_date|date:'d-m-Y'}}</td>
+                        </tr>
+                         {% endfor %}
+                     </table>
+
+                </div>
+
+            </div>
+                   
+
+              </div>
+            </div>
+
+</br>
+                        <div class="divInfoBlock">&nbsp;
+<span class="glyphicon glyphicon-star"></span>
+                            Education Details
+
+
+    </div>
+
+</br>
+        <div>
+        <div style="overflow-x: auto;">
+
+        
+         <div  >
+
+
+                    <table class="table table-bordered table-hover" id="tableedu">
+
+<thead>
+<tr>
+    <th class="alignTh" style="width: 16%;">Qualification Level<p class="required"> *</p></th>
+      <th class="alignTh" style="width: 17%;">Degree<p class="required"> *</p></th>
+      <th class="alignTh" style="width: 15%;">Board/University<p class="required"> *</p></th>
+      <th class="alignTh" style="width: 8%;">Duration<p class="required"> *</p></th>
+      <th class="alignTh" style="width: 24%;">Discipline<p class="required"> *</p></th>
+      <th class="alignTh" style="width: 6%;">Year of Passing<p class="required"> *</p></th>
+      <th class="alignTh" style="width: 6%;">% Marks / CGPA<p class="required"> *</p></th>
+      <th class="alignTh" style="width: 8%;">Division<p class="required"> *</p></th>       
+    </tr>
+
+</thead>
+ {% for y in qual1 %}
+     <tr>
+           <td>
+                 {{y.degree.qualification_category}}
+           </td>
+
+             <td id="degree" style="width: 15px;" >
+
+
+{% if y.degree.degree_long_name == 'Others' %}
+   {{ y.other_degree }}
+  {% else %}
+   {{y.degree}}
+{% endif %}
+
+</td>
+      <td style="width: 15px;">{{y.school_college}}</td>
+      <td style="width: 7px;">{{y.get_duration_display}}</td>
+     
+       <td style="width: 28px;" id="discipline">
+
+
+{% if y.discipline.discipline_long_name == 'Others' %}
+   {{ y.other_discipline }}
+  {% else %}
+   {{y.discipline}}
+  {% endif %}
+
+</td> 
+        <td id="hi12" style="width: 4px;">{{y.completion_year}}</td>
+          <td style="width: 5px;">{{y.percentage_marks_cgpa}}</td>
+            <td style="width: 7px;">{{y.get_division_display}}</td>
+            
+
+    </tr>
+  {% endfor %}
+
+                                 </table>
+
+                    </div>
+              
+
+          </div>
+        </div>
+
+<table class="table table-bordered table-hover">
+    {% if 'programming_flag' in teaching_mode_check %}
+      <tr>
+          <td class="bold" style="width:35%" > Do you have working knowledge of ANY programming language <p class="required"> *</p></td>
+          <td id="progFlag" >{{form.get_programming_flag_display|default:'-'}}</td>
+      </tr>
+    {% endif %}
+    <tr>
+        <td class="bold">Level of Studies in Mathematics <p class="required"> *</p> </td>
+        <td>{{form.get_math_proficiency_level_display}}</td>
+    </tr>
+    <tr>
+        <td class="bold">Are you a past student of Bits Pilani <p class="required"> *</p> </td>
+        <td>{{form.get_prior_student_flag_display}}</td>
+        
+    </tr>
+    <tr>
+      <td>BITS ID Number (if past student)  </td>
+        <td>{{form.bits_student_id}}</td>
+    </tr>
+</table>
+
+<table class="table table-bordered table-hover">
+    <tr>
+     
+       
+        <td class="bold">Are you currently pursuing studies in any other university or college<p class="required"> *</p> </td>
+
+ </td>
+<td>{{form.get_parallel_studies_flag_display}}</td>
+        
+
+        
+
+    </tr>
+</table>
+
+{% if form.login_email.email|get_rej_reason_sel_comments %}
+<table class="table table-bordered table-hover">
+    <tr>  
+        <td width="30%">BITS Rejection Reason</td>
+        <td width="70%">{{bits_rej_reason}}</td>    
+    </tr>
+    <tr>  
+        <td width="30%">BITS Selection / Rejection Comments</td>
+        <td width="70%">{{bits_comment}}</td>    
+    </tr>
+</table>
+{% endif %}
+
+
+
+  </div>
+</div>
+
+</div>
+
+<div class="divInfoBlock">&nbsp;<span class="glyphicon glyphicon-star"></span> Uploaded Documents
+
+
+    </div>
+
+<br/>
+<table class="table table-bordered table-hover" style="    margin-left: 7px;width:98%">
+  
+  {% for x in uploadFiles %}
+  <tr>
+    <td>
+    {{x.document}}
+      
+    </td>
+
+    <td>
+
+    <a href="{% if x.file %}{% url 'registrationForm:document-view' x.pk %}{% else %}#{% endif%}" TARGET="_blank">{{x}}</a>
+
+      
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+
+<br>
+{% if user.is_staff and not is_pre_sel_rej %}
+
+<style type="text/css">
+    .button-div{
+      margin:0 10px;
+    }
+    .buttons-div{
+      display:flex;
+      justify-content: center;
+    }
+    
+  </style>
+
+<div class="buttons-div">
+  <div class="button-div">
+      <input class="btn btn-sm btn-primary" name="update" id="id_update" 
+          type="submit" value="Update" >
+  </div>
+
+  <div class="button-div">
+    <a class="btn btn-sm btn-primary" 
+    {% if form.id|stuID_exists or  form.id|chk_max_stuID %}
+     onclick="popP()"
+    {% elif form.id|id_gen_st_check1 %}
+     href="{% url 'bits_admin:adm_man_id_gen' form.id %}" 
+    {% else %}
+      onclick="popP()"
+    {% endif %}>
+    Generate Student ID</a>
+  </div>
+
+  {% if form.student_application_id|is_regen_offer_button %}
+    <div class="button-div">
+      <a class="btn btn-sm btn-primary"
+      {% if form.student_application_id|is_pld_record %} 
+        href="{% url 'bits_admin:adm_regen_offer' form.id %}"
+      {% else %}
+        onclick="noPLD_record();"
+      {% endif %}
+      >Regenerate Offer Letter</a>
+    </div>
+  {% endif %}
+</div>
+
+<br>
+
+<center>
+  {% if form.id|is_pre_sel_rej_button %}
+  <div class="buttons-div">
+    
+    <div class="button-div">
+      <a 
+        class="btn btn-primary btn-sm" 
+        type="submit"
+        onclick="show_alert('#dialogPreS','#dialogSelMailSent','SHORT');"
+        style="width:400px;">
+        Pre-Select Candidate for Payment of Application / Booking Fees
+      </a>
+    </div>
+
+    <div class="button-div">
+      <a 
+        class="btn btn-primary btn-sm" 
+        type="submit"
+        onclick="show_alert('#dialogPreR','#dialogRejMailError','REJ');"
+        style="width:400px;white-space: normal;">
+        Reject Candidate Submission
+      </a>
+    </div>
+  </div>
+  {% endif %}
+</center>
+
+{% endif %}
+</form>
+<br>
+
+<div style= "display:none;" id="id_gen" >
+  <p style= "font-size:17px;" ></p>
+</div>
+
+
+
+
+<div style="margin-left: 16px;
+">
+
+
+</div>
+
+    <p></p>
+    <div style="padding:0px">
+        <div style="padding:0px"></div>
+    <div class="footerWrapper" style="margin-top: 95px;">
+
+
+<div class="cpInfoFixWrapper">
+    <div class="cpInfoFix">
+        <p class="info">
+            Admissions Office, BITS, Pilani - 333 031 (Rajasthan) India.<br>
+            For Assistance Call +91-80-48767777</p>
+
+    </div>
+    
+</div>
+{% include 'registrations/pre_select_rej.html'%}

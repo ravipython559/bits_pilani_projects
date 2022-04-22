@@ -1,0 +1,151 @@
+# Project dependency in ubuntu
+1.Update
+ a. sudo apt-get update
+
+2.MySQL
+ a. sudo apt-get install mysql-server
+ b. sudo mysql_secure_installation
+ c. sudo apt-get install libmysqlclient-dev
+
+3.Pillow Dependencies
+ a. sudo apt-get install python-dev
+ b. sudo apt-get install libtiff5-dev libjpeg8-dev zlib1g-dev libfreetype6-dev liblcms2-dev libwebp-dev tcl8.6-dev tk8.6-dev python-tk
+ 
+4.Git
+ a. sudo apt-get install git
+
+5.Virtualenv
+ a. sudo apt-get install virtualenv
+ b. virtualenv ac
+ 
+6.Git configuration
+ a. git config --global user.name "<username>"
+ b. git config --global user.email "<email>"
+ 
+7.Development setup
+ a. cd ac   #ac is a virtualenv refer point 5
+ b. source bin/activate
+ c. git clone git@gitlab.com:bits-pilani/bitsparinati.git
+ d. cd bitsparinati
+
+8.Local settings
+ a. mkdir logs
+ b. touch bits/local_settings.py
+ c. copy/paste the content given in LOCAL_SETTING point below
+ d. touch bits/local_storage.py
+ e. copy/paste the content given in LOCAL_STORAGE point below
+ f. pip install -U pip setuptools
+ f. pip install -r requirements.txt
+ g. python manage.py collectstatic
+ h. python manage.py runserver
+
+
+#----------------------------------------------------------------------------------------------------------------------------------------#
+#					         **---  LOCAL_SETTING  ---**
+#----------------------------------------------------------------------------------------------------------------------------------------#
+####          LOCAL_SETTING start         ####
+
+import os
+from pytz import timezone as indiantime
+
+# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+DEBUG = True
+SECURE_SSL_REDIRECT = False
+ALLOWED_HOSTS = []
+SECURE_PROXY_SSL_HEADER = None
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False
+
+
+SILENCED_SYSTEM_CHECKS = [
+    'django_mysql.W001',
+]
+
+DEFAULT_FILE_STORAGE = 'bits.bits_storage.MediaStorage'
+STATICFILES_STORAGE = 'bits.bits_storage.StaticStorage'
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'bits_aws',
+        'USER': 'bits_2',
+        'PASSWORD': 'bits_2',
+        # 'HOST': '192.168.1.67',#'210.212.180.164',
+        # Or an IP Address that your DB is hosted on
+        'HOST': '210.212.180.164',
+        'PORT': '3306',
+    }
+}
+
+
+PROJECT_DIR = os.path.dirname(BASE_DIR)
+STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')
+STATIC_URL = '/static/'
+MEDIA_URL = '/media/'
+STATICFILES_DIRS = (os.path.join(BASE_DIR, "bits/static"), )
+MEDIA_ROOT = os.path.join(PROJECT_DIR, 'bits/media/')
+
+PAYMENT_HOST = 'http://localhost:8080'
+PAYMENT_FUNCT = '/PaymentIntegrationKit/rest/integration/'
+PAYMENT_URL = PAYMENT_HOST + PAYMENT_FUNCT + 'getNewTxn'
+PAYMENT_RESPONSE_URL = PAYMENT_HOST + PAYMENT_FUNCT + 'returnTxnDtls'
+
+
+ORACLE_AMOUNT = 15000
+ADMISSION_FEES = 15000
+
+CELERY_RESULT_BACKEND = 'django-db'
+
+BROKER_URL = 'redis://localhost:6379/0'
+
+CELERY_TIMEZONE = indiantime('Asia/Kolkata').zone
+CELERY_ACCEPT_CONTENT = ['pickle', 'json', 'msgpack', 'yaml']
+CELERY_TASK_SERIALIZER = 'pickle'
+CELERY_RESULT_SERIALIZER = 'pickle'
+CELERY_IMPORTS=("bits_admin.task")
+CELERY_IGNORE_RESULT = False
+
+####          LOCAL_SETTING end         ####
+#----------------------------------------------------  END  -----------------------------------------------------------------------#
+
+#-------------------------------------------$$$$$$$$$$$$$$$$$$$$$$$$$--------------------------------------------------------------#
+#-------------------------------------------$$$$$$$$$$$$$$$$$$$$$$$$$--------------------------------------------------------------#
+
+#----------------------------------------------------------------------------------------------------------------------------------#
+#                                                  *---  LOCAL_STORAGE ---*                                                        #
+#----------------------------------------------------------------------------------------------------------------------------------#
+
+####          LOCAL_STORAGE start         ####
+
+from django.core.files.storage import FileSystemStorage
+from django.contrib.staticfiles.storage import StaticFilesStorage
+import io
+import os
+
+class StaticStorage(StaticFilesStorage):
+    location = 'static'
+
+class MediaStorage(FileSystemStorage):
+    location = 'media'
+
+
+def document_extract_file(ad):
+    file = os.path.join(settings.MEDIA_ROOT, ad.file.name)
+
+    with open(file, mode='r+b') as f:
+        temp_file = io.BytesIO(f.read())
+    return temp_file
+
+def document_offer_file(cs):
+    file = os.path.join(settings.MEDIA_ROOT, cs.offer_letter.name)
+    
+    with open(file, mode='r+b') as f:
+        temp_file = io.BytesIO(f.read())
+    return temp_file
+
+####          LOCAL_STORAGE end         ####
+
+#-------------------------------------------------------    END   ------------------------------------------------------------------#
+test

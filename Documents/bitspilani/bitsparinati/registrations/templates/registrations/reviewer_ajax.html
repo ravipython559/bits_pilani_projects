@@ -1,0 +1,90 @@
+{% load static %}
+{% load admission_filter %}
+<script type="text/javascript">
+
+function show_alert_dialog()
+{
+	$.post( "{% url 'registrationForm:send_confirmation_email' %}",
+	{
+		'app_id':{{app_pk}},
+		'do_status':'{%if application_status == shortlisted %}SHORT{%elif application_status == rejected %}REJ{%endif%}',
+		'csrfmiddlewaretoken':'{{ csrf_token }}',
+	}).done(function(data) 
+	{
+		if (data["bits_success"] == 200)
+		{
+			$( "#dialogMailSent" ).dialog({
+				close:function(event,ui){
+					{% if def_check %}
+						window.location.href="{% url 'reviewer:deferred_application_details' app_pk %}";
+					{% endif %}
+					
+				},
+			});
+			$("#doc-form :input").prop("disabled", true);
+
+		}
+		else $( "#dialogMailError" ).dialog();
+	}).fail(function(data) 
+	{
+		$( "#dialogMailError" ).dialog();
+	});
+}
+
+function show_alert(dialogue_warn, dialogue, status) 
+{
+	$(dialogue_warn).dialog({
+		modal: true,
+		width: 500,
+		buttons: {
+			"Yes": function(){
+				if ('{{application_status}}'==status) show_alert_dialog();
+				else
+					$(dialogue).dialog({
+						modal: true, 
+						width:500,
+						buttons:{ 
+							"OK":function(){ $(this).dialog("close"); } 
+						}
+					});
+				
+				$(this).dialog("close");
+			},
+			"Cancel": function(){ $(this).dialog("close"); }
+		}
+	});
+}
+
+</script>
+
+
+<div class="col-md-2">
+	<input class="btn btn-sm btn-primary btn-block" type="button"  
+		value="Send Shortlisting Email" 
+		id="validateForm2"
+			
+		{% if is_transfer_program_admission_active_disable %}
+			disabled
+		{% else %}
+			{% if email|offer_letter_assigned and email|pg_loc_assigned %}
+					onclick="show_alert('#dialogS','#dialogShort', '{{shortlisted}}');"
+			{% elif not email|offer_letter_assigned %}
+					onClick="off_let_pg_loc(1)"
+			{% elif not email|pg_loc_assigned %}
+					onClick="off_let_pg_loc(2)" 
+			{% endif %}
+		{% endif %}
+	>
+</div>
+<div class="col-md-offset-1 col-md-2">
+	<input class="btn btn-sm btn-primary btn-block" 
+		type="button"  
+		value="Send Rejection email" id="validateForm3"
+		{% if is_admission_inactive %}
+			disabled
+		{% else %}
+			onclick="show_alert('#dialogR','#dialogRej', '{{rejected}}');"
+		{% endif %}
+
+	>
+</div>

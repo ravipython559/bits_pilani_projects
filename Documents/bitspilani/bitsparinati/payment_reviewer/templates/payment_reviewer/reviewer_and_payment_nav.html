@@ -1,0 +1,65 @@
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" 
+  aria-expanded="false">Manage User and Applicant Data
+  <span class="caret"></span></a>
+  <ul class="dropdown-menu dropdown-menu-right" role="menu">
+    <li><a href="{% url 'registrationForm:review-applicant-data' %}">
+    Applicant List for Review</a></li>
+    <li><a href="{% url 'reviewer:sh-rej-list'%}">
+    Review Shortlisted and Rejected Candidates</a></li>
+    <li><a href="{% url 'registrationForm:review-applicant-list' %}">
+    Send Shortlist/Rejection Mail</a></li>
+    <li><a href="{% url 'reviewer:prog-change-list' %}">
+    Change Program Selection</a></li>
+    <li><a href="{% url 'reviewer:esc-applicant'%}">
+    Escalated Applications</a></li>
+    <li><a href="{% url 'reviewer:name-change-list' %}">
+    View Newly Admitted Students</a></li>
+  </ul>
+</li>
+
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" 
+  aria-expanded="false">Manage Payment Data<span class="caret"></span></a>
+  <ul class="dropdown-menu dropdown-menu-left" role="menu">
+    <li><a href="">Download Payment Data</a></li>
+    <li><a href="{% url 'payment_reviewer:upload-manual-payments-home' %}">Upload Manual Payment File</a></li>
+    <li><a href="{% url 'payment_reviewer:upload-gateway-payments-home' %}">
+    Upload Payment Gateway File</a></li>
+    <li><a href="{% url 'payment_reviewer:reconcile-manual-payments' %}">
+    Reconcile Manual Payment Uploads</a></li>
+    <li><a href="{% url 'payment_reviewer:reconcile-gateway-payments' %}">Reconcile Gateway Payment Uploads</a></li> 
+    <li><a href="{% url 'payment_reviewer:hist-manual-payments-home' %}">View Historical Manual Gateway Data</a></li>
+    <li><a href="{% url 'payment_reviewer:hist-gateway-payments-home' %}">View Historical Payment Gateway Data</a></li>
+  </ul>
+</li>
+
+
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" 
+  aria-expanded="false">Reports
+  <span class="caret"></span></a>
+  <ul class="dropdown-menu dropdown-menu-right" role="menu">
+    <li><a href="{% url 'reviewer:dmr-non-spec'%}">
+    DMR Report - Program wise - NonSpecific Programs</a></li>
+    <li><a href="{% url 'reviewer:dmr-daily-non-spec'%}">
+    DMR Report - Daily Movement - NonSpecific Programs</a></li>
+    <li><a href="{% url 'reviewer:dmr-daily-cluster'%}">
+    DMR Report - Daily Movement - Cluster Programs</a></li>
+    <li><a href="{% url 'reviewer:dmr-daily-certification'%}">
+      DMR Report - Daily Movement - Certification Programs</a>
+    </li>
+    <li><a href="{% url 'reviewer:dmr-daily-specific'%}">
+      DMR Report - Daily Movement - Specific Programs</a>
+    </li>
+    <li><a href="{% url 'reviewer:dmr-spec-cluster'%}">
+    DMR Report Specific & Cluster Programs</a></li>
+    <li><a href="">Program Summary Reports</a></li>
+    <li><a href="{% url 'reviewer:milestone-report'%}">Milestones Date Reports</a></li>
+    <li><a href="{% url 'reviewer:waiver-report'%}">Fee Waiver Reports</a></li>
+  </ul>
+</li>
+
+<li class="dropdown">
+  <a href="{% url 'auth_logout'%}">Logout</a>
+</li>

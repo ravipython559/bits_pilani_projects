@@ -1,0 +1,70 @@
+{% extends "easy_pdf/base.html" %}
+{% block content %}
+<style type="text/css">
+.label{
+	font-size: 14px;
+	font-weight: bold;
+}
+table {
+    border-collapse: collapse;
+    font-family: "Times New Roman", Times, serif;
+}
+
+table, th, td {
+    border: 1px solid black;
+
+}
+</style>
+<div  id="content">
+<h3 style="text-align: center;font-size:15px">Application form for Admission to MS/M Tech Degree Programmes</h3>
+<!-- <table >
+    <thead>
+	<tr>
+				<td><h2>Personal Details</h2></td>
+	</tr>
+        <tr>
+				<td class="label">First Name</td>
+				<td class="label" >Middle Name</td>
+				<td class="label" >Last Name</td>
+				<td class="label">Date of Birth</td>
+			</tr>
+    </thead>
+    <tbody>
+       
+
+    {% for element1 in book_list %}
+        <tr>
+            
+            <td> {{element1.application_id}}</td>
+            <td> {{element1.fullname}}</td>
+            <td> {{element1.created_on_datetime}}</td>
+            <td> {{element1.current_location}}</td>
+            
+            
+            
+           
+        </tr>
+    {% endfor %}
+ 
+    </tbody>
+</table> -->
+{% for eleme in size %}
+<table>
+  <TH COLSPAN=2 style="text-align: center;font-size:15px">Production</TH> </TR>
+ {% for element1 in book_list %}
+  <tr> 
+    <td COLSPAN=2>Name:{{element1.application_id}}</td>
+    
+  </tr>
+  <tr>
+    <td>Date of birth:{{element1.date_of_birth}}</td>
+   
+  </tr>
+  {% endfor %}
+</table>
+ {% endfor %}
+
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,136 @@
+{% extends 'payment_reviewer/bits_base_payment_reviewer.html' %}
+{% load admission_filter %}
+{% load table_tags %}
+{% load i18n %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}Payment Data View{% endblock %}
+
+{% block staticContent %}
+  <link rel="stylesheet" href="/static/assets/css/jquery-ui.css">
+  <script src="/static/assets/js/jquery-ui.js"></script>
+  <script src="/static/assets/js/datepicker.js"></script>
+
+  <script type="text/javascript">
+    $(document).ready(function(){
+    $("#csv").click(function(){
+        var search=$('.dataTables_filter input').val()
+         
+         var to_date=$("#id_to_date").val();
+         var from_date=$("#id_from_date").val();
+         var bank_name =$("#id_bank_type").val();
+         $("#dt_search").val(search);
+         $("#fromDate").val(from_date);
+         $("#toDate").val(to_date);
+         $("#bank").val(bank_name);
+        });
+        $("#id_from_date").datepicker({
+            dateFormat: "dd-mm-yy",
+                  numberOfMonths: 1,
+                  changeMonth: true,
+                  changeYear: true,
+                  showOn: "button",
+                   maxDate: '0',
+        buttonImage: "{% static "assets/images/img-calendar-lg.gif" %}",
+        buttonImageOnly: true,
+          buttonText: "Select date",
+              onSelect: function(selected) {
+                    $("#id_to_date").datepicker("option","minDate", selected);
+                  }
+              });
+
+      $("#id_to_date").datepicker({
+          dateFormat: "dd-mm-yy",
+              numberOfMonths: 1,
+              changeMonth: true,maxDate: '0',
+              changeYear: true,showOn: "button",
+        buttonImage: "{% static "assets/images/img-calendar-lg.gif" %}",
+        buttonImageOnly: true,
+          buttonText: "Select date",
+              onSelect: function(selected) {
+                 $("#id_from_date").datepicker("option","maxDate", selected);
+
+              }
+          }); 
+  });
+
+  $( "#myform" ).validate({
+    rules: {
+      from_date: {
+        required: true,
+        date: true
+      },
+      to_date: {
+        required: true,
+        date: true
+      }
+    }
+  });
+  </script>  
+  <style type="text/css">
+    .form-inline .input-group > .form-control
+    {
+       width:155%;
+       
+    }
+     @supports (-moz-appearance:none) {
+    .form-inline .input-group > .form-control
+    {
+      
+       width:185%;
+       
+    }
+}
+    .input-group{
+      right:120px;
+    }
+  
+  </style> 
+{% endblock %}
+
+{%block titleOfContent %} 
+  Payment Data View 
+{% endblock %}
+
+{% block container %}
+<br>
+<div class="container">
+  <form action="{% url 'payment_reviewer:dateFormat1' %}" method="post" id="myform">
+    {% csrf_token %}
+    <div class="row container">
+      <div class="col-md-3">
+        <label><b>From Date :</b></label>&nbsp&nbsp{{form1.from_date|attr:'maxlength:0'}}
+        <p style="font-size: 9px;"><b>(Payment Date)</b> </p>
+      </div>
+
+      <div class="col-md-3">
+        <label><b>To Date :</b></label>&nbsp&nbsp{{form1.to_date|attr:'maxlength:0'}}
+        <p style="font-size: 9px;"><b>(Payment Date)</b> </p>
+      </div>
+      <div class="col-md-3">
+        <label><b>Bank :</b></label>&nbsp&nbsp{{form1.bank_type}}
+      </div>
+      <div class="col-md-3">
+        <input class="btn btn-sm btn-primary" type="submit" value="List" 
+          style="width:20%;">
+      </div>
+    </div>    
+  </form>
+  <br>
+
+  {% render_table table %}
+
+  <div class="text-center">              
+    <form action="{% url 'payment_reviewer:createpaymentCSV' %}" method="post">
+      {% csrf_token %}           
+      <input class="btn btn-sm btn-primary" type="submit" value="Download CSV" id="csv" style="width:20%">
+      <input type="hidden" id="dt_search" name="search" value="texens" />
+      <input type="hidden" id="fromDate" name="fromDate" value="texens" />
+      <input type="hidden" id="toDate" name="toDate" value="texens" />
+      <input type="hidden" id="bank" name="bank"/>
+    </form>  
+  </div>          
+</div>
+<br>
+{% endblock %}

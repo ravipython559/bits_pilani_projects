@@ -1,0 +1,40 @@
+{% extends 'super_reviewer/application_form_view.html' %}
+{% load static %}
+{% load admission_filter %}
+
+{% block title %}Applicant Form{% endblock %}
+
+{% block nav-links %}
+	{% include 'sub_reviewer/nav/sub_reviewer_nav.html' %} 
+{% endblock %}
+
+
+{% block container %}
+{{ block.super }}
+
+    {% if form.login_email.email|get_preview_offer_letter %}
+    <br>
+    <br>
+        <div class = "row text-center">
+            <div class = "col-md-offset-4 col-md-4">
+              <a class="btn btn-sm btn-primary"
+                {% if form.login_email.email|offer_letter_assigned and form.login_email.email|pg_loc_assigned %}
+                   
+                  href = "{% url 'registrationForm:preview-offer-letter-pdf' form.student_application_id %}" target='_blank'
+                    
+                {% elif not form.login_email.email|offer_letter_assigned %}
+                   onClick="off_let_pg_loc(1)"
+                {% elif not form.login_email.email|pg_loc_assigned %}
+                   onClick="off_let_pg_loc(2)" 
+                {% endif %}
+                >
+                Preview Offer Letter
+                </a>
+          </div>
+        </div>
+
+    <br>
+    <br>
+    {% endif %}
+
+{% endblock %}

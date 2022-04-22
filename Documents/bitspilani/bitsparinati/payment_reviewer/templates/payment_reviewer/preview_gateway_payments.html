@@ -1,0 +1,80 @@
+{% extends 'payment_reviewer/bits_base_payment_reviewer.html' %}
+{% load static %}
+{% load i18n %}
+{% load widget_tweaks %}
+
+{% block title %}Preview Gateway Payment Upload{% endblock %}
+
+{% block staticContent %}
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
+
+  <style>
+    #popUp{
+      font-weight:bold;
+      font-size:14px;
+    }
+    .ui-dialog-titlebar-close {
+    visibility: hidden;
+    }
+  </style>
+{% endblock %}
+
+{%block titleOfContent %} 
+  Confirm Payment Gateway Data Upload
+{% endblock %}
+
+{% block container %}
+<br>
+<div class="container">
+  <table class="table table-bordered" >
+    <thead>
+      <tr>
+        <th></th>
+        {% for field in result.diff_headers %}
+          <th>{{ field }}</th>
+        {% endfor %}
+      </tr>
+    </thead>
+    {% for row in result.rows %}
+    <tr>
+      <td>
+        {% if row.import_type == 'new' %}
+          {% trans "New" %}
+        {% elif row.import_type == 'skip' %}
+          {% trans "Skipped" %}
+        {% elif row.import_type == 'delete' %}
+          {% trans "Delete" %}
+        {% elif row.import_type == 'update' %}
+          {% trans "Update" %}
+        {% endif %}
+      </td>
+      {% for field in row.diff %}
+      <td>
+        {{ field }}
+      </td>
+      {% endfor %}
+    </tr>
+    {% endfor %}
+  </table>
+
+  <form method="post">
+    {% csrf_token %}
+    {{ form }}
+
+    <div class="row ">
+      <div class="col-md-offset-3 col-md-3" >
+        <input type="submit" value="Confirm Payment Gateway Data Upload" name="confirm" id="confirm" class="btn btn-primary"/>
+        
+      </div>
+      <div class="col-md-offset-1 col-md-2" >
+      <input type="submit" value="Cancel Upload" name="cancel" id="cancel" class="btn btn-primary" />
+      </div>
+    </div>
+
+  </form>
+
+</div>
+<br>
+<span id="popUp"></span>
+{% endblock %}

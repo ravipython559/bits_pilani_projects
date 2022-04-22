@@ -1,0 +1,14 @@
+{% extends "registration/registration_base.html" %}
+{% load i18n %}
+{% load static %}
+{% block title %}{% trans "Logged out" %}{% endblock %}
+{%block titleOfContent %}{% endblock %}
+{% block content %}
+<div class="container minHeight" >
+  <h4 class="text-center">
+    <p>{% trans "Successfully logged out" %}.</p>
+    <p>Please Click to <a style= " padding-right: 19px;" href={% url 'auth_login'%}>Log in</a></p>
+  </h4>
+    
+</div> 
+{% endblock %}

@@ -1,0 +1,81 @@
+{% extends 'reviewer/bits_base_reviewer.html' %}
+
+{% load static %}
+{% load widget_tweaks %}
+{% load admission_filter %}
+{% load super_reviewer_filter %}
+{% load table_tags %}
+
+{% block title %} {{ title }} {% endblock %}
+
+{% block staticContent %}
+  <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css">
+
+  <script>
+  $(document).ready(function(){
+    $('#form').submit(function(e){
+      $('#milestone_search').val($('input[type=search]').val());
+    });
+
+     $('select[name=pg_type]').change(function(){
+      $.getJSON( "{% url 'bits_admin_payment:get-prog' %}", 
+        { 
+        pg_type : $('#id_pg_type').val() 
+        } ).done(function( data ) {
+        var fetched_data = JSON.parse(data['pg']);
+        $('select[name=program]').empty();
+        $('select[name=program]').append($('<option>',{value: '',text: 'Choose Program'}));
+        $.each(fetched_data,function(i,value){
+          $('select[name=program]').append($('<option>',{value: value.pk, text: value.full_pg}));
+        });
+        });
+    });
+
+
+  });
+  </script>
+{% endblock %}
+
+{%block titleOfContent %} 
+    {{ title }}
+{% endblock %}
+
+{% block container %}
+<div class="container">
+  <form method='get' id='form'>
+
+ <br><br>
+  <div class="row col-md-offset-1">
+    <div class="col-md-3">
+      <p><b>Admit Batch</b>: &nbsp{{form.admit_batch}}</p>
+    </div>
+    <div class="col-md-3">
+      <p><b>Program</b>: &nbsp{{form.program}}</p>
+    </div>
+    <div class="col-md-3">
+      <p><b>Program Type</b>: &nbsp{{form.pg_type}}</p>
+    </div>
+
+
+    <button class="btn btn-primary btn-sm" type="submit" name="filter_btn">Filter</button>
+  </div>
+
+&nbsp
+
+    {% csrf_token %}
+    
+      {% render_table table %}
+
+    <div class="text-center">
+      <input  type="hidden" name="milestone_search" id='milestone_search' >
+      <input class="btn btn-sm btn-primary" type="submit" name="CSV" 
+        value="Download CSV" style="width:15%">
+      <input class="btn btn-sm btn-primary" type="submit" name="EXCEL" 
+        value="Download Excel" style="width:15%">
+    </div>
+  </form>
+</div>
+<br>
+{% endblock %}
+

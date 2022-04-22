@@ -1,0 +1,159 @@
+{% extends "easy_pdf/base.html" %}
+{% load static %}
+{% load i18n %}
+{% load widget_tweaks %}
+{% load admission_filter %}
+{% load humanize %}
+
+<head>
+  <link href="{% static "assets/css/bootstrap.min.css" %}" rel="stylesheet">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head>
+
+{% block content %}
+<style>
+  table, th, td{
+    border: 1px solid black; 
+    border-collapse: collapse;
+    }
+  th{
+    text-align: left;
+    }
+  th, td{
+    padding: 2px;
+  }
+  .tableNB{
+    border: none;
+  }
+  @page {
+  margin: 2cm;
+  @frame footer {
+    -pdf-frame-content: footerContent;
+    left: 450pt;
+    width: 512pt;
+    bottom: 20pt; 
+    height: 40pt;
+  }
+  } 
+</style>
+
+ <div style="padding-bottom:5px; text-align:right;">
+    <img 
+    src="{% static "assets/images/BIts_Logo-01.png" %}" 
+      alt="BITS Pilani logo" width=400>
+ </div>
+
+    <div style="clear:right;">
+    <h1 style="text-align:center;"><b><u>Admission Offer</u></b></h2> 
+    </div>
+    <div style="text-align:right">
+      <b>{{cs.accepted_rejected_by_candidate|date:'F d, Y'}}</b>
+    </div>
+    <p>
+       <b>Ref:</b> Adm/1-2017/Admit/{{cs.application.student_application_id}}
+    </p>
+    <p>
+      Dear {{ cs.application.full_name }},<br>
+    </p>
+
+    <p>
+      Congratulations! We are pleased to inform you that based on your educational background, professional experience and work profile, you have been <strong>provisionally selected for admission to {{ program_name }}.</strong>
+    </p>
+
+    <p>
+      To confirm your admission, you are required to pay INR {{ cs.adm_fees|intcomma }}/- (towards one time Admission Fee of INR 16,500/- and Semester Fee of INR {{ semFees|intcomma }}/-). You can make the payment in <a href="https://wilpadmissions.bits-pilani.ac.in/accounts/login/">Application Centre</a> using Netbanking/ Credit Card/ Debit Card.
+    </p>
+
+    <p>
+      <a href="https://wilpadmissions.bits-pilani.ac.in/accounts/login/">Click here</a> to login to the Application Center to make the fee payment.<br> 
+      <strong>You must pay the fee by {{ cs.fee_payment_deadline_dt|date:'M j, Y'|default:'will be provided later' }}.</strong>
+    </p>
+
+    <p>
+      Upon successful payment, you will be allotted your BITS ID. You will also receive your login information to the BITS Pilani e-learning portal and email ID shortly. The payment will be considered as confirmation of admission and registration for the first semester.
+    </p>
+
+    <p>
+      Please note that if you decide to discontinue from the programme after confirmation of admission and registration, you will forfeit the entire Admission Fee and Semester Fee of INR {{ cs.adm_fees|intcomma }}/-.
+    </p>
+
+    <p>
+      Work Integrated Learning Programmes offer a unique learning methodology that demands commitment to upholding the high academic standards of BITS Pilani, along with meeting the work-related demands of your employer organization. You are expected to be employed for the entire duration of the programme. After admission, in case you change your organization and/ or mentor, you must inform Work Integrated Learning Programmes Division by submitting a new Employer Consent Form and/ or Mentor Consent.
+    </p>
+
+    <strong>Important Information:</strong>
+    <table style="width: 40%;">
+      <tr>
+        <th></th>
+        <th>Date</th>
+        <th>Time</th>
+        <th>Venue</th>
+      </tr>
+      <tr>
+        <td>Orientation Session</td>
+        <td>{{cs.orientation_dt|date:'D, M j, Y'|default:'will be provided later'}}</td>
+        <td>{{cs.orientation_dt|time:"TIME_FORMAT"|default:'will be provided later'}}</td>
+        <td>{{cs.orientation_venue|default:'will be provided later'}}</td>
+      </tr> 
+      <tr>
+        <td>Lectures</td>
+        <td>{{cs.lecture_start_dt|date:'D, M j, Y'|default:'will be provided later'}}</td>
+        <td>{{cs.lecture_start_dt|time:"TIME_FORMAT"|default:'will be provided later'}}</td>
+        <td>{{cs.lecture_venue|default:'will be provided later'}}</td>
+      </tr> 
+    </table>
+
+    <p>
+      <strong>Please note that classes for this programme will be conducted online. There will NOT be any face-to-face classroom sessions for this programme.</strong>
+    </p>
+
+    <p>
+      Administrative Contact Person: {{cs.admin_contact_person|default:'will be provided later'}}, ph: {{cs.admin_contact_phone|default:'<>'|safe }}.<br>
+      Academic Contact Person: {{cs.acad_contact_person|default:'will be provided later'}}, ph: {{cs.acad_contact_phone|default:'<>'|safe }}.<br>
+    </p>
+      <!-- Change to be asked -->
+    {% if cs.application|get_course_list %}
+
+      <hr>
+    <p style="text-align:center">
+      <b>To be filled and duly signed by the applicant without detaching the above part of this letter.</b>
+    </p>
+
+    <p>
+      I {{ cs.application.full_name }} herewith accept the admission offer as per above stated conditions and also confirm my Registration for the First Semester of my degree offered in the 2017-18 Semester 1 of BITS calendar for the four courses as listed below:
+    </p>
+
+    <table align="center" style="text-align:center; border: 1px solid black; 
+      border-collapse: collapse;padding:2px" width="80%" >
+      <tr>
+        <th width="20%" style="text-align:center;">Course No.</th>
+        <th width="50%" style="text-align:center;">Course Title</th>
+        <th width="10%" style="text-align:center;">Units</th>
+      </tr>
+      <tbody>
+      {%for course in courseL%}
+      <tr>
+        <td> {{course.course_id}}</td>
+        <td> {{course.course_name}}</td>
+        <td> {{course.course_unit}}</td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+
+    <br>
+    <br>
+
+    <table class="tableNB">
+      <tr class="tableNB">
+      <td class="tableNB"> <b>Place & Date</b></td>
+      <td class="tableNB" style="text-align:right"><b>(Applicant's Signature)</b></td>
+      </tr>
+    </table>
+{% endif %}   
+    <footer>
+      <div id="footerContent">
+        <img src="{% static "assets/images/companyBranding.gif"%}" width="200" height="80" >
+      </div>
+    </footer>
+{% endblock %}

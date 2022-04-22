@@ -1,0 +1,93 @@
+{% extends 'bits_base_admin.html' %}
+{% load static %}
+{% load table_tags %}
+{% load widget_tweaks %}
+
+{% block title %}
+  {{ block.super }} Loan Applications Report
+{% endblock %}
+
+{% block nav-links %}
+  {% include 'business_dev/nav/business_user_nav.html' %} 
+{% endblock %}
+
+{% block staticContent %}
+  <style type="text/css">
+    #id_programs {
+      width:70%;
+    }
+    #id_status{
+      width:60%;
+    }
+  </style>
+  <script type="text/javascript">
+    $(document).ready(function(){
+      $("#emi_app_csv").click(function(){
+         var search = $('input[type=search]').val();
+         $("#search").val(search);
+         var pg = $('#id_programs').val();
+         $("#program").val(pg);
+        });
+
+      $('select[name=pg_type]').change(function(){
+      $.getJSON( "{% url 'bits_admin_payment:get-prog' %}", 
+        { 
+        pg_type : $('#id_pg_type').val() 
+        } ).done(function( data ) {
+        var fetched_data = JSON.parse(data['pg']);
+        $('select[name=programs]').empty();
+        $('select[name=programs]').append($('<option>',{value: '',text: 'Choose Program'}));
+        $.each(fetched_data,function(i,value){
+          $('select[name=programs]').append($('<option>',{value: value.pk, text: value.full_pg}));
+        });
+        });
+    });
+
+      });
+  </script>
+{% endblock %}
+
+{%block titleOfContent %}
+  Student EMI Loan Applications Report (Propelld)
+{% endblock %}
+
+{% block container %}
+<br>
+<div class="container-fluid">
+<center>
+  <form id="emi_form" >         
+    <div class="col-md-offset-0">
+      <div class="col-md-2">
+        <label><b>Program :</b></label>&nbsp&nbsp{{form.programs}}
+      </div>
+
+       <div class="col-md-3">
+        <label><b>Admit Batch :</b></label>&nbsp&nbsp{{form.admit_batch}}
+      </div>
+
+       <div class="col-md-3">
+        <label><b>Program Type :</b></label>&nbsp&nbsp{{form.pg_type}}
+      </div>
+
+      <div class="col-md-2">
+        <label><b>Loan Status :</b></label>&nbsp&nbsp{{form.status}}
+      </div>
+
+      <div class="col-md-2 text-left">
+        <input class="btn btn-sm btn-primary" type="submit" value="Filter" name="list" style="width: 50%">
+      </div>
+    </div><br>
+    &nbsp&nbsp
+    {% render_table table %}
+
+    <div class="row">
+      <div class = "col-md-offset-4 col-md-4">
+        <input id="emi_app_csv" class="btn btn-sm btn-primary" 
+        type="submit" value="Export CSV" name="emi_app_csv" style="width:40%" >
+      </div>
+      <input type="hidden" id="search" name="search">
+    </div>
+  </form>
+</center>
+</div><br><br>
+{% endblock %}

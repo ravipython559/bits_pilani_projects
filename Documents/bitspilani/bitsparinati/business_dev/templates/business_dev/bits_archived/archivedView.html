@@ -1,0 +1,66 @@
+{% extends 'bits_archived/archivedView.html' %}
+{% load static %}
+{% load i18n %}
+{% load table_tags %}
+{% load widget_tweaks %}
+
+{% block nav-links %}
+  {% include 'business_dev/nav/business_user_nav.html' %} 
+{% endblock %}
+
+{% block container %}
+  <br>
+  <div class="container-fluid">
+    <form action="{% url 'business_user:postArchApp' %}" method="get" id="myform">
+    {% csrf_token %}
+     <div class="flex-container">
+
+      <div style="width: 80%"><b> From Date:</b> {{form1.from_date|attr:'maxlength:0'}}
+      <p style="font-size: 9px;"><b>(Applied on Date)</b></p></div>
+
+      <div style="width: 80%"><b>To Date:</b> {{form1.to_date|attr:'maxlength:0'}}
+      <p style="font-size: 9px;"><b>(Applied on Date)</b> </p></div>
+
+      <div style="width: 90%"><b>Program :</b>{{form1.programs}}
+      <p style="font-size: 9px; "><b>(Choose Program Type First)</b></p></div>
+
+      <div style="width: 128%"><b>Application Status :</b>{{form1.status}}</div>
+
+      <div style="width: 110%"><b>Program Type :</b>{{form1.pg_type}}</div>
+
+      <div style="width: 110%"><b>Admit Batch :</b>{{form1.admit_batch}}</div> 
+
+</div>
+        <div class="text-center" >
+        <input class="btn btn-xs btn-primary" type="submit" value="List" style="width: 10%">
+        </div>
+      </form>
+
+  <br>
+
+  {% render_table table %}
+ <div class="text-center">
+    <form action="{% url 'business_user:createArchiveCSV' %}" method="get">
+        {% csrf_token %}
+        <input class="btn-sm btn-primary" name="AppCSV" type="submit" value="Download CSV file" 
+        id="csv" >
+         <input class="btn btn-sm btn-primary" name="EduCSV" type="submit" 
+        value="Download Educations CSV" id="Educsv" style="width:20%" >
+        <input class="btn btn-sm btn-primary" name="WExpCSV" type="submit" 
+        value="Download Work Experience CSV" id="WExpcsv" style="width:20%" >
+        <input class="btn btn-sm btn-primary" name="MHrCSV" type="submit" 
+        value="Download Mentor and HR Contact Details" id="MHrcsv" style="width:30%" >  
+
+        <input type="hidden" id="texens" name="user" value="texens" />
+        <input type="hidden" id="fromDate" name="fromDate" value="texens" />
+        <input type="hidden" id="toDate" name="toDate" value="texens" />
+        <input type="hidden" id="stat" name="stat" value="texens" />
+        <input type="hidden" id="prog" name="prog" value="texens" />
+        <input type="hidden" id="pgType" name="pgType" value="texens" />
+        <input type="hidden" id="admit_batch" name="admit_batch" value="texens" />
+
+    </form> 
+  </div> 
+  </div>  
+  <br>
+{% endblock %}

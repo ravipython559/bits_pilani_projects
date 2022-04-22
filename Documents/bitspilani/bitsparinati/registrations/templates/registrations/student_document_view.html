@@ -1,0 +1,79 @@
+{% extends 'bits_BaseTemp.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% load admission_filter %}
+
+
+{% block title %}
+  {{ block.super }} - Uploaded Documents
+{% endblock %}
+
+
+{% block staticContent %}
+  <style type="text/css">
+    #error_message{
+      color: red;
+      font-weight: bold;
+      font-size: larger;
+
+    }
+    .table{ 
+      width: 65%;
+      font-size: larger;
+     }
+  </style>
+{% endblock %}
+
+
+{% block navigationLinks %}
+  <li><a href="{% url 'registrationForm:applicantData'%}">Home</a></li>
+  <li><a href="{% url 'registrationForm:applicantView'%}" TARGET="_blank">Download Application PDF</a></li>
+  <li><a href="{% url 'auth_logout' %}">Log Out</a></li>
+{% endblock %}
+
+
+{% block titleOfContent %}
+  List of Documents Uploaded by You.
+{% endblock %}
+
+
+{% block container %}
+<br>
+<div class="container">
+    <form id="uploadConfirmForm" method="post">
+      {% csrf_token %}
+      <center>
+      <h6>
+      Click on the button 'Confirm Final Document Upload' to confirm your documents. Note that, post confirmation, you will not be able to make any further changes
+      </h6><br>
+        <table class="table table-bordered table-hover">
+          <tr>
+            <th>Document  Name</th>
+            <th>Document Uploaded</th>
+          </tr>
+          {% for x in documents %}
+            <tr>
+              <td>{{ x.doc_type }}
+                {% if x.mandatory%}
+                  <span style="color:red">*</span>
+                {% endif %}
+              </td>
+              <td>
+              	<a href="{% if x.doc_link %}{% url 'registrationForm:document-view' x.doc_link %}{% else %}#{% endif %}" target="_blank">{{ x.doc_name }}</a>
+              </td>
+            </tr>
+          {% endfor %}
+        </table>
+
+        <div class="row">
+          <span id="error_message">{{form.verify.errors}}</span>
+          {{form.verify|attr:'required:true'}}
+          <b>{{form.verify.label}}</b>
+        </div><br>
+        
+        <input type="submit" value="Confirm Final Document Upload" class="btn btn-sm btn-primary">
+      </center>
+    </form>
+</div>
+<br>
+{% endblock %}

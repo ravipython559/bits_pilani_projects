@@ -1,0 +1,228 @@
+<html>
+	<head>
+
+	</head>
+	<body>
+		
+		<table border="1">
+			<tr>
+			<td>First 1name</td>
+			<td>{{app.first_name}}</td>
+			</tr>
+			<tr>
+			<td>middle name</td>
+			<td>{{app.middle_name}}</td>
+			</tr>
+			<tr>
+			<td>last_name</td>
+			<td>{{app.last_name}}</td>
+			</tr>
+			<tr>
+			<td>gender</td>
+			<td>{{app.gender}}</td>
+			</tr>
+			<tr>
+			<td>date_of_birth</td>
+			<td>{{app.date_of_birth}}</td>
+			</tr>
+			<tr>
+			<td>address_line_1</td>
+			<td>{{app.address_line_1}}</td>
+			</tr>
+			<tr>
+			<td>address_line_2</td>
+			<td>{{app.address_line_2}}</td>
+			</tr>
+			<tr>
+			<td>address_line_3</td>
+			<td>{{app.address_line_3}}</td>
+			</tr>
+			<tr>
+			<td>city</td>
+			<td>{{app.city}}</td>
+			</tr>
+			<tr>
+			<td>state</td>
+			<td>{{app.state}}</td>
+			</tr><tr>
+			<td>country</td>
+			<td>{{app.country}}</td>
+			</tr>
+			<tr>
+			<td>application_status</td>
+			<td>{{app.application_status}}</td>
+			</tr>
+			<tr>
+			<td>current_organization</td>
+			<td>{{app.current_organization}}</td>
+			</tr>
+			<tr>
+			<td>program</td>
+			<td>{{app.program}}</td>
+			</tr>
+			<tr>
+			<td>current_location</td>
+			<td>{{app.current_location}}</td>
+			</tr>
+			<tr>
+			<td>fathers_name</td>
+			<td>{{app.fathers_name}}</td>
+			</tr>
+			<tr>
+			<td>mothers_name</td>
+			<td>{{app.mothers_name}}</td>
+			</tr>
+			<tr>
+			<td>nationality</td>
+			<td>{{app.nationality}}</td>
+			</tr>
+			<tr>
+			<td>phone</td>
+			<td>{{app.phone}}</td>
+			</tr>
+			<tr>
+			<td>mobile</td>
+			<td>{{app.mobile}}</td>
+			</tr>
+			<tr>
+			<td>email_id</td>
+			<td>{{app.email_id}}</td>
+			</tr>
+			<tr>
+			<td>employer_consent_flag</td>
+			<td>{{app.employer_consent_flag}}</td>
+			</tr>
+			<tr>
+			<td>employer_mentor_flag</td>
+			<td>{{app.employer_mentor_flag}}/td>
+			</tr>
+			<tr>
+			<td>current_org_employee_number</td>
+			<td>{{app.current_org_employee_number}}</td>
+			</tr>
+			<tr>
+			<td>current_designation</td>
+			<td>{{app.current_designation}}</td>
+			</tr>
+			<tr>
+			<td>fee_payment_owner</td>
+			<td>{{app.fee_payment_owner}}</td>
+			</tr>
+			<tr>
+			<td>current_org_industry</td>
+			<td>{{app.current_org_industry}}</td>
+			</tr>
+			<tr>
+			<td>current_org_employment_date</td>
+			<td>{{app.current_org_employment_date}}</td>
+			</tr>
+			<tr>
+			<td>work_location</td>
+			<td>{{app.work_location}}</td>
+			</tr>
+			<tr>
+			<td>exam_location</td>
+			<td>{{app.exam_location}}</td>
+			</tr>
+			<tr>
+			<td>math_proficiency_level</td>
+			<td>{{app.math_proficiency_level}}</td>
+			</tr>
+			<tr>
+			<td>prior_student_flag</td>
+			<td>{{app.prior_student_flag}}</td>
+			</tr>
+			<tr>
+			<td>bits_student_id</td>
+			<td>{{app.bits_student_id}}</td>
+			</tr>
+			<tr>
+			<td>parallel_studies_flag/td>
+			<td>{{app.parallel_studies_flag}}</td>
+			</tr>
+			<tr>
+			<td>bonafide_flag</td>
+			<td>{{app.bonafide_flag}}</td>
+			</tr>
+			<tr>
+			<td>created_on_datetime</td>
+			<td>{{app.created_on_datetime}}</td>
+			</tr>
+			<tr>
+			<td>last_updated_on_datetime</td>
+			<td>{{app.last_updated_on_datetime}}</td>
+			</tr>
+			</table>
+			<table border="1">
+			<tr>
+				<th>school_college</th>
+				<th>duration</th>
+				<th>percentage_marks_cgpa</th>
+				<th>completion_year</th>
+				<th>division</th>
+				<th>degree</th>
+				<th>discipline</th>
+
+			</tr>
+
+			{%for x in edu %}
+			<tr>
+			<td>
+				{{x.school_college}}
+			</td>
+			<td>
+				{{x.duration}}
+			</td>
+			<td>
+				{{x.percentage_marks_cgpa}}
+			</td>
+			<td>
+				{{x.completion_year}}
+			</td>
+			<td>
+				{{x.division}}
+			</td>
+			<td>
+				{{x.degree}}
+			</td>
+			<td>
+				{{x.discipline}}
+			</td>
+
+
+				</tr>
+
+			{% endfor %}
+			</table>
+			
+
+			<table >
+			<tr>
+				<th>organization</th>
+				<th>start_date</th>
+				<th>end_date</th>
+				<th>designations</th>
+			</tr>
+				{%for x in qual %}
+			<tr>
+				<td>
+				{{x.organization}}
+			</td>
+			<td>
+				{{x.start_date}}
+			</td>
+			<td>
+				{{x.end_date}}
+			</td>
+			<td>
+				{{x.designations}}
+			</td>
+
+			</tr>
+
+			{% endfor %}
+			</table>
+
+		
+	</body>
+</html>

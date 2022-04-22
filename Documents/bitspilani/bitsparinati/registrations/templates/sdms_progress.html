@@ -1,0 +1,54 @@
+{% extends 'bits_Base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% load admission_filter %}
+{% load super_reviewer_filter %}
+{% load bits_admin_filter %}
+{% block staticContent %}
+
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
+<script>
+  $(document).ready(function(){
+    var idVar = setInterval(() => { timer() }, 2000);
+
+    function timer() {
+      $.ajax({
+        type: 'get',
+        url: "{% url 'reviewer:sdms_progress' %}",
+        data:{'job': '{{job_id}}',},
+        success: function(response){
+
+          document.getElementById('status_pop1').innerHTML = response['message'];
+
+          $('#status_pop1').dialog({
+            width: 500,
+            resizable:false,
+          });
+
+          if (response['status']=='FAILURE' || response['status']=='SUCCESS'){
+            window.location.href="{% url 'reviewer:name-change-list' %}";
+            clearInterval(idVar);
+          }
+
+        }
+      });
+    }
+  });
+</script>
+
+{% endblock %}
+
+{%block titleOfContent %} 
+    SDMS Sync is in progress...please wait...
+{% endblock %}
+
+
+
+{% block container %}
+  <p id="status_pop1" style="font-size:17px;font-weight: bold;"></p>
+{% endblock %}
+
+
+
+

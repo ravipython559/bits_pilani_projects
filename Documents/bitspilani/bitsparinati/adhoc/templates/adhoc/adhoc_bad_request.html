@@ -1,0 +1,24 @@
+{% extends 'adhoc/pay_adhoc_fee.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %} Adhoc Payment Status {% endblock %}
+
+{%block titleOfContent %} Payment Status{% endblock %}
+
+{% block container %}
+<br><br>
+	<div class="container">
+	    <div class="row">
+	      <div class="col-md-offset-2 col-md-10">
+	      	{% for f in otf %}
+	      		<p>
+					<b>
+						Payment for {{f.fee_type}} already done on {{f.paid_on}} with amount INR {{f.gateway_total_amount|intcomma}}/-.
+					</b>
+			  	</p>
+			{% endfor %}
+	      </div>
+	    </div>
+	</div>
+{% endblock %}

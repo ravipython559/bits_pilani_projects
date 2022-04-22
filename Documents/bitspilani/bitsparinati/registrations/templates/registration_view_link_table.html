@@ -1,0 +1,15 @@
+{% load static %}
+{% load admission_filter %}
+
+<tr>            
+    <td class="tableHeader">
+    <a href={{ link }} >{{app_ap_id}}</a>
+    </td>
+    <td> {{ fullname }}</td>
+    <td> {{ c_o_d|date:'d-m-Y' }}</td>
+    <td> {{ location }}</td>
+    <td> {{ program_name }}</td>
+    <td class="tableHeader">
+     {{ app_status|get_app_status }} 
+    </td>
+</tr>

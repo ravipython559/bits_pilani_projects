@@ -1,0 +1,227 @@
+{% extends 'bits_Base.html' %}
+
+{% load static %}
+{% load widget_tweaks %}
+
+{% block staticContent %}
+  <style type="text/css">
+    body {
+      min-height: 100%;
+      position: relative;
+    }
+    body:after {
+      content: '';
+      display: block;
+      height: 100px;
+    }
+      textarea{
+      vertical-align: top;
+    }
+    .error_display{
+      color:red;
+      text-align: right;
+
+    }
+
+#HRname,#Mname,#Mdes,#HRdes{
+  color:red;
+}
+    .MnHr{
+  text-align: right;
+  font-weight: bold;
+}
+  </style>
+<script type="text/javascript">
+$(document).ready(function () {
+{% if is_mentor_required or is_hr_required %}
+
+  $( "#hr_mn_form" ).submit(function( e ) {
+
+    /*e.preventDefault();*/
+    var is_mentor_check = false;
+    var is_hr_check = false;
+    /*var unbind_form = $("form").unbind("submit");*/
+    var pattern = new RegExp(/^[A-Za-z\s]+[\.]?[\']?[A-Za-z\s]*$/); // dot,apostrophe and spaces
+
+    {% if is_mentor_required %}
+      var m = $('#id_m_name').val()
+      var m_des = $('#id_m_des').val()
+      var m_valid= pattern.test(m);
+      var m_des_valid= pattern.test(m_des);
+
+        if(m == '')
+          $("#Mname").html("This fiels is required.");
+        else if(m_valid == false)
+          $("#Mname").html("Please Enter Valid Mentor Name");
+        else
+          $("#Mname").html("");
+
+
+        if(m_des == '')
+          $("#Mdes").html("This fiels is required.");
+
+        else if(m_des_valid == false)
+          $("#Mdes").html("Please Enter Valid Mentor Designation");
+        else
+          $("#Mdes").html("");
+        is_mentor_check = (m!= '' && m_valid == true && m_des!= '' && m_des_valid == true)
+
+        if (!is_mentor_check)
+          return false;
+
+    {% endif %}
+
+    {% if is_hr_required %}
+      var hr = $('#id_hr_cont_name').val()
+      var hr_des = $('#id_hr_cont_des').val()
+      var hr_valid= pattern.test(hr);
+      var hr_des_valid= pattern.test(hr_des);
+
+      if(hr == '')
+        $("#HRname").html("This fiels is required.");
+      else if(hr_valid == false)
+        $("#HRname").html("Please Enter Valid HR Name");    
+      else
+        $("#HRname").html("");
+
+
+      if(hr_des == '')
+        $("#HRdes").html("This fiels is required.");
+      else if(hr_des_valid == false)
+        $("#HRdes").html("Please Enter Valid HR Designation");
+      else
+        $("#HRdes").html("");
+
+      is_hr_check = (hr!= '' && hr_valid==true && hr_des!= '' && hr_des_valid == true);
+
+      if(!is_hr_check)
+        return false;
+
+
+    {% endif %}
+
+  if( is_mentor_check || is_hr_check )
+    $("form").submit();
+           
+ });
+
+{% endif %}
+});
+</script>
+{% endblock %}
+
+{% block navigationLinks %}
+
+  <li><a href={% url 'registrationForm:applicantData'%}>Home</a> </li>
+  <li><a href={% url 'auth_logout'%}> Log out</a> </li>
+{% endblock %}
+
+
+{%block titleOfContent %} 
+    Mentor and HR Contact Details Required
+{% endblock %}
+
+{% block container %}
+
+<div class="container">
+<form action="{% url 'reviewer:accept-offer-later' %} " method="post" id="hr_mn_form" novalidate>
+{% csrf_token %}
+          {% if is_mentor_required %}
+<div class="container">
+
+          <font size="4">
+            <strong>Mentor Details</strong>
+          </font>
+          <br>
+          <br>
+          <div class="row MnHr">
+            <div class="col-md-4">
+              Mentor Name {{men_form.m_name}}
+            </div>
+            <div class="col-md-offset-2 col-md-4">
+              Mentor Designation {{men_form.m_des}}
+            </div> 
+          </div>
+          <div class="row MnHr">
+            <div class="col-md-4" id="Mname"></div>
+            <div class="col-md-offset-2 col-md-4" id="Mdes"></div>
+          </div>
+          <br>
+          <div class="row MnHr">
+            <div class="col-md-4" id="mId">
+              Mentor Mobile {{men_form.m_mob_no}}
+                    <div class="error_display">
+                      {% for x in men_form.m_mob_no.errors %}
+                          {{ x }}
+                      {% endfor %}
+                      </div>
+            </div>
+            <div class="col-md-offset-2 col-md-4">
+              Mentor Email {{men_form.m_email}}
+              
+      <div class="error_display">
+          {% for x in men_form.m_email.errors %}
+              {{ x }}
+          {% endfor %}
+      </div>
+            </div> 
+          </div>
+          <br>
+          <br>
+{% endif %}
+
+{% if is_hr_required %}
+
+          <font size="4">
+            <strong>HR Contact Details</strong>
+          </font>
+          <br>
+          <br>
+    <div class="row MnHr">
+        <div class="col-md-4">
+          HR Contact Name {{hr_form.hr_cont_name}}
+        </div>
+        <div class="col-md-offset-2 col-md-4">
+          HR Contact Designation {{hr_form.hr_cont_des}}
+        </div> 
+    </div>
+          <div class="row MnHr">
+            <div class="col-md-4" id="HRname"></div>
+            <div class="col-md-offset-2 col-md-4" id="HRdes"></div>
+          </div>
+<br>
+<div class="row MnHr">
+  <div class="col-md-4" id="hrId">
+    HR Contact Mobile {{hr_form.hr_cont_mob_no}}
+          <div class="error_display">
+              {% for x in hr_form.hr_cont_mob_no.errors %}
+                  {{ x }}
+              {% endfor %}
+          </div>
+  </div>
+  <div class="col-md-offset-2 col-md-4">
+    HR Contact Email {{hr_form.hr_cont_email}}
+      <div class="error_display">
+              {% for x in hr_form.hr_cont_email.errors %}
+                  {{ x }}
+              {% endfor %}
+      </div>
+  </div> 
+</div>
+<br>
+<br>
+</div>
+{% endif %}
+</div>
+<br>
+<br>
+
+    <div class="text-center">
+    <input class="btn btn-sm btn-primary" type="submit" value="Save and Submit"  
+    style="width:20%" >
+    </div>
+    
+  </form> 
+</div>
+
+{% endblock %}

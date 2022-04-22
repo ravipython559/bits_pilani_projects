@@ -1,0 +1,9 @@
+Bank ID,Bank Name,TPSL Transaction ID,SM Transaction ID,Bank Transaction ID,Total Amount,Charges,Service Tax,Net Amount,Transaction Date,Payment File Date,Src_itc
+1170,SBI,283034026,C3566T12c3b53cf61c4110a975ab9a72e1d086,55656,55761.5,20,1.5,55750,5/9/2017,5/10/2017,{itc:AWP010430}{email:kjkunte@gmail.com}{mob:919921893045}{custname:Kshitij Jayant Kunte}
+1170,SBI,453034027,C3566T12c3b53cf61c4110a975ab9a72e1d030,59656,60761.5,50,6.5,55750,5/9/2017,5/10/2017,{itc:AHB010318}{email:abc54@gmail.com}{mob:919001893045}{custname:pay sddfd kumar}
+1170,SBI,883034028,C3566T12c3b53cf61c4110a975ab9a72e1d089,57656,65761.5,70,9.5,55750,5/9/2017,5/10/2017,{itc:AHB010235}{email:pay@gmail.com}{mob:919921883045}{custname:pay kumar}
+1179,HDFC,283034029,C3566T12c3b53cf61c4110a975ab9a72e1d078,71226,1507,7,3.5,1500,5/10/2017,5/12/2017,{itc:AHW800409 }{email:gt5@gmail.com}{mob:919971893045}{custname:raj work exp rr}
+1179,HDFC,983034030,C3566T12c3b53cf61c4110a975ab9a72e1d056,89656,1517,17,4.5,1500,5/10/2017,5/12/2017,{itc:AHB010410 }{email:nr1@gmail.com}{mob:919920893045}{custname:dfgfa }
+1870,ICCI,183034031,C3566T12c3b53cf61c4110a975ab9a72e1d036,32656,1512.9,12,7.5,1500,5/10/2017,5/12/2017,{itc:ABB990401 }{email:gt3@gmail.com}{mob:919921893005}{custname:Gautam exp check}
+1870,ICCI,283034032,C3566T12c3b53cf61c4110a975ab9a72e1d020,89656,1513.8,13,3.5,1500,5/10/2017,5/12/2017,{itc:AHW800393 }{email:abc65@gmail.com}{mob:919921003045}{custname:abv P}
+2220,KOTAK,239894033,C3566T12c3b53cf61c4110a975ab9a72e1d032,45656,55761.5,60,8.5,55750,5/10/2017,5/12/2017,{itc:AWP010430}{email:kjkunte@gmail.com}{mob:919921893045}{custname:Kshitij Jayant Kunte}

@@ -1,0 +1,243 @@
+{% load static %}
+
+{% load widget_tweaks %}
+{% load admission_filter %}
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<link rel="stylesheet" type="text/css" href="{% static "assets/css/style.css"%}">
+<link href="{% static "assets/css/bootstrap.min.css"%}" rel="stylesheet">
+<link href="{% static "assets/css/ie10-viewport-bug-workaround.css"%}" rel="stylesheet">
+
+
+    <!-- Custom styles for this template -->
+<link href="{% static "assets/css/signin.css"%}" rel="stylesheet">
+<script src="{% static "assets/js/ie-emulation-modes-warning.js"%}"></script>
+ <!--<script src="{% static "assets/js/bootstrap.min.js"%}"></script>-->
+  <script src="{% static "assets/js/jquerynew.min.js"%}"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<style type="text/css">
+.tableHeader{
+text-align: center
+
+
+}
+.custom{
+  font-weight: bold;
+    font-size: 16px;
+}
+body {
+      min-height: 100%;
+      position: relative;
+    }
+    body:after {
+      content: '';
+      display: block;
+    
+    }
+
+</style>
+
+<div class="jumbotron">
+<header>
+
+<tr>
+
+<title>BITS WILP</title>
+<div class="headerWrapper" style=" height: 167px;">
+
+<h1 class="hidden">BITS Pilani</h1>
+<div class="logoWrapper" padding-top: 17px;>
+<img src='{% static "assets/images/BIts_Logo-01.png" %}' id="headercontrol_imgu" alt="BITS Pilani logo" style="height: 96px; padding-top: 15px;" >
+<h2 class="" style="
+    text-align: center;
+    margin-top: -50px;
+    font-size: 30px;
+    font-weight: bolder;
+    color: #02024D;
+"><i>Application Centre</i></h2>
+ 
+<div id="tag"  >
+<a href="{% url 'registrationForm:applicantData'%}">Home</a> |
+
+
+{% if user.email|is_CIOT_user %}
+  <a href='{% static "static_pdf/How_to_Apply_IoT.pdf" %}' target="_blank">How to Apply</a> |
+{% elif not user.email|is_specific_user %}
+  <a href='{% static "static_pdf/How_to_Apply-NonSpecific.pdf" %}' target="_blank">How to Apply</a> | 
+{% else %}
+  <a href='{% static "How_to_Apply.pdf" %}' target="_blank">How to Apply</a> |
+{% endif %}
+
+  {% if queryResult.application_status == "Submitted" %}
+
+    &nbsp|&nbsp
+    <a href="{% url 'registrationForm:applicantView'%}" TARGET="_blank">Download Application PDF</a>
+    &nbsp|&nbsp
+    <a href="{% url 'registrationForm:payfeeview'%}">Pay Fees</a>
+
+  {% elif  queryResult.application_status ==  "Application Fee Paid,Documents Uploaded" %}
+    
+    &nbsp|&nbsp
+    <a href="{% url 'registrationForm:applicantView'%}" TARGET="_blank">Download Application PDF</a>
+    &nbsp|&nbsp
+    <a href="{% url 'registrationForm:payfee'%}" TARGET="_blank">Download Fee Receipt</a>
+
+  {% elif queryResult.application_status == 'Application Fee Paid,Documents Uploaded In Progress' %}
+
+      &nbsp|&nbsp
+      <a href="{% url 'registrationForm:applicantView'%}" TARGET="_blank">Download Application PDF</a>
+      &nbsp|&nbsp
+      <a href="{% url 'registrationForm:payfee'%}" TARGET="_blank">Download Fee Receipt</a>
+      
+      &nbsp|&nbsp
+      <a href="{% url 'registrationForm:student-upload-edit'%}" style="text-decoration:none">
+      Edit Upload Documents</a>
+
+  {% elif queryResult.application_status == 'Application Fees Paid' %}
+
+    &nbsp|&nbsp
+    <a href="{% url 'registrationForm:applicantView'%}" TARGET="_blank">Download Application PDF</a>
+    &nbsp|&nbsp
+    <a href="{% url 'registrationForm:payfee'%}" TARGET="_blank">Download Fee Receipt</a>
+    &nbsp|&nbsp
+    <a href="{% url 'registrationForm:student-upload'%}" style="text-decoration:none">
+    Upload Documents</a>
+               
+  {% endif %}
+
+  &nbsp|&nbsp
+  <a href="{% url 'auth_logout'%}"> Log out</a>
+
+</div>
+</div>
+
+</tr>
+
+
+
+ <!-- Static navbar -->
+
+
+  </header>
+
+</div>
+
+
+
+
+
+
+
+<link rel="stylesheet" href="{% static "assets/css/applicantView.css" %}" type="text/css" media="all">
+
+<link rel="stylesheet" href="{% static "assets/css/jquery-ui.css" %}">
+
+<script src="{% static "assets/js/jquery-ui.js" %}"></script>
+<script src="{% static "assets/js/jquery-1.9.1.min.js" %}"></script>
+
+<script src="{% static "assets/js/jquery-1.11.1.min.js" %}"></script>
+<script src="{% static "assets/js/jquery.validate.min.js" %}"></script>
+<script src="{% static "assets/js/additional-methods.min.js" %}"></script>
+<link rel="stylesheet" type="text/css" href="{% static "assets/css/jquery.dataTables.min.css" %}">
+<script src="{% static "assets/js/jquery.dataTables.min.js" %}"></script>
+<script>
+  $(function(){
+    
+    $("#uploadConfirmForm").submit(function(e) {
+      e.preventDefault();
+      var self = this;
+      $.ajax({
+        type: "GET",
+        url: "{% url 'registrationForm:student-validate-required-file' %}",
+        async:false,
+        cache: false,
+        failure:function(data){},
+        success:function(data){
+          if (data['num']) self.submit();
+          else $('#error_message').html('Please upload all the mandatory documents');
+
+        }
+    });
+    });
+
+   // jQuery methods go here...
+
+});
+</script>
+<head>
+
+<div class="container">
+
+  
+  <div style="margin-top: 54px;">
+
+    <form method="post" id="uploadConfirmForm" 
+    action="{% url 'registrationForm:student-confirmation-file' %}">
+    {% csrf_token %}
+<h3>List of Documents Uploaded by You.</h3>
+<div style="margin-left:147px;margin-bottom:24px;">Click on the button 'Confirm Final Document Upload' to confirm your documents. Note that, post confirmation, you will not be able to make any further changes</div>
+    <center>
+	 <div id="error_message" style="color:red;margin-left:-39%;font-size:17px"></div>
+    <table  class="table table-bordered table-hover" style="    width: 68%;">
+      <tr>
+        <th class="custom">Document  Name</th>
+        <th class="custom">Document Uploaded</th>
+      </tr>
+      {% for x in uploaded %}
+      <tr>
+        <td>{{ x.doc_type }}
+        {% if x.mandatory%}
+          <span style="color:red">*
+            
+          </span>
+        {% endif %}
+
+        </td>
+        <td>
+    		<a href="{% if x.doc_link %}{% url 'registrationForm:document-view' x.doc_link %}{%else%}#{%endif%}" 
+          target="_blank">{{ x.doc_name }}</a>
+
+	</td>
+      </tr>
+      {% endfor %}
+
+    </table>
+    </center>
+    <!-- <p style="    font-weight: bold; font-size: 13px;    margin-left: 16%;">Please click on the documents uploaded to verify whether the correct document has been uploaded</p>
+     --><div>
+    <input type="checkbox" required="true" style="    font-weight: bold;
+      font-size: 13px;    margin-left: 16%;"/> &nbsp&nbsp<b> I certify that I have uploaded the correct documents.</b>
+    </div>
+    <input type="submit" value="Confirm Final Document Upload" class="btn btn-sm btn-primary" style="    width: 22%;    margin-top: 3%;
+      margin-left: 37%;">
+
+    </form>
+
+
+  </div>
+</div>
+<div style="padding:0px">
+  <div style="padding:0px"></div>
+  <div class="footerWrapper" style="margin-top: 16%; width:106%;">
+
+
+    <div class="cpInfoFixWrapper">
+    <div class="cpInfoFix">
+    <p class="info">
+    Admissions Office, BITS, Pilani - 333 031 (Rajasthan) India.<br>
+    For Assistance Call +91-80-48767777</p>
+
+    </div>
+    <!--<div style="height: 50px; width: 100%; background-color: #F5F5F5; margin-top: 0px">
+    </div>-->
+    </div>
+
+
+  </div>
+</div>
+
+
+
+
+
+

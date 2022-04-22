@@ -1,0 +1,53 @@
+{% extends 'bits_admin/elective_selections_app_view.html' %}
+{% load static %}
+{% load table_tags %}
+
+
+{% block nav-links %}
+  {% include 'reviewer/reviewer_nav_bar.html' %}
+{% endblock %}
+
+
+{% block container %}
+  <br>
+  <div class="container">
+    <form action="{% url 'reviewer:view-elective-selections' %}" 
+      method="get" id="program-form">         
+      <div class="row container">
+        <div class="col-md-4">
+          <label><b>Program :</b></label>&nbsp&nbsp{{form.programs}}
+        </div>
+
+        <div class="col-md-2">
+          <input id='list' class="btn btn-sm btn-primary" type="submit" value="List" name="pg_filter">
+        </div>
+      </div>     
+      <br>
+
+      {% render_table table %}
+
+      <br>
+
+      <div class="row">
+        <div class = "col-md-4">
+          <input id="elective_csv" class="btn btn-sm btn-primary" 
+          type="submit" value="Export CSV" name="elective_csv">
+        </div>
+        <div class = "col-md-4">
+          <input id="lock_selection" name="lock_selection" class="btn btn-sm btn-primary" 
+          type="submit" value="Lock Elective Selections">
+        </div>
+
+        <div class = "col-md-4">
+          <input id="unlock_selection" name="unlock_selection" class="btn btn-sm btn-primary" 
+          type="submit" value="Unlock Elective Selections">
+        </div>
+        <input type="hidden" id="user_search" name="user_search">
+        <input type="hidden" id="program" name="program">
+        <input type="hidden" id="search" name="search">
+    </form>
+    <span id="popup"></span>
+  </div>
+  <br>
+  <br>
+{% endblock %}

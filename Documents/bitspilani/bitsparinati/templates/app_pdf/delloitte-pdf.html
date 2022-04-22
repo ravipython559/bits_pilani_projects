@@ -1,0 +1,613 @@
+{% extends "easy_pdf/base.html" %}
+{% load staticfiles %}
+{% load static %}
+{% load admission_filter %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+{% block content %}
+<html>
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>BITS</title>
+</head>
+<style>
+#rectangle1{border:1px solid black; }
+#rectangle1 h5{border:none;}
+#title{
+text-align:center;
+top:50px;
+}
+
+#form_name{
+text-align:center;
+}
+  body{
+      font-size: 10px;
+      font-family: Calibri;
+    }
+
+/*table, th, td {
+    border: 1px solid blue;
+    border-collapse: collapse;
+}
+*/
+th{
+padding:10px;
+}
+
+.footer span {
+width:3cm;
+border-bottom:0.1em solid #000;
+display:inline-block;
+}
+
+.main span{
+width:3cm;
+border-bottom:0.1em solid #000;
+display:inline-block;
+
+}
+img{zoom:80%;}
+
+    @page {
+                size: A4;
+                margin: 1cm;
+                @frame footer {
+                    -pdf-frame-content: footerContent;
+                    bottom: 0cm;
+                    margin-left: 15cm;
+                    margin-right: 9cm;
+                    height: 1cm;
+                }
+
+            
+
+            
+    
+        size: a4 portrait;
+        @frame header_frame {           /* Static Frame */
+            -pdf-frame-content: header_content;
+            left: 490pt; width: 512pt; top: 20pt; height: 40pt;
+        
+        
+    }
+
+       
+</style>
+<body>
+ <div id="header_content" style="font-size: 14px;"><b>{{q.student_application_id}}</b></div>
+
+<h3 id="title" style="font-size: 12px;"><b>Birla Institue of Technology & Science,Pilani,Rajasthan<br>Work Integrated Learning Programmes Division</b></h3>
+
+<h4 id="form_name" style="font-size: 11px;"><b>Application for Admission to {{q.program.program_name}} for First Semester 2019-20</b></h4>
+
+<div id="rectangle1" style=" ">
+<label style="margin-top: 2px;margin-left: 4px;" style="font-size: 10px;"><b>&nbsp&nbsp&nbspFor Office use only</b></label><br/>
+<label style="margin-left: 4px;border-bottom: 1px solid black;" style="font-size: 10px;">&nbsp&nbsp&nbspID No.:_________{{q.program.program_code}}______&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</label>
+<label style="margin-left: 650px;">&nbsp&nbsp&nbspDate of Receipt:_________________<span></span></label><br/>
+<label style="margin-left: 4px;">&nbsp&nbsp&nbspRemarks,if any:________________________________________</label><br/>
+<label>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspDean</label>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+<label style="float:right">Vice-Chancellor</label><br/>
+</div>
+<br>
+<br>
+<br><br><br><br>
+<label style="top:30px">Note:Please read the instructions carefully before filling in this applicatiohn form.</label>
+
+<h4><b>SECTION 1:PERSONAL INFORMATION & EDUCATIONAL BACKGROUND</b></h4>
+
+
+<table style="width:100%">
+  <tr>
+
+    <td style="font-size: 12px;">1.Name: {{q.full_name}}</td>
+    <td rowspan="9" colspan="0" >&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+    <img src="{% static "assets/images/passprt.PNG" %}" style="margin-left:-145px;" /></td></tr>
+
+   
+  
+  <tr>
+      <td style="font-size: 12px;">2.Gender: {{q.get_gender_display}}</td>
+  </tr>
+  <tr>
+    <td style="font-size: 12px;">3.Date of Birth: {{q.date_of_birth}}</td>
+  </tr>
+  <tr>
+    <td style="font-size: 12px;">4.Father's Name: {{q.fathers_name}}</td>
+  </tr>
+  <tr>
+    <td style="font-size: 12px;">5.Mother's Name: {{q.mothers_name}}</td>
+  </tr>
+  <tr>
+    <td style="font-size: 12px;">6.Email: {{q.email_id}}</td>
+  </tr>
+  <tr>
+    <td style="font-size: 12px;">7.Mobile/Phone: {{q.mobile}}/{{q.phone}}</td>
+  </tr>
+  <tr>
+    <td style="font-size: 12px;">8.Nationality: {{q.get_nationality_display}}</td>
+  </tr>
+  <tr>
+    <td style="font-size: 12px;">9.Do you belong to Scheduled Caste or Scheduled Tribe?[Y/N]_________</td>
+  </tr>
+  <tr>
+    <td style="font-size: 12px;">10.Address for Correspondence: {{q.address_line_1}}</br>
+&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp{{q.address_line_2}}</br>
+&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp{{q.address_line_3}}</br>
+&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp{{q.city}},{{q.get_state_display}},{{q.get_country_display}}</br>
+</td>
+  </tr>
+</table>
+
+</br>
+<table style="width:100%; border: 1px solid black;">
+<p><b>11.Educational details</b> from School Leaving Certificate onwards in chronological order:</p>
+<tr>
+<th style="font-size: 12px;" >Name of Diploma/Degree</th>
+<th style="font-size: 12px;">Subject/Branch</th>
+<th>Duration(Years)</th>
+<th>Year of completion</th>
+<th>Total Marks Obtained</th>
+<th>Maximum Marks</th>
+<th>Final % Marks *</th>
+<th>Div.</th>
+</tr>
+
+
+{%for element1 in qualification%}
+<tr>
+<td style="padding:5px">{{element1.degree.degree_short_name}}</td>
+<td style="padding:5px">{{element1.discipline.discipline_name}}</td>
+<td style="padding:5px">{{element1.duration}}</td>
+<td style="padding:5px">{{element1.completion_year}}</td>
+<td style="padding:5px">{{element1.percentage_marks_cgpa}}</td>
+<td style="padding:5px">&nbsp</td>
+<td style="padding:5px">&nbsp</td>
+<td style="padding:5px">{{element1.get_division_display}}</td>
+</tr>
+
+{% endfor %}
+</table>
+<h5><i>*As Calculated for declaring result and award Of Division by your Board / university.If marks are not awarded,give Cumulative Grade Point Average 
+
+Or its equivalent.Explain below the basis on which your B. SC. / B.E. M. SC. / M. C.A. (Or equivalent)final percentage is Calculated (Cleary explain 
+
+gaps, if any in a separate Sheet.) 
+</i></h5>
+<br>
+<hr>
+<br>
+<p><h5>12.Level at which you have studied Mathematics: {{q.get_math_proficiency_level_display}}</h5></p>
+<br><br><br><br>
+<br><br><br><br>
+<br><br><br><br><br>
+<p><h5>13.Are you currently enrolled for degree or diploma in any University/Institution:(Y/N)
+  {% if q.parallel_studies_flag == 1 %}
+  Y
+  {% else %} 
+ N
+  {% endif %}
+  <span></span></h5></p>
+
+<p>If Yes,give details specifying the University Institution name,programme name,duration,date of joining the programme and likely date of completion of the same.<hr></p>
+<p>14.Have you ever been a student of BITS,Pilani.(Yes/No):if yes,please wriye name of the degree and your ID No.:{{q.obits_student_id}}</p>
+<hr>
+<p><strong>15.Exam Centre Choice:</strong> {{q.current_location}}<p>The evaluation methodology demands the admitted students to come to an Off-Campus centre at <b>Banglore/Chennai/Delhi/Goa/Hydrabad/Mumbai/Pilani/Pune</b> twice during evry semester of study for duration normally during the weekends and at their own expense for taking the Mid-Semester and Comprehensive examinations.Out of theses centres,indicate your choice of Examination Centre.<h1 style="text-decoration: underline;">{{q.exam_location.location_name}}</h1></p>
+</br>
+ 
+<small><i>Note:In case exam centre is not indicated the institute will unilaterally assign a Centre.The Institue is also free to demand that syudents come to an Exam Centre other than the one indicated above.Further,in case of Dubai centre there will be an additional exam centre fees,which will be indicated at the time of admission.</i></small>
+<p>16.Current Employment Status: {{q.get_current_employment_status_display}}</p>
+<p>17.Total Work Experience: 
+  {% if q.login_email.email|get_certificate_payfee_text %}
+    {{ q.total_work_experience_in_months }} Years
+  {% else %}           
+    {% display_y_m_d q.login_email.email %}
+  {% endif %}
+</p>
+<p>18.Work Experience in Current Organisation: 
+  {% if q.login_email.email|is_employed %}
+  {% c_w_e q.login_email.email %}
+  {% else%}
+  --
+  {% endif %}
+</p>
+<p><small><i>(as on applicable deadline to be counted only fron the point of completing BE/MSc or equivalent))</i></small></</p>
+<p><strong>Employment Details:</strong><small>Since the year of completing BE/MSc or equivalent,give brief employment details below in reverse chronological order.</small></p>
+
+<table style="width:100%; border: 1px solid black;">
+<tr>
+<th>Name of Employer</th>
+<th>Designation held</th>
+<th>Start Date</th>
+<th>End Date</th>
+
+</tr>
+
+<tr>
+<td height="200"></td>
+<td height="200"></td>
+<td height="200"></td>
+<td height="200"></td>
+
+</tr>
+{%for element1 in exp%}
+
+<tr>
+<td style="padding:5px" >{{element1.organization}}</td>
+<td style="padding:5px">{{element1.designations}}</td>
+<td style="padding:5px">{{ element1.start_date | date:" D d M Y"}}</td>
+<td style="padding:5px">{{ element1.end_date | date:" D d M Y"}}</td>
+
+</tr>
+
+{% endfor %}
+<tr>
+<th colspan="2">Total Work Experience calculated after completing BE/MSc or equivalent</th>
+
+</tr>
+
+</table>
+<br>
+<small><i>Provide the dates of start end of the employment period.Clearly explain gaps,if any in a separate sheet.</i></small>
+
+<p><strong>19.Declaration by the Applicant</strong></p>
+<p>I have carefully read the details and the instructions given in this form and hereby declare that all the information given and statements 
+
+made in various sections and parts Of this Application Form and enclosures are true to the best of my knowledge. I agree to the condition that if 
+
+information or statement were found to be wrong, my admission to BITS would automaticaly be cancelled. I understand that the objective of the Institute will be
+
+to examine in detail my educational and professional background along with my employer's visualization of my current and future professional involvement 
+
+to accommodate my Career aspirations within the framework Of an appropriate learning avenue. I thus realize that in this process Of matChng, the Institute 
+
+instead Of rejecting my application for admission may even Suggest that I would be more suitable for another degree programme / area Of study for Which I 
+
+have not applied. If admitted,I promise to abide by the Rules and Regulations in force or those that may hereafter be made by the Institute and I shall do 
+
+nothing either inside or outside the Institute which will interfere with its orderly working and discipline.I promise to be regular in the study schedule and in 
+
+appearing in the examinations at allotted centre. If I am required to Pilani for any examination,I shall take permission from my employer for appearing 
+
+in the same. In the case that I myself will be paying my fees / dues,I affirm that I will regularly pay fees/dues to the Institute during my programme.
+
+Further, in all matters concerning the Institute and myself the decision of BITS Vice-Chancellor shall be binding on me. 
+
+</p>
+
+
+    Place:________________________<span></span>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+    Signature:_____________________<span></span>
+<br>
+ Date:________________________<span></span>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+ &nbspName:<span></span>
+
+<br><br><br><br><br><br><br><br><br>
+<br><br><br><br><br><br><br><br><br>
+
+<h4><b>SECTION 2: EMPLOYER CONSENT FORM</b> (This section must be duly filled in by all employed candidates)</h4>
+<li><h5>Name of Employing Organization : {{q.current_organization}}</h5></li>
+<li><h5>Name of Employee: {{q.fullname}}</h5></li>
+<li><h5>Designation of Employee: {{q.current_designation}}</h5></li>
+{% if q.current_org_employment_date|date:"d-m-Y" == "01-01-1" %}
+<li><h5>Date of Joining the Organization: 00-00-0000  (Day/Month/Year)</h5></li>
+ {% else %} 
+<li><h5>Date of Joining the Organization: {{q.current_org_employment_date|date:"d-m-Y"}}  (Day/Month/Year)</h5></li>
+{% endif %}
+<li><h5>Degree Programmme applied for: <b>{{q.program.program_name}} </b></h5>  </li>
+
+<p><h5>Work Profile of the Employee : _______________________________________________________________________________________________________________________
+______________________________________________________________________________________________________________________________________________________________
+______________________________________________________________________________________________________________________________________________________________
+______________________________________________________________________________________________________________________________________________________________
+______________________________________________________________________________________________________________________________________________________________
+______________________________________________________________________________________________________________________________________________________________
+______________________________________________________________________________________________________________________________________________________________
+______________________________________________________________________________________________________________________________________________________________
+</h5></p>
+
+
+<p>This is to certify that our organization strongly supports and willingly participates in this cooperative effort for conducting the 
+work-integrated learning programme. We feel that this programme will be useful to the employees for their growth and also for our 
+organization. We understand that this programme will be run on the same standard and rigour with which corresponding program 
+are run on campus at BITS, Plani. </p>
+
+<p>We are Willing to participate in this educational process also by nominating a qualified senior professional from our organization /associate organization who will agree to act as a mentor and resource person for Strengthening work-study integration. This mentor 
+will also help in giving suitable organization-based assignments and projects, which will add value to the programme and also will 
+become useful for the organization. In case we are unable to provide mentor from our organization /associate organization, we in 
+principle approve the selection of mentor from another organization as per details in Section 3 Of this application form. </p>
+<br>
+<p>Signature of authorized signatory from organisation:___________________________________________________________</p>
+<p>Name of authorized signatory from organisation_________________________________________________________________</p>
+<p>Designation of authorized signatory from organisation:_________________________________________________________
+___________________________________________________________________________________________________________________
+___________________________________________________________________________________________________________________</p>
+<br>
+<p>Address of the Organization:________________________________________________________________________________________________________
+  <p></p>
+_______________________________________________________________________________________________________________________________
+<p></p>
+_______________________________________________________________________________________________________________________________
+
+</p>
+<br>
+<p>Date:___________________&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp ________________________ </p>
+
+ &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspSeal of the Organisation
+
+
+<br><br><br><br><br><br><br><br>
+<br><br><br><br><br><br><br><br>
+<br>
+<h4><b>SECTION 3:  MENTOR CONSENT FORM</b> </h4>
+<p>
+This form is mandatory for all applicants and the Mentor chosen should have minimum educational qualification of the level of Higher 
+Degree Of BITS or its equivalent such as M.E. / M.S. / M.Phil. etc. However, senior professionals holding a First Degree Of BITS or its equivalent such as B.E. / M.Sc. / M.BA. / MCA. / M.B.B.S. etc. and having a minimum Of 5-years Of relevant work experience, may 
+also be proposed as mentors. Preference be given to applicants having a suitable Mentor from the same employing organization. 
+</p>
+
+<h><b>Declaration by the Mentor</b><h> 
+<p><i>
+I have noted that my name has been suggested as Mentor. I have gone through the Information for Mentor given below and I am 
+willing to take up this assignment and discharge all responsibilities required thereof.</i> 
+</p>
+
+
+
+
+<ul style="list-style: none;">
+<li>Name of Mentor:{{ment.0.name}}</li>
+<br>
+<li>Mentor Qualification:</li>
+<br>
+<li>University:</li>
+<br>
+<li>Specialization/Branch:</li>
+<br>
+<li>Designation of Mentor:</li>
+<br>
+<li>Name of Organization:</li>
+<br>
+<li>Mentor's Total Work Experience&nbsp&nbsp&nbsp&nbsp: __<U>0</U>__ Years __<U>0</U>__ Months(as on application deadline)</li>
+<br>
+<li>Mentor's Total Work Experience in current organization: __<U>0</U>__ Years __<U>0</U>__ Months(as on application deadline)</li>
+<br>
+<li>Mentor's address(in capital Letters):</li>
+<br>
+<li>Address:</li>
+<br>
+<br>
+<li>City:</li>
+
+<br>
+<li>State:</li>
+<br>
+<br>
+<li>Mentor's email address:</li>
+<br>
+<li>Mentor's contact phone no:</li>
+<br><br>
+<p>Date:____________________&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp ________________________</p>
+ &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspSignature  of Mentor
+<br>
+<p>___________________________________________________________________________________________________________________________________________</p>
+</ul>
+<br><br><br><br><br><br>
+<br><br><br><br><br>
+<br><br>
+<p align="center"><h><b>INFORMATION FOR MENTOR </b></h></p>
+<p>
+In the educational methodology for this programme, there is a planned arrangement of periodic interactions in Work-Leaming 
+Environment. Your employer's cooperation is sought in creating a Work-Learning Environment at your own organization through 
+guidance to the employee-student by one of the senior officers who would be designated as a Mentor. Such an arrangement would 
+involve four to six hours per week, at most, by this senior officer. The basic role of the Mentor will be to assist the BITS Faculty 
+members in carrying out the academic responsibilities by functioning as a resource person provlding valuable guidance based on his/
+her professional expertise. The salient features of the Mentors role are summarized below. 
+</p>
+ 
+<ol type="1">
+  <li>
+Each course conducted with a deadine specified for completion of study of a topic based on the syllabus Of the course. 
+Mentor is expected to monitor that the candidate is adhering to the specified study schedule. 
+</li>
+  <li>
+Each course will have certain evaluation components with specific deadines. Mentor should again ensure whether the 
+candidate is adhering to these deadlines. 
+</li>
+  <li>
+To ensure a good relationship between the course and the work Of the employee, Mentor may identify study assignments 
+based on the work allocated to the candidate apart from conducting seminars / viva and giving an objective opinion about the 
+progress of the candidate in these components. 
+</li>
+
+  <li>
+The Mentor wil interact with the student at least thrice a week on mutually agreed days. The Mentor will periodically inform the 
+Dean concerned at BITS Pilani regarding the candidate's progress. 
+</li>
+
+  <li>
+During interaction,the Mentor will emphasize self-study and self-learning as pects of the educational process.
+
+</li></ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p align="center"><b>CHECKLIST FOR ENCLOSURES/ATTACHMENTS</b></p>
+
+<p>
+<u>Important:</U> Please ensure that you have enclosed the following documents/information without which your application wil be 
+considered as incomplete and rejected. You must also ensure that the enclosures are appended in the Same order as given below. 
+<u>The very first enclosure must</u> be your Degree Certificate issued by your University. 
+</p>
+
+<br>
+
+<b>Please Tick against all those items / documents you have enclosed with this application form. </b>
+<br><br><br>
+<table>
+
+
+
+ </table> 
+
+
+<table style="width:100%">
+
+
+
+<tr style="width:100%">
+ <td>1.</td>
+
+<td  colspan="15" >Attested Photocopies Of B.E./B.Tech. / M.SC. /MCA. / A.M.I.E. /M.B.A /BITS B.S. or equivalent degree certificate 
+issued by your university for your educational qualification and spelling Of your name. This must be your first enclosure. 
+failing which your application will be rejected.</td>
+
+
+<td ><img src="/home/poojag/Desktop/img3.PNG" style="margin-left: 500px;"/></td>
+
+</tr>
+
+<tr>
+   <td>2.</td>
+<td colspan="15">For your date of birth verification attested photocopy Of X Pass I Matriculation / Secondary School Leaving Certificate / 
+Marksheet</td>
+<td ><img src="/home/poojag/Desktop/img3.PNG" style="margin-left: 500px;"/></td>
+  </tr>
+
+  <tr>
+   <td>3.</td>
+<td colspan="15">Attested marksheets for al the years I Semesters of all your degree / diploma examinatlons.</td>
+<td ><img src="/home/poojag/Desktop/img3.PNG" style="margin-left: 500px;"/></td>
+  </tr>
+  <tr>
+   <td>4.</td>
+<td colspan="15">Experience Certificate(s) towards proof of work experience in current employing organization as well as previous 
+organization(s) wherever applicable. </td>
+<td ><img src="/home/poojag/Desktop/img3.PNG" style="margin-left: 500px;"/></td>
+  </tr>
+  <tr>
+   <td>5.</td>
+<td colspan="15">Detailed professional resume of the candidate giving academic & professional achievements including employment 
+details in reverse chronological order.</td>
+<td ><img src="/home/poojag/Desktop/img3.PNG" style="margin-left: 500px;"/></td>
+  </tr>
+    <tr>
+   <td>6.</td>
+<td colspan="15">trong support letter from employing educational institution in case of applicants employed in educational institutions 
+only.</td>
+<td ><img src="/home/poojag/Desktop/img3.PNG" style="margin-left: 500px;"/></td>
+  </tr>
+    <tr>
+   <td>7.</td>
+<td colspan="15">Latest brochure giving a detailed profile of the current employing organization.</td>
+<td ><img src="/home/poojag/Desktop/img3.PNG" style="margin-left: 500px;"/></td>
+  </tr>
+    <tr>
+   <td>8.</td>
+<td colspan="15">A write-up on your career objectives in applying to this programme. </td>
+<td ><img src="/home/poojag/Desktop/img3.PNG" style="margin-left: 500px;"/></td>
+  </tr>
+    <tr>
+   <td>9.</td>
+<td colspan="15">Detailed resume of your proposed Mentor alongwith an attested photocopy of his/her highest degree certificate.</td>
+<td ><img src="/home/poojag/Desktop/img3.PNG" style="margin-left: 500px;"/></td>
+  </tr>
+    <tr>
+   <td>10.</td>
+<td colspan="15">Document giving justification forwarded by the applicants Wherever the proposed Mentor is not from the 
+same employing organization as that of the applicant.</td>
+<td ><img src="/home/poojag/Desktop/img3.PNG" style="margin-left: 500px;"/></td>
+  </tr>
+    <tr>
+   <td>11.</td>
+<td colspan="15">Any Other documents like &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspCertificates for short-term course, marriage certificate I Gazette notification for correct name 
+purpose. equivalence certificate if degree is not from University / State Board, etc. &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspSpecify_________________________________________________</td>
+<td ><img src="/home/poojag/Desktop/img3.PNG" style="margin-left: 500px;"/></td>
+  </tr>
+     <tr>
+   <td>12.</td>
+<td colspan="15">Demand Draft for the requisite processing fee. DD NO.:________________________Dated_____________________for Rs.1500/- drawn in favour Of BITS, Pilani. 
+</td>
+<td></td>
+</tr>
+<tr>
+   <td></td>
+<td colspan="15">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspOR 
+</td>
+<td></td>
+</tr>
+<tr>
+   <td></td>
+<td colspan="15">Copy of ICICI Bank Challan Branch Transaction ID:_________________Dated____________
+</td>
+<td></td>
+</tr>
+<tr>
+   <td></td>
+<td colspan="15">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspOR 
+</td>
+<td></td>
+</tr>
+<tr>
+   <td></td>
+<td colspan="15">Copy Of Net Banking Payment Receipt Transaction ID:_________________Dated____________
+</td>
+<td><img src="/home/poojag/Desktop/img3.PNG" style="margin-left: 500px;"/></td>
+</tr>
+<tr>
+   <td></td>
+<td colspan="15">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspOR 
+</td>
+<td></td>
+</tr>
+<tr>
+   <td></td>
+<td colspan="15">Copy of Credit Card payment Receipt Transaction ID:_________________Dated____________
+</td>
+<td></td>
+</tr>
+  <tr>
+   <td>13.</td>
+<td colspan="15">
+Affix your Passport Size Colour Photograph in the space below.</td>
+<td ></td>
+  </tr>
+
+   <tr>
+   <td></td>
+<td colspan="15">
+&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<img src="/home/poojag/Desktop/img4.PNG" style="margin-left: 476px; margin-bottom: -30px;" /></td>
+<td ></td>
+  </tr>
+
+
+
+ 
+ </table> 
+
+
+
+<br>
+
+<p>________________________________________________________________________________________________________________________________________________________</p>
+<h><b>For Office Use Only:<b><h>
+<p><small>Enclosure Verification: Signature________________________________________________Date____________________________________</small></p>
+<div id="footerContent">
+            {%block page_foot%}
+                Page <pdf:pagenumber>
+            {%endblock%}
+        </div>
+</body></html>
+{% endblock %}

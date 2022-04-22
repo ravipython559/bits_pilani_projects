@@ -1,0 +1,11 @@
+{% extends 'bits_base_admin.html' %}
+{% load static %}
+{% load admission_filter %}
+
+{% block nav-links %}
+	{% if user.reviewer|is_payment_and_reviewer %}
+		{% include 'reviewer/reviewer_and_payment_nav.html' %} 
+	{% else %}
+		{% include 'payment_reviewer/payment_reviewer_nav_bar.html' %}     
+	{% endif %}
+{% endblock %}

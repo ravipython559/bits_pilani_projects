@@ -1,0 +1,21 @@
+{% extends 'bits_base_admin.html' %}
+{% load static %}
+{% load table_tags %}
+{% load widget_tweaks %}
+
+{% block title %}
+  {{ block.super }} Ad-Hoc Payments Propelld EMI Report
+{% endblock %}
+
+{%block titleOfContent %}
+  Ad-Hoc Payments Propelld EMI Report
+{% endblock %}
+
+{% block container %}
+  <br>
+  <div class="container-fluid">
+    <center>
+        {% render_table table %}
+    </center>
+  </div>
+{% endblock %}

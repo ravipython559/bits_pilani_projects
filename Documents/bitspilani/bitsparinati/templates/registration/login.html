@@ -1,0 +1,135 @@
+{% extends "registration/registration_base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Log in" %}{% endblock %}
+
+{% load widget_tweaks %}
+{% load static %}
+
+{% comment %}
+**registration/login.html**
+
+It's your responsibility to provide the login form in a template called
+registration/login.html by default. This template gets passed four
+template context variables:
+
+``form``
+    A Form object representing the login form. See the forms
+    documentation for more on Form objects.
+
+``next``
+    The URL to redirect to after successful login. This may contain a
+    query string, too.
+
+``site``
+    The current Site, according to the SITE_ID setting. If you don't
+    have the site framework installed, this will be set to an instance
+    of RequestSite, which derives the site name and domain from the
+    current HttpRequest.
+
+``site_name``
+    An alias for site.name. If you don't have the site framework
+    installed, this will be set to the value of
+    request.META['SERVER_NAME']. For more on sites, see The
+    "sites" framework.
+{% endcomment %}
+
+{% block staticContent %}
+
+<script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '2401394589877477');
+  fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=2401394589877477&ev=PageView&noscript=1"
+/></noscript>
+
+<!-- End Facebook Pixel Code -->
+{% endblock %}
+
+
+{%block titleOfContent %} 
+        <b>Please Sign in to Complete your Application Process </b>
+{% endblock %}
+
+{% block content %}
+<style>
+ label{
+    margin-top: 24px;
+  margin-bottom: 24px;
+  margin-left: -8%;
+}
+   body {
+      min-height: 100%;
+      position: relative;
+    }
+    body:after {
+      content: '';
+      display: block;
+      height: 100px;
+    }
+
+
+</style>
+    <div class="container">
+    <br>
+<center>
+      <form class="form-signin" method="Post" style="font-size: medium;" action="{% url 'django.contrib.auth.views.login' %}">
+        
+     
+        {% csrf_token %}
+         <!-- {{ form.as_p }} -->
+         {% if form.errors %}
+          <p style="color:red; text-align:center;">Invalid Username  or Password</p>
+          {% endif %}
+
+        <table>
+            <tr>
+                <td><b>Email Id:</b></td>
+                <td>{{ form.username|attr:'required:true'|attr:'oninvalid:setCustomValidity("Please Enter Email Id")'|attr:'oninput:setCustomValidity("")' }}</td>
+                
+            </tr>
+           
+            <tr>
+                <td>{{ form.password.label_tag }}</td>
+                <td>{{ form.password |attr:'required:true'|attr:'oninvalid:setCustomValidity("Please Enter Password")'|attr:'oninput:setCustomValidity("")'}}</td>
+               
+            </tr>
+        </table>
+
+   </br>
+        <button class="btn btn-primary center-block " type="submit" value="Login">Sign in</button>
+        
+        
+        
+      </form>
+
+          <h4 class="text-center" ><b>
+            {% trans "Forgot Password? Click "  %} 
+            <a href="{% url 'auth_password_reset' %}">{% trans "here" %}</a>
+            </b>
+          </h4>
+          <h4 class="text-center">
+          <b>
+            {% trans "Not Registered Yet? Click" %} 
+            <a href="{%url 'registration_register'%}">{% trans "here" %}</a>
+            </b>
+          </h4>
+</center>
+     </div>
+
+{% endblock %}
+    <!-- /container -->
+
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    
+

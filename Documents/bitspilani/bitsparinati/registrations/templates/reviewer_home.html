@@ -1,0 +1,111 @@
+{% extends 'bits_base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% load i18n %}
+
+{% block title %}
+{% trans 'reviewer' %}
+{% endblock %}
+
+{% block staticContent %}
+
+
+<link rel="stylesheet" href="{% static "assets/css/applicantView.css" %}" type="text/css" media="all">
+
+<link rel="stylesheet" href="{% static "assets/css/jquery-ui.css" %}">
+
+<script src="{% static "assets/js/jquery-ui.js" %}"></script>
+<script src="{% static "assets/js/jquery-1.9.1.min.js" %}"></script>
+
+<script src="{% static "assets/js/jquery-1.11.1.min.js" %}"></script>
+<script src="{% static "assets/js/jquery.validate.min.js" %}"></script>
+<script src="{% static "assets/js/additional-methods.min.js" %}"></script>
+<link rel="stylesheet" type="text/css" href="{% static "assets/css/jquery.dataTables.min.css" %}">
+<script src="{% static "assets/js/jquery.dataTables.min.js" %}"></script>
+<head>
+<script type="text/javascript">
+$(document).ready(function(){
+
+    $('#reviewer_table').DataTable();
+
+
+
+});
+</script>
+
+{% endblock %}
+
+
+{% block navigationLinks %}
+
+   <div id="tag">
+   <a href="{% url 'auth_logout' %}">{% trans 'Log Out' %}</a>
+
+   </div>
+
+{% endblock %}
+
+
+{%block titleOfContent %}
+    {% trans 'Application List' %}
+{% endblock %}
+
+
+{% block container %}
+
+
+<div class="container">
+    <div style="margin-top:11px;">
+
+        <table cellpadding="0" cellspacing="0" border="0"
+        class="table table-striped table-bordered" id="reviewer_table">
+            <thead>
+
+                <tr >
+                    <th class="tableHeader"> {% trans 'Application ID' %}</th>
+                    <th class="tableHeader"> {% trans 'Name' %}</th>
+                    <th class="tableHeader"> {% trans 'Applied On' %}</th>
+                    <th class="tableHeader"> {% trans 'Program Applied for' %}</th>
+                    <th class="tableHeader"> {% trans 'Application Status' %}</th>
+
+
+                </tr>
+            </thead>
+            <tbody>
+                {%for element1 in queryResult%}
+                <tr>
+                    {% with app_id=element1.student_application_id%}
+                        <td>
+                        <a href="{% url 'registrationForm:student-application-review' app_id %}">{{element1.application_id}}</a>
+                        </td>
+                    {% endwith%}
+                    <td> {{element1.fullname}}</td>
+                    <td> {{element1.created_on_datetime|date:'d-m-Y'}}</td>
+                    <td> {{element1.program.program_name}}</td>
+                    <td class="tableHeader">
+                    {{element1.application_status}}
+                    </td>
+
+                </tr>
+                {% endfor %}
+
+
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+

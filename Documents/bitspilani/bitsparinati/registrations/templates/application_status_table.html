@@ -1,0 +1,94 @@
+{% load static %}
+{% load i18n %}
+{% load widget_tweaks %}
+{% load admission_filter %}
+<style>
+#tableS{
+  background-color: #eee;
+  width: 68%;
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+
+.tdS {
+  border: 1px solid black;
+  background-color: #eee;
+  font-size: 120%;
+  text-align: center;
+  padding: 5px;
+}
+</style>
+
+<p style="color:#337ab7; font-size:100%">  <b>Your Application has been successfully Submitted</b></p>
+ <p><b>Your Application Status is shown below</b></p>
+ <div class="table-responsive">
+<table id="tableS">
+  <tr>
+    <td class="tdS">Application ID</td>
+    <td class="tdS">Status</td>
+    <td class="tdS">Action</td>
+    {% if email|get_admission_permission or email|get_waiver_roll_no %}
+    <td class="tdS">
+      Student ID
+    </td>
+    {% endif %} 
+
+    {% if email|is_hr_men_filled %} 
+    <td class="tdS">
+      Action
+    </td>
+    {% endif %}
+
+    {% if email|get_deffered_mandatory_doc_status %}
+    <td class="tdS">
+      Action
+    </td>
+    {% endif %}
+    
+    {% if email|get_elective_list%}
+      <td class = "tdS">
+        Action
+      </td>
+    {% endif %}
+  </tr>
+  <tr >
+    <td class="tdS">{{ app_id }}</td>
+    <td class="tdS">{{ status }}</td>
+    <td class="tdS"><a href="{{ link }}" target={{target}} >{{ action }}</a></td>
+    {% if email|get_admission_permission %} 
+    <td class="tdS">
+      {{ email|get_roll_no }}
+    </td>
+
+    {% elif email|get_waiver_roll_no %}
+    <td class="tdS">
+    {{ email|get_waiver_roll_no}}
+    </td>
+    {% endif %}
+
+    {% if email|is_hr_men_filled %}   
+    <td class="tdS">
+    {% autoescape off %}
+      {% hr_men_link %}
+    {% endautoescape %}
+    </td>
+    {% endif %}
+
+    {% if email|get_deffered_mandatory_doc_status %}   
+    <td class="tdS">
+    {% autoescape off %}
+      {% deff_mandatory_doc_submission_link %}
+    {% endautoescape %}
+    </td>
+    {% endif %}
+
+    {% if email|get_elective_list %}
+      <td class = "tdS">
+        {% autoescape off %}
+          {% elective_selection_link %}
+        {% endautoescape%}
+      </td>
+    {% endif %}
+  </tr> 
+</table>
+</div>

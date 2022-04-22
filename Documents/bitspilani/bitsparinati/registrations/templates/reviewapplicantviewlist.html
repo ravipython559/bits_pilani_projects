@@ -1,0 +1,179 @@
+{% extends 'reviewer/bits_base_reviewer.html' %}
+{% load static %}
+{% load table_tags %}
+{% load widget_tweaks %}
+{% load super_reviewer_filter %}
+
+{% block title %}Bulk Shortlist/Reject{% endblock %}
+
+{% block staticContent %}
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
+
+  <script type="text/javascript">
+  $.ajaxPrefilter(function( options, originalOptions, jqXHR ) {
+      options.async = true;
+  });
+
+  var $ =jQuery.noConflict();
+  $(document).ready(function(){
+      $('#reviewer_table').DataTable();
+  });
+  </script>
+
+  <script type="text/javascript">
+  function show_alert() {
+    $( "#dialogS" ).dialog({
+    modal: true,
+    width: 500,
+    buttons: {
+      "Yes": function(){
+        show_alert_dialog();
+       $(this).dialog("close");
+
+       },
+      "Cancel": function(){
+        r = 2;
+        $(this).dialog("close");
+      }
+    }});
+  }
+
+  function show_alert_dialog(){
+    $.ajax({
+            type: "POST",
+            url: "{% url 'registrationForm:recheck-send-confirmation-email'%}",
+
+            data: {'program':$('#id_programs').val(),
+            'location':$('#id_locations').val(),
+            'csrfmiddlewaretoken': '{{ csrf_token }}',},
+            cache: false,
+            success: function(data){
+                      
+                      var message='Confirmation mail sent to '
+                      message += data['num'] ;
+                      message += ' applicants ';
+                      
+                      $( "#dialogMailSentA" ).text(message);
+                      $( "#dialogMailSentA" ).dialog({
+                        beforeClose: function(){
+                            window.location.href="{% url 'registrationForm:review-applicant-list' %}";
+                          },
+                        });              
+                      },
+            async:false,
+            failure: function(data) { 
+              console.log(data);
+                }
+            });
+  }
+
+  function show_alert1() {
+    $( "#dialogR" ).dialog({
+    modal: true,
+    width: 500,
+    buttons: {
+      "Yes": function(){
+        show_alert1_dialog();
+       $(this).dialog("close");
+
+       },
+      "Cancel": function(){
+        r = 2;
+        $(this).dialog("close");
+      }
+    }});
+  }
+
+  function show_alert1_dialog(){
+    $.ajax({
+          type: "POST",
+          url: "{% url 'registrationForm:recheck-send-rejection-email'%}",
+
+          data: {'program':$('#id_programs').val(),
+          'location':$('#id_locations').val(),
+          'csrfmiddlewaretoken': '{{ csrf_token }}',
+        },
+          cache: false,
+          success: function(data){
+                    var message='Rejection mail sent to '
+                    message += data['num'] ;
+                    message += ' applicants ';
+                    
+                    $( "#dialogMailSentA" ).text(message);
+                    $( "#dialogMailSentA" ).dialog({
+                      beforeClose: function(){
+                          window.location.href="{% url 'registrationForm:review-applicant-list' %}";
+                        },
+                    });             
+                    },
+          async:false,
+          failure: function(data) { 
+            console.log(data);
+              }
+          });
+  }
+  </script>
+  <style type="text/css"> 
+    #scatable_filter{
+      display: none;
+    }
+  </style>
+{% endblock %}
+
+{%block titleOfContent %} 
+    Applicant List
+{% endblock %}
+
+{% block container %}
+<div class="container">
+<form method="post" action="{% url 'registrationForm:refresh_applicant_data' %}" id="form" class="my-form-class" disabled="disabled">
+{% csrf_token %}
+    <div class="row container">
+      <div class="col-md-5">
+        <label><b>Select Program :</b></label>&nbsp&nbsp{{form1.programs}}
+      </div>
+
+      <div class="col-md-4">
+        <label><b>Select Location :</b></label>&nbsp&nbsp{{form1.locations}}
+      </div>
+
+      <div class="col-md-2 text-left">
+        <input class="btn btn-sm btn-primary" type="submit" value="Get List" 
+          style="width: 100px;" id="validateForm3">
+      </div>
+    </div> 
+
+ <b><font size="2" color="blue">Note : Please choose to send out shortlisted and rejected emails ONLY after decision on the same have been finalized.</b></font>
+<br>
+<br>
+<br>
+
+  {% render_table table %}
+
+<div class = "row text-center">
+  <input type="hidden" value="" id="appStatus" />
+
+  <div class="col-md-offset-2 col-md-4">
+    <input class="btn btn-sm btn-primary" type="button" value="Send Confirmation Email to Shortlisted Candidates" id="validateForm1" onclick="show_alert();">
+  </div>
+
+  <div class="col-md-4">
+  <input class="btn btn-sm btn-primary" type="button"  value="Send Confirmation Email to Rejected Candidates" id="validateForm2" onclick="show_alert1();">
+  </div>
+</div>
+
+
+ <div style= "display:none;" id="dialogS" >
+  <p style= "font-size:17px;"><b>Are you sure you want to send out the shortlisting email? Please note that once the email is sent, no further updates to the application will be allowed. Please click on YES to confirm sending of email</b></p>
+</div>
+
+<div style= "display:none;" id="dialogR" >
+  <p style= "font-size:17px;"><b>Are you sure you want to send out the Rejection email? Please note that once the email is sent, no further updates to the application will be allowed.Please click on OK to confirm sending of email</b></p>
+</div>
+
+<div id="dialogMailSentA" style="display:none;font-size:17px;"></div>
+
+</form>
+<br>
+{% endblock %}

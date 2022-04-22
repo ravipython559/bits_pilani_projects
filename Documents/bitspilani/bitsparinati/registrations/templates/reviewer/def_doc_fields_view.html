@@ -1,0 +1,66 @@
+{% extends 'reviewer/def_doc_app_view.html' %}
+{% load table_tags %}
+
+{% block title %}
+  {{ block.super }} Deferred Documents Submission View
+{% endblock %}
+{% block staticContent %}
+<style type="text/css">
+    #id_programs {
+      width:70%;
+    }
+    
+    #id_status{
+      width:60%;
+    }
+  </style>
+    <script type="text/javascript">
+    $(document).ready(function(){
+      $("#csvs").click(function(){
+          var search = $('input[type=search]').val();
+         $("#search").val(search);
+       });
+    });
+       </script>
+{% endblock %}
+
+{%block titleOfContent %}
+  Deferred Documents Submission View
+{% endblock %}
+
+{% block container %}
+<br>
+<div class="container-fluid">
+<center>
+ <form method="get">
+    <div class="row container">
+      <div class="col-md-4">
+        <label><b>Program :</b></label>&nbsp&nbsp{{form2.programs}}
+      </div>
+
+      <div class="col-md-3">
+        <label><b>Application Status :</b></label>&nbsp&nbsp{{form2.status}}
+      </div>
+
+      <div class="col-md-3">
+        <label><b>Admit Batch :</b></label>&nbsp&nbsp{{form2.admit_batch}}
+      </div>
+
+      <div class="col-md-2 text-left">
+        <input class="btn btn-sm btn-primary" type="submit" value="List" style="width: 70%">
+      </div>
+    </div>     
+
+<br>
+
+{% render_table table %}
+
+<br>
+<br>
+      <input class="btn btn-sm btn-primary" type="submit" value="Download CSV File" name="csvs" id="csvs" style="width:20%">
+      <input type="hidden" id="search" name="search">
+ 
+    </form>
+    </center>
+</div>
+{% endblock %}

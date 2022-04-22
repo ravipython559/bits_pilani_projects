@@ -1,0 +1,387 @@
+{% extends 'reviewer/bits_base_reviewer.html' %}
+
+{% load static %}
+{% load widget_tweaks %}
+{% load admission_filter %}
+{% load super_reviewer_filter %}
+
+{% block title %}Program Change{% endblock %}
+
+{% block staticContent %}
+  <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css">
+
+  <script>
+  var result = {};
+  {% for key,values in hidden_id.items %}
+    result['{{key}}'] = '{{ values }}';
+  {% endfor %}
+
+
+  $(document).ready(function(){
+
+    for ( var i=0; i<document.getElementById('id_CSForm-TOTAL_FORMS').value; i++ ){
+
+      var app_id = document.getElementById('id_CSForm-'+i+'-id').value;
+      var checked = document.getElementById('id_CSForm-'+i+'-es_to_su_rev');
+      var pg_id = document.getElementById('id_CSForm-'+i+'-program');
+      if (checked.checked && !(checked.disabled)){
+        pg_id.value = result[app_id];
+      }
+
+    }
+
+    $('#sr_table').DataTable({
+      "bPaginate": false,
+      "bInfo":false,
+    });
+
+    $('input[type=search]').val("{{form1.search.value|default:''}}");
+
+    $('input[type=search]').on('keyup',function(e){
+      var link ="{% url 'registrationForm:review_application_details' 0 %}".split('0')[0];
+
+      $.ajax({ 
+          type: "POST",
+          url: "{% url 'reviewer:prog_ajax_list' %}",
+          cache:false,
+          async: true,
+          data: { 
+            'locations':"{{form1.locations.value|default:''}}", 
+            'programs':"{{form1.programs.value|default:''}}",
+            'search':$('input[type=search]').val(),
+            'csrfmiddlewaretoken': '{{ csrf_token }}', 
+          },
+          success: function(data){
+            result = {};
+            $('#id_locations').val(data['locations']);
+            $('#id_programs').val(data['programs']);
+            $('#id_search').val(data['search']);
+            $('#table_count').html('Total: '+data['count']);
+            $('#id_CSForm-TOTAL_FORMS').val(data['per_page']);
+            $('#id_CSForm-INITIAL_FORMS').val(data['per_page']);
+            $('#paginate').empty();
+            $('#sr_table tbody').empty();
+            var fetching_data = JSON.parse(data['app']);
+            var pg_data = JSON.parse(data['list_of_pg']);
+
+            if (data['count']){
+
+              $.each(fetching_data,function(index,value){
+                var tr = $('<tr/>');
+                tr.append($('<td/>').append($('<a/>').attr('href',link + value['id']+'/').attr('target','_blank').text(value['student_application_id'])));
+                tr.append('<td>' + value['finalName'] + '</td>');
+                tr.append('<td>' + value['created_on_datetime'].substring(0, 10) + '</td>');
+                tr.append('<td>' + value['pg_cd'] +' - '+ value['pg_name'] + ' (' +value['pg_typ'].toUpperCase() + ')</td>');
+                if (value['application_status'] == 'Fees Paid')
+                  tr.append('<td> Application Fees Paid </td>');
+                else
+                  tr.append('<td>'+value['application_status']+ '</td>');
+
+                var pd_td = $('<td></td>');
+
+                $('<span>').attr(
+                {
+                  id: 'id_CSForm-' + index + '-program-extra',
+                }).css('color','red').appendTo(pd_td);
+
+                $('<br>').appendTo(pd_td);
+
+                var select_pg_list = JSON.parse(pg_data[value['id']]);
+
+                var pg = $('<select>').attr({
+                  id: 'id_CSForm-' + index + '-program',
+                  name: 'CSForm-' + index + '-program',
+                  onchange:'ajax_validate_program(this);',
+                }).append(
+                    $('<option>', 
+                      {value: '',text: 'select program'})
+                    );
+
+                $.each(select_pg_list,function(i,v){
+                  pg.append(
+                    $('<option>', 
+                      {value: v['id'],text: v['program_code']+' - '+v['program_name']+' ('+v['program_type'].toUpperCase()+')'})
+                    );
+                });
+                pg.appendTo(pd_td);
+                tr.append(pd_td);
+
+
+                var td = $('<td></td>');
+
+
+                $('<input>').attr(
+                {
+                  type: 'hidden',
+                    id: 'id_CSForm-' + index + '-id',
+                    name: 'CSForm-' + index + '-id',
+                    value: value['id']
+                }).appendTo(td);
+
+                if(value['application_status'] == '{{ esc_status }}')
+                  $('<input>').attr(
+                  {
+                      type: 'checkbox',
+                      id: 'id_CSForm-' + index + '-es_to_su_rev',
+                      name: 'CSForm-' + index + '-es_to_su_rev',
+                      checked: 'checked',
+                      disabled: 'disabled',
+                  }).appendTo(td);
+              else
+                $('<input>').attr(
+                  {
+                      type: 'checkbox',
+                      id: 'id_CSForm-' + index + '-es_to_su_rev',
+                      name: 'CSForm-' + index + '-es_to_su_rev',
+                      onchange:'ajax_validate_program(this);',
+                    
+                  }).appendTo(td);
+                tr.append(td);
+                $('#sr_table tbody').append(tr);
+              });
+
+        for(var i=0;i<data['total_pages'] && i<2;i++)
+                $('#paginate').append('<li><a onclick="pagelostform('+(i+1)+')">'+(i+1)+'</a></li>');
+
+              if(data['total_pages']>1)
+                $('#paginate').append('<li><a onclick="pagelostform('+2+')">Next</a></li>');
+
+            }
+          },
+          failure: function(data) { 
+          alert('problem while ajax request to program change');
+        }
+      });
+
+    });
+
+
+    $('#form').on('submit',function(e){
+        
+     for ( var i=0; i<document.getElementById('id_CSForm-TOTAL_FORMS').value; i++ ){
+
+      var app = document.getElementById('id_CSForm-'+i+'-id');
+      var esc = document.getElementById('id_CSForm-'+i+'-es_to_su_rev');
+      var pg = document.getElementById('id_CSForm-'+i+'-program');
+
+      if ( esc.checked && !(esc.disabled) && pg.value )
+        result[String(app.value)] = String(pg.value);
+
+      if (!esc.checked || ( !pg.value && esc.checked))
+        if(String(app.value) in result)
+          delete result[String(app.value)];
+      
+
+     }
+
+      var JsonString = JSON.stringify(result);
+      $('#id_hidden_id').val(JsonString);
+
+      if(!Object.keys(result).length && 
+        $(e.target).find("input[type=submit]:focus" ).attr('name') == 'escalate'
+        ){
+
+        e.preventDefault();
+        return false;
+      }
+
+
+    });
+});
+
+function pagelostform(page){
+
+  $('#id_page').val(page);
+  $('#id_locations').val("{{form1.locations.value|default:''}}");
+  $('#id_programs').val("{{form1.programs.value|default:''}}");
+  $('#form').submit();
+
+}
+
+function ajax_validate_program(t){
+  var st =t.name.split('-');
+  var pg = document.getElementById('id_' + st[0] +'-' + st[1] +'-program').value;
+  var es = document.getElementById('id_' + st[0] +'-' + st[1] +'-es_to_su_rev').checked;
+  var sca = document.getElementById('id_' + st[0] +'-' + st[1] +'-id').value;
+  var error = document.getElementById( 'id_' + st[0] +'-' + st[1] +'-program-extra' );
+
+  if (es)
+    {
+      if(!pg){
+        error.innerHTML = "this field is required";
+        return false;
+      }
+      $.ajax({ 
+          type: "POST",
+          url: "{% url 'reviewer:pg_ch_ajax' %}",
+          cache:false,
+          async: true,
+          data: { 'pg':pg, 
+            'sca':sca,
+            'csrfmiddlewaretoken': '{{ csrf_token }}', 
+          },
+          success: function(data){ 
+            if (data['e']){
+              error.innerHTML = data['e'];
+              document.getElementById('id_' + st[0] +'-' + st[1] +'-program').value ='';
+              document.getElementById('id_' + st[0] +'-' + st[1] +'-es_to_su_rev').checked =false;
+            }
+            else{
+              error.innerHTML = '';
+            }
+
+          },
+          failure: function(data) { 
+          alert('problem while ajax request to program change');
+        }
+      });
+
+    }
+
+
+
+}
+
+  </script>
+
+  <style type="text/css">
+    textarea{
+      vertical-align: top;
+    }
+  </style>
+{% endblock %}
+
+{%block titleOfContent %} 
+    Applicant List (Select and Submit for Program Change)
+{% endblock %}
+
+{% block container %}
+<div class="container-fluid">
+  <br>
+  <form method="post" action="{% url 'reviewer:prog-change-list' %}" id="form" class="my-form-class" disabled="disabled">
+  
+    <div class="row container">
+      <div class="col-md-5">
+        <label><b>Select Program :</b></label>&nbsp&nbsp{{form1.programs}}
+      </div>
+
+      <div class="col-md-4">
+        <label><b>Select Location :</b></label>&nbsp&nbsp{{form1.locations}}
+        
+      </div>
+
+      <div class="col-md-2">
+        {{form1.hidden_id}}
+        {{form1.page}}
+        {{form1.search}}
+        <input class="btn btn-sm btn-primary" id="get_list" type="submit" value="Get List" style="width: 100px;" name="filter_list" >
+      </div>
+    </div>
+ 
+  
+  <br>
+  <div>
+    {% csrf_token %}
+    {{ cs_formset.management_form }}
+    {% for x in cs_formset.non_form_errors %}
+      <span style="color:red"> {{x}} </span><br>
+    {% endfor %}
+    {% for x in cs_formset.form_errors %}
+      <span style="color:red"> {{x}} </span><br>
+    {% endfor %}
+    
+
+  </div>
+
+  <table class="table table-striped table-bordered" id="sr_table" >
+  <thead>
+    <tr>
+      <th>Application ID</th>
+      <th>Name</th>
+      <th>Applied On</th>
+      <th>Program Applied for</th>
+      <th>Application Status</th>
+      <th>Program</th>
+      <th>Select for Escalation</th>
+    </tr>
+  </thead>
+  <tbody>
+    {%for form in cs_formset.forms %}
+      <tr>
+        {% bits_offer_status_td  app_stud_id=form.id %}
+        <td>
+          {% for hidden in form.hidden_fields %} {{ hidden }} {% endfor %}
+
+          {% for x in  form.program.errors %}
+            <span style="color:red" id ="{{ form.program.auto_id }}-extra" > {{x}} </span><br>
+          {% endfor %}
+          <span style="color:red" id ="{{ form.program.auto_id }}-extra" > </span>
+
+          {% if form.id|esc_applicant_check %}
+            {{ form.program|attr:'disabled:disabled' }}
+          {% else %}
+            {% render_field form.program onchange="ajax_validate_program(this);" %}
+
+          {% endif %}
+        </td>
+        <td>
+
+        {% if form.id|esc_applicant_check %}
+              {{ form.es_to_su_rev|attr:'disabled:disabled'|attr:'checked:checked' }}
+            {% else %}
+              {% if form.id|is_in_dict:hidden_id %}
+                {{ form.es_to_su_rev|attr:'checked:checked'|attr:"onchange:ajax_validate_program(this);" }}
+              {% else %}
+                {{ form.es_to_su_rev|attr:"onchange:ajax_validate_program(this);" }}
+              {% endif %}
+            {% endif %}
+
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+  </table>
+
+  <br>
+
+   <div id="pagify" class="row">
+  <div class="col-sm-2 col-md-2 col-lg-2">
+    <ul class="pagination form-control">
+      <li id='table_count'>
+        Total: {{total}}
+      </li>
+    </ul>
+  </div>
+<div class="col-sm-9 col-md-9 col-lg-9 text-right" style="float:right; cursor:pointer;">
+  <ul class="pagination" id='paginate'>
+    {% if objects.has_previous %}
+      <li><a onclick="pagelostform({{ objects.previous_page_number }});">Previous</a></li>
+    {% endif %}
+
+    {% list_pages objects.paginator.num_pages objects.number as pages%}
+  
+
+    {% for x in pages %}
+      <li><a style="{% if x == objects.number %}
+        color: white; background-color:#23527c;
+        {% endif %}" onclick="pagelostform({{ x }});">{{ x }}</a></li>
+    {% endfor %}
+
+    {% if objects.has_next %}
+      <li><a onclick="pagelostform({{ objects.next_page_number }});">Next</a></li>
+    {% endif %}
+  </ul>
+</div>
+</div>
+<br>
+
+    <div class="text-center">
+    <input class="btn btn-sm btn-primary" name="escalate" type="submit" value="Escalate for Program Change" style="width:30%">
+    </div>
+    <div id ="extra_form"></div>
+
+  </form> 
+</div>
+<br>
+{% endblock %}

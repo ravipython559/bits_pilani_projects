@@ -1,0 +1,152 @@
+
+<meta http-equiv="Context-Type" content="text/html; charset=US-ASCII">
+
+{% load static %}
+{% load i18n %}
+{% load widget_tweaks %}
+{% load admission_filter %}
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<link rel="stylesheet" type="text/css" href="{% static "assets/css/style.css"%}">
+<link href="{% static "assets/css/bootstrap.min.css"%}" rel="stylesheet">
+<link href="{% static "assets/css/ie10-viewport-bug-workaround.css"%}" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+<link href="{% static "assets/css/signin.css"%}" rel="stylesheet">
+<script src="{% static "assets/js/ie-emulation-modes-warning.js"%}"></script>
+ <!--<script src="{% static "assets/js/bootstrap.min.js"%}"></script>-->
+  <script src="{% static "assets/js/jquerynew.min.js"%}"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+<div class="jumbotron">
+<header>
+
+<tr>
+
+<title>BITS WILP</title>
+<div class="headerWrapper" style=" height: 167px;">
+
+<h1 class="hidden">BITS Pilani</h1>
+<div class="logoWrapper" padding-top: 17px;>
+<img src="{% static "assets/images/BIts_Logo-01.png" %}" id="headercontrol_imgu" alt="BITS Pilani logo" class="logoFunc" >
+
+<h2 class="appCentre" ><i>Application Centre</i></h2>
+<!--  <div id="tag"  >
+
+    <a href="{% url 'registrationForm:bits-login-admin'%}">Home</a> &nbsp|&nbsp
+<a href={% url 'registrationForm:applicantView'%} TARGET="_blank">Download Application PDF</a>&nbsp
+         |&nbsp<a style= "float:right; padding-right: 19px;" href={% url 'auth_logout'%}> Log out</a>
+</div> -->
+
+
+
+
+ <div id="tag"  >
+<a href={% url 'registrationForm:bits-login-admin'%}>{% trans 'Home' %}</a>
+         &nbsp|&nbsp
+
+
+{% if not user.email|is_specific_user %}
+  
+  <a href={% static "How_to_Apply-NonSpecific.pdf" %} target="_blank">How to Apply</a> | 
+  
+  {% else %}
+  
+  <a href={% static "How_to_Apply.pdf" %} target="_blank">How to Apply</a> |
+ 
+  {% endif %}
+&nbsp|&nbsp
+     <a href="{% url 'registrationForm:instruction-update'%}" >Modify Application Instruction Text</a>
+         &nbsp|&nbsp
+<a href={% url 'bits_admin:userdataview'%} 
+	style="text-decoration:none">
+    	{% trans 'Download User Data' %}</a>
+		&nbsp|&nbsp
+<a href={% url 'bits_admin:applicantData'%} style="text-decoration:none">Download Applicant Data</a>&nbsp|&nbsp
+<a href="{% url 'bits_admin:paymentData'%}">
+          Download Payment Data</a>
+         &nbsp|&nbsp
+<a  href="{% url 'admin:index' %}registrations/" style="text-decoration:none">Manage Master Data</a>&nbsp|&nbsp<a href={% url 'auth_logout'%}> Log out</a>
+
+
+
+
+
+            </div>
+</div>
+</div>
+
+</tr>
+ <!-- Static navbar -->
+ <style type="text/css">
+input[type=file]{
+  border: 1px solid gray;
+  margin-left: 94px;
+
+}
+a{
+  color: #656565;
+}
+
+ </style>
+
+ <script type="text/javascript">
+
+/*$(document).ready(function () {
+
+
+
+
+ $('<option value="0">Please Select</option>').appendTo("#id_file_format");
+alert("ssssssssssssssss");
+
+$('#id_file_format').val(0).attr("selected", "selected");
+
+
+
+
+$( "#dataSent" ).click(function() {
+alert("sssssss")
+
+  });
+
+});*/
+ </script>
+  </header>
+
+</div>
+<body>
+<form action="." method="post" enctype="multipart/form-data">
+<div style="margin-top: 7%;margin-left: 42%;font-size:14px;">
+    {% csrf_token %}
+
+
+<p>
+    <label style="float:left">File :</label>
+    {{form.fileupload|attr:'required:true'}}
+    <p> {{form.fileupload.errors}}</p>
+</p>
+
+
+</br></br></br>
+<input class="btn btn-sm btn-primary" id="dataSent" type="submit" value="Submit" style=" margin-top: 3%; margin-left: 5%;" />
+</div>
+
+<!-- <a class="btn btn-sm btn-primary"  style= " margin-top: 7%;
+margin-left: 43%;" href="{%url 'registrationForm:payment-redirect' %}">Submit</a> -->
+<div id="footer" style="margin-left: -12%;">
+<div class="footerWrapper" style="margin-top: 95px;position:fixed;bottom:0;    width: 112%;">
+    <div class="footerFix"> </div>
+
+<div class="cpInfoFixWrapper">
+    <div class="cpInfoFix">
+        <p class="info">
+            Admissions Office, BITS, Pilani - 333 031 (Rajasthan) India.<br>
+            For Assistance Call +91-80-48767777</p>
+    </div>
+</div>
+</div>
+</div>
+</form>
+</body>
+<html><head></head><body></body></html>

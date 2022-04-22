@@ -1,0 +1,127 @@
+{% extends 'bits_BaseTemp.html' %}
+{% load static %}
+
+{% block title %}{{block.super}} - Choose Electives{% endblock %}
+
+{% block titleOfContent %} 
+  Elective Courses-Choose Electives for your First Semester
+{% endblock %}
+
+
+{% block staticContent %}
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+  <link rel="stylesheet" href="{% static 'assets/css/jquery-ui.css' %}"></link>
+
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
+ 	<style type="text/css">
+ 		table {
+    		width: 100%;
+    		font-size: 100%;
+			  }
+		th {
+    		height: 50px;
+			}	
+		.app_stud_id {
+			color:#D2691E; 
+			font-size:16px;
+				}
+		#viewofferletter{
+			font-size: 12px;
+			}
+ 	</style>
+
+ 	<script type="text/javascript">
+ 		$(document).ready(function(){
+ 			{% if status %}
+				$('#id_gen p').text('Electives Choice Successfully Saved');
+				$('#id_gen').dialog({
+					width: 500,
+					resizable:false,
+					buttons: {
+					"OK": function(){
+						$(this).dialog("close");
+					},
+					}
+				});
+			{% endif %} 
+		});
+		
+	</script>
+
+{% endblock %}
+
+{% block navigationLinks %}
+	<li><a href={% url 'registrationForm:applicantData'%}>Home</a></li>
+	<li><a href="{% url 'registrationForm:applicantView'%}" TARGET="_blank">
+	Download Application PDF</a></li>
+	<li><a href={% url 'auth_logout'%}>Log out</a></li>
+{% endblock %}
+
+
+{% block container %}
+	<div class="container">
+		<form method="post">
+			{% csrf_token %}
+			<br>
+			<div class="row" >
+  				<div class="col-md-4 app_stud_id">
+  					<b>Application ID: {{applicant.application_id}}</b>
+  				</div>
+
+  				<div class="col-md-offset-5 col-md-3 text-right app_stud_id">
+    				<b>Student ID: {{cs.student_id}}</b>
+  				</div>
+
+  			</div>
+			<br>
+			<a id = "viewofferletter" class = 'pull-right' href = "{% url 'registrationForm:offer-letter'%}" target="_blank"> View Offer Letter</a>
+			<br>
+			<br>
+			<div class="table-responsive">
+				<table class="table">
+				<tr>
+					<th>Course ID</th>
+					<th>Course Name</th>
+					<th>Units</th>
+					<th>Choose Electives</th>
+				</tr>
+				 {% for course in course_list %}
+				 <tr>
+				 	<td>{{course.course_id}}</td>
+				 	<td>{{course.course_name}}</td>
+				 	<td>{{course.course_unit}}</td>
+				 	<td>&nbsp;</td>
+				 </tr>	     
+			  	 {% endfor %}
+
+				{% for form in formset.forms %}
+				{{ form.id }}
+				  <tr>
+				    <td>{{ form.fscl_course_id}}</td>
+				    <td>{{ form.fscl_course_name}}</td>
+				    <td>{{ form.fscl_course_unit}}</td>
+				    <td> {{ form.course}}</td>
+				    {{ form.course_id_slot}}
+				  </tr>
+				{% endfor %}
+
+				{{ formset.management_form }}
+				</table>
+			</div>
+			{% if not ecl_exists %}
+			<p>
+				The Electives are yet to be decided for your program. Kindly log in again after a couple of days to do your elective selection.
+			</p>
+			{% endif %}
+			<center>
+				<input id='submit_id' type = "submit" value = "Update Elective Choices" class = "btn btn-sm btn-primary" {% if not ecl_exists or not ses_is_locked %}disabled{% endif %} >
+			</center>
+		</form>
+	</div>
+<br>
+<div style= "display:none;" id="id_gen" >
+  <p style= "font-size:17px;" ></p>
+</div>
+{% endblock %}
+

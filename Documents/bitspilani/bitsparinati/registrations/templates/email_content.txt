@@ -1,0 +1,32 @@
+<html>
+<body>
+<p>
+Dear <strong>{{app_name}},</strong>
+</p>
+
+<p>
+Thank you for submitting your application to the {{program}} offered by BITS Pilani Work Integrated Learning Programmes. Your Application has been evaluated by the Admission Cell and you can now log back into the online <a href="https://wilpadmissions.bits-pilani.ac.in/accounts/login/" >Application Center</a> to view the result.
+</p>
+<br>
+<br>
+<p>
+Best Regards,
+</p>
+
+<p>
+<b>Admission Cell</b><br>
+<b>Work Integrated Learning Programmes</b><br>
+<b>Birla Institute of Technology & Science, Pilani</b><br>
+Visit: <a href="http://www.bits-pilani.ac.in/wilp">
+www.bits-pilani.ac.in/wilp
+</a><br>
+Write: <a href="mailto:admission@wilp.bits-pilani.ac.in" 
+target="_top">admission@wilp.bits-pilani.ac.in</a><br>
+Call: +91-80-48767777<br>
+</p>
+</body>
+</html>
+
+
+
+	

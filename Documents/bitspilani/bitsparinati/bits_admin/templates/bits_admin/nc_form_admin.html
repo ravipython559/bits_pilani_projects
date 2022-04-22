@@ -1,0 +1,238 @@
+{% extends 'bits_base_admin.html' %}
+
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}Name Verifcation- Review and Update{% endblock %}
+
+{% block staticContent %}
+  <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css">
+
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
+
+  <script>
+  $(document).ready(function(){
+  {% if query.verified_student_name%}
+  $('#nc_form').on('submit',function(e) {
+          e.preventDefault();
+          $("#pop1").html("");
+          var btn = $(this).find("input[type=submit]:focus" );
+          var btn_clkd = btn.attr("id");
+
+          if(btn_clkd == 'idSave')
+            {
+              $("#pop1").html("The name of this student seems to have been verified at an earlier date. Please note that if the detail of this student has been ported to SDMS before and the name has been changed in SDMS, the name changes done here will NOT be ported to SDMS. Are you sure you want to make the name change?");
+            }
+          else
+            {
+              $("#pop1").html("Are you sure you want to sync details with SDMS?");
+            }
+                $("#pop1").dialog({
+                modal: true,
+                width: 500,
+                resizable:false,
+                buttons: {
+                  "YES": function(){
+
+                      $("#nc_form").unbind("submit");
+                      $('#'+ btn_clkd).click();
+                   
+                   $(this).dialog("close");
+                   },
+                  "NO": function(){
+                    
+                   $(this).dialog("close");
+                   },
+
+                 }});
+
+  });
+{% endif %}
+  });
+  </script>
+
+  <style type="text/css">
+    #id_verified_student_name{
+      text-transform: uppercase;
+    }
+      #pop1{
+        font-weight:bold;
+        font-size:14px;
+      }
+
+      #dnv_table{
+      border-collapse: collapse;
+      border-width: 2px;
+      width:50%; 
+      text-align: center;
+      }
+      .tabhead {
+      background-color: #eee;
+      font-weight: bold;
+      font-size:12px;
+      }
+      .error_display{
+        color:red;
+      }
+      .ap_st{
+        color:#337ab7;
+      }
+      #api_fail_msg{
+        font-weight:bold;
+        font-size:14px;
+        color:red;
+      }
+      #api_success_msg{
+        font-weight:bold;
+        font-size:14px;
+        color:green;
+      }
+  </style>
+{% endblock %}
+
+{%block titleOfContent %} 
+    Name Verification for New Student - Review and Update
+{% endblock %}
+
+{% block container %}
+<div class="container">
+<br>
+  {% if api_op %}
+      {% for x in api_op %}
+        {% if x.sdms_status_code == 200 %}
+          <div id="api_success_msg">Student ID:{{x.id_no}} - Successfully synced.</div>
+        {% else %}
+          <div id="api_fail_msg">Student ID:{{x.id_no}} - Error :{{x.sdms_error}}</div>
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+  <br>
+  <span id="pop1"></span>
+  <form method="post" action="{% url 'bits_admin:nc-form' query.application.id %}" class="my-form-class" id="nc_form">
+  <br>
+{% csrf_token %}
+  <div class="row" style="float:right;">
+    <a href={% url 'bits_admin:admin-application-views' query.application.id %} target="_blank" >View Complete Applicant Details</a>&nbsp|&nbsp
+    <a href={% url 'registrationForm:reviewApplicantView' query.application.student_application_id%} target="_blank">Download Application pdf</a>
+  </div>
+  <br>
+
+  <div class="row ap_st">
+    <div class="col-md-4">
+      <font size="3">
+        <b>Application ID - &nbsp&nbsp{{query.application.student_application_id}}
+        </b>      
+      </font>
+    </div>
+    <div class="col-md-4">
+      <font size="3">
+        <b>Student ID - &nbsp&nbsp{{ query.student_id }}</b>
+      </font>
+    </div>
+  </div>
+  <br><br>
+
+  <div class="row">
+    <div class="col-md-4">
+        <b>Full Name</b>&nbsp&nbsp{{ query.application.full_name }}  
+    </div>
+    <div class="col-md-2">
+      <b>Date of Birth</b>&nbsp&nbsp{{ query.application.date_of_birth |date:'d/m/Y'}}
+    </div>
+    <div class="col-md-2">
+      <b>Gender</b>&nbsp&nbsp{{ query.application.gender }}
+    </div>
+  </div>
+  <br> 
+
+  <div class="row">
+    <div class="col-md-4">
+        <b>BITS Verified Name</b> 
+         {{prog_form.verified_student_name}} 
+         <div class="error_display">
+              {% for x in prog_form.verified_student_name.errors %}
+                  {{ x }}
+              {% endfor %}
+
+          </div>
+
+    </div>
+    <div class="col-md-7">
+      <p> Please Enter the Verified Name (for unverified names, entry as made by the Applicant is shown) </p> 
+    </div>
+  </div>
+  <br>
+
+  <div class="row">
+    <div class="col-md-4">
+        <b>Name Last Verified on</b> &nbsp&nbsp{{ query.name_verified_on|date:'d/m/Y' }}
+    </div>
+    <div class="col-md-4">
+      <b>Name Last Verified by</b> &nbsp&nbsp{{ query.name_verified_by| default:''}}
+    </div>
+  </div>
+  <br>
+
+  <div class="row">
+    <div class="col-md-4">
+        <b>Data Synced with SDMS?</b> &nbsp&nbsp
+        {% if query.dps_flag %}
+        Yes
+        {% else %}
+        No  
+        {% endif %}
+    </div>
+    <div class="col-md-4">
+      <b>Last Sync with SDMS on</b> &nbsp&nbsp
+      {{ query.dps_datetime|date:'d/m/Y' }}
+    </div>
+  </div>
+  <br>
+
+  <div>
+    <font size="3">
+      <b>Documents for Name Verification</b>
+    </font>
+  </div>
+  <br>
+
+  <center>
+      <table class="table table-striped table-bordered" id="dnv_table">
+      <thead>
+            <tr>
+              <td class="tabhead">Document Name</td>
+              <td class="tabhead">Link</td>
+            </tr>
+      </thead>
+      <tbody>
+            {%for x in doc%}
+              <tr>
+                <td>{{x.document.document_name}}</td>
+                <td> 
+                <a href="{% if x.file %}{% url 'registrationForm:document-view' x.pk %}{% else %}#{% endif %}" target = '_blank' >Doc Link</a>
+                </td>
+              </tr>
+            {% endfor %}       
+      </tbody>
+    </table>
+  </center>
+  <br>
+
+    <div class="row ">
+      <div class="col-md-offset-2  col-md-4">
+        <input class="btn btn-sm btn-primary" name="save" id="idSave" 
+        type="submit" value="Save Verified Name Changes / Sync Details with SDMS">
+      </div>
+
+      <div class="col-md-4">
+        <input class="btn btn-sm btn-primary" name="sync" id="idSync" 
+        type="submit" value="Sync Details with Student Data Management System">
+      </div>
+    </div>
+
+  </form> 
+</div>
+<br>
+{% endblock %}

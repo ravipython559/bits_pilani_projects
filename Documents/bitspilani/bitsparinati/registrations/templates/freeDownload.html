@@ -1,0 +1,196 @@
+{% load static %}
+
+{% load widget_tweaks %}
+{% load admission_filter %}
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<link rel="stylesheet" type="text/css" href="{% static "assets/css/style.css"%}">
+<link href="{% static "assets/css/bootstrap.min.css"%}" rel="stylesheet">
+<link href="{% static "assets/css/ie10-viewport-bug-workaround.css"%}" rel="stylesheet">
+
+
+    <!-- Custom styles for this template -->
+<link href="{% static "assets/css/signin.css"%}" rel="stylesheet">
+<script src="{% static "assets/js/ie-emulation-modes-warning.js"%}"></script>
+ <!--<script src="{% static "assets/js/bootstrap.min.js"%}"></script>-->
+  <script src="{% static "assets/js/jquerynew.min.js"%}"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+
+<div class="jumbotron">
+<header>
+
+<tr>
+
+<title>BITS WILP</title>
+<div class="headerWrapper" style=" height: 167px;">
+
+<h1 class="hidden">BITS Pilani</h1>
+<div class="logoWrapper" padding-top: 17px;>
+<img src="{% static "assets/images/BIts_Logo-01.png" %}" id="headercontrol_imgu" alt="BITS Pilani logo" class="logoFunc" >
+
+<h2 class="appCentre" ><i>Application Centre</i></h2>
+ <div id="tag"  >
+<a href={% url 'registrationForm:applicantData'%}>Home</a> |
+
+{% if user.email|is_CIOT_user %}
+  <a href="{% static "static_pdf/How_to_Apply_IoT.pdf" %}" target="_blank">How to Apply</a> |
+{% elif not user.email|is_specific_user %}
+  <a href={% static "static_pdf/How_to_Apply-NonSpecific.pdf" %} target="_blank">How to Apply</a> | 
+{% else %}
+  <a href={% static "How_to_Apply.pdf" %} target="_blank">How to Apply</a> |
+{% endif %}
+
+<a href={% url 'registrationForm:applicantView'%} TARGET="_blank">Download Application PDF</a>
+         &nbsp|&nbsp<a href={% url 'registrationForm:payfee'%} TARGET="_blank">Download Fee Receipt</a>&nbsp|&nbsp
+         <a href="{% url 'registrationForm:student-upload' %}" style="text-decoration:none">
+         Upload Documents</a>&nbsp|&nbsp<a href={% url 'auth_logout'%}> Log out</a>
+
+  
+ 
+                
+            </div>
+
+</div>
+</div>
+
+</tr>
+
+
+
+ <!-- Static navbar -->
+
+
+  </header>
+
+</div>
+
+ 
+
+
+
+  <style type="text/css">
+.tagAppliaction{
+    margin-top: 47px;
+
+    margin-left: 50px;
+}
+h3{
+    text-align: center;
+     margin-top: 75px;
+}
+
+
+
+#example_wrapper{
+    position: relative;
+top: 33px;
+left: 50px;
+width: 92%;
+}
+table.dataTable tr.odd { background-color:  #D3D3D3 }   
+    table.dataTable tr.even { background-color: #f2f2f2}
+  </style>
+  <head>
+   
+    <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+
+
+
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.11/css/jquery.dataTables.min.css"/>
+  <script src="https://cdn.datatables.net/1.10.11/js/jquery.dataTables.min.js"></script>
+      
+      
+  </head>
+
+    <body>
+ <h3 style="margin-left: 6%;">Application Fee Receipt </h2>
+        <div class="container">
+          
+               
+
+           
+           
+               
+<center>
+<table style="margin-left: 18%;width: 50%;margin-top: 3%;" class="table">
+<tr>
+  <td>Application ID</td>
+  <td>{{ctx.ap_id}}</td>
+</tr>
+
+<tr>
+  <td>Application Name</td>
+  <td>{{ctx.ap_name}}</td>
+</tr>
+
+<tr>
+  <td>Program Applied For</td>
+  <td>{{ctx.ap_program}}</td>
+</tr>
+
+<tr>
+  <td>Fee Amount</td>
+  <td>{{ctx.ap_fee_amount}}</td>
+</tr>
+
+<tr>
+  <td>Payment Bank</td>
+  <td>{{ctx.ap_pay_bank}}</td>
+</tr>
+
+<tr>
+  <td>Transaction Id</td>
+  <td>{{ctx.ap_trans_io}}</td>
+</tr>
+
+<tr>
+  <td>Payment Date and Time</td>
+  <td>{{ctx.ap_pay_d_t}}</td>
+</tr>
+<tr>
+  <td colspan=2 >
+ <a class="btn btn-sm btn-primary "  style= "width: 36%;
+margin-top: 8%;
+margin-left: 17%;" href={% url 'registrationForm:payfee'%} TARGET="_blank"> Download Fee Receipt</a>
+</td>
+</tr>
+<tr>
+  <td colspan=2 style="text-align: center;padding-right: 172px;">Click <a href={% url 'registrationForm:applicantData'%}>Here</a> to go back to Homepage
+</td>
+</tr>
+  
+
+</table>
+
+         </center>   
+        </div>
+<div style="padding:0px"></div>
+    <div class="footerWrapper" style="margin-top:10%;width:106%;">
+
+
+<div class="cpInfoFixWrapper">
+    <div class="cpInfoFix">
+        <p class="info">
+            Admissions Office, BITS, Pilani - 333 031 (Rajasthan) India.<br>
+            For Assistance Call +91-80-48767777</p>
+
+    </div>
+    <!--<div style="height: 50px; width: 100%; background-color: #F5F5F5; margin-top: 0px">
+            </div>-->
+</div>
+
+
+</div>
+
+       
+
+   
+    <script type="text/javascript">
+$(document).ready(function(){
+
+    
+    $('#example').DataTable();
+});
+
+    </script>

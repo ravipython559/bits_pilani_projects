@@ -1,0 +1,118 @@
+{% extends "registration/registration_base.html" %}
+{% load i18n %}
+{% load static %}
+{% load widget_tweaks %}
+{% block title %}{% trans "Register for account" %}{% endblock %}
+
+{% block staticContent %}
+<style type="text/css">
+
+  label{
+    margin-top: 24px;
+    margin-bottom: 24px;
+  }
+  body {
+    min-height: 100%;
+    position: relative;
+  }
+  body:after {
+    content: '';
+    display: block;
+    height: 100px;
+  }
+
+</style>
+<script type="text/javascript">
+$(document).ready(function () {
+  var minNumber = -100;
+  var maxNumber = 40
+
+  var random=randomNumberFromRange(minNumber, maxNumber);
+
+  function randomNumberFromRange(min,max){
+    return Math.floor(Math.random()*(max-min+1)+min);
+  }
+
+  now = new Date();
+  year = "" + now.getFullYear();
+  month = "" + (now.getMonth() + 1); if (month.length == 1) { month = "0" + month; }
+  day = "" + now.getDate(); if (day.length == 1) { day = "0" + day; }
+  hour = "" + now.getHours(); if (hour.length == 1) { hour = "0" + hour; }
+  minute = "" + now.getMinutes(); if (minute.length == 1) { minute = "0" + minute; }
+  second = "" + now.getSeconds(); if (second.length == 1) { second = "0" + second; }
+  milli=""+now.getMilliseconds(); if (milli.length == 1) { milli = "0" + milli; }
+  var abc=year + "-" +month+day+random+hour+minute+second;
+  $("#id_username").val(abc);
+});
+</script>
+
+{% endblock %}
+
+
+{%block titleOfContent %} 
+        <b>Register Here to Start your Application Process</b>
+{% endblock %}
+
+
+{% block content %}
+<div class="container">
+  <br>
+  <center>
+    <form class="form-signin registration-form"  method="Post" style="font-size: large;">
+      {% csrf_token %}
+      {% if form.errors%}
+        <div class="alert alert-danger">
+          {{ form.email.errors}} {{ form.password1.errors}}{{ form.password2.errors}}
+        </div>
+      {% endif %}
+      <table>
+        <tr>
+            <td width="200px;"><b>{% trans "Email Id:" %}</b></td>
+            <td style="padding-bottom: 10px;">{{ form.email|attr:'required:true'|attr:'pattern:[^@]+@[^@]+\.[a-zA-Z]{2,}'|attr:'oninvalid:setCustomValidity("Please Enter Email Id")'|attr:'oninput:setCustomValidity("")' |attr:'maxlength:50' }}
+            </td>
+        </tr>
+        <tr>
+            <td><b>{% trans "Password:" %}</b></td>
+            {{form.username}}
+            {{ form.username.errors}}
+            <td style="padding-bottom: 10px;">{{ form.password1 |attr:'required:true'|attr:'oninvalid:setCustomValidity("Please Enter Password")'|attr:'oninput:setCustomValidity("")'|attr:'maxlength:45'}}</td>
+        </tr>
+        <tr>
+            <td><b>{% trans "Confirm Password:" %}</b></td>
+            <td>{{ form.password2 |attr:'required:true'|attr:'oninvalid:setCustomValidity("Please Enter Confirm Password")'|attr:'oninput:setCustomValidity("")'|attr:'maxlength:45'}}</td>
+           
+           
+        </tr>
+      </table>
+      <input type="hidden" name="next" value="{{ next }}" />
+      <div class="span4 offset4 text-center">
+        <br>
+        <p>Please Click <a target="_blank" href="https://bits-pilani-wilp.ac.in/privacy-policy.php">here</a> to read our <strong>Privacy Policy</strong></p>
+          </br>
+          <button class="btn btn-primary center-block " type="submit"  value="{% trans 'Submit' %}">
+            Register
+          </button>
+      </div>
+    </form>
+    <br> 
+    <h4 class="text-center" >
+      <b>
+        {% trans "Already registered? Click" %} <a href="{% url 'auth_login' %}"> {% trans "here" %}</a> {% trans "to login" %}
+      </b>
+    </h4>
+  </center>
+</div>
+{% endblock %}
+
+
+{% comment %}
+**registration/registration_form.html**
+Used to show the form users will fill out to register. By default, has
+the following context:
+
+``form``
+    The registration form. This will be an instance of some subclass
+    of ``django.forms.Form``; consult `Django's forms documentation
+    <http://docs.djangoproject.com/en/dev/topics/forms/>`_ for
+    information on how to display this in a template.
+{% endcomment %}

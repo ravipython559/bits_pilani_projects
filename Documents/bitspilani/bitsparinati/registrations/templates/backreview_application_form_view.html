@@ -1,0 +1,786 @@
+{% load static %}
+
+{% load widget_tweaks %}
+{% load static %}
+
+{% load widget_tweaks %}
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<link rel="stylesheet" type="text/css" href="{% static "assets/css/style.css"%}">
+<link href="{% static "assets/css/bootstrap.min.css"%}" rel="stylesheet">
+<link href="{% static "assets/css/ie10-viewport-bug-workaround.css"%}" rel="stylesheet">
+
+
+    <!-- Custom styles for this template -->
+
+<link href="{% static "assets/css/signin.css"%}" rel="stylesheet">
+<script src="{% static "assets/js/ie-emulation-modes-warning.js"%}"></script>
+ <!--<script src="{% static "assets/js/bootstrap.min.js"%}"></script>-->
+  <script src="{% static "assets/js/jquerynew.min.js"%}"></script>
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<link rel="stylesheet" type="text/css" href="{% static "assets/css/jquery.dataTables.min.css" %}">
+<script src="{% static "assets/js/jquery.dataTables.min.js" %}"></script>
+
+<div class="jumbotron">
+<header>
+
+<tr>
+
+<title>BITS WILP</title>
+<div class="headerWrapper" style=" height: 167px;">
+
+<h1 class="hidden">BITS Pilani</h1>
+<div class="logoWrapper" padding-top: 17px;>
+<img src="{% static "assets/images/BIts_Logo-01.png" %}" id="headercontrol_imgu" alt="BITS Pilani logo" class="logoFunc" >
+
+<h2 class="appCentre" ><i>Application Centre</i></h2>
+
+
+
+</div>
+</div>
+
+</tr>
+</header>
+
+</div>
+
+
+
+
+<style>
+.required {
+    color: #e32;
+    content: ' *';
+    display:inline;
+}
+        ul {
+    list-style-type: none;
+    margin: 1px;
+padding: 3px;
+}
+
+li {
+    display: inline;
+}
+td, th {
+padding: 7px;
+}
+div#stuDiv{
+    padding: 10px;
+}
+.add-row{
+
+    padding: 8px 21px;
+    border-radius: 6px;
+    color:black;
+
+
+    background-size:  38px 34px;sorting_1
+    background-repeat: no-repeat;
+    position: relative;
+    left: 1%;
+}
+.delete-row{
+
+    padding: 8px 21px;
+    border-radius: 6px;
+    color:black;
+
+    position: relative;
+
+    background-size:  38px 34px;
+    background-repeat: no-repeat;
+
+}
+
+
+#work select{
+     width: 99%;
+
+}
+#industry select{
+    width: 76%;
+}
+.phone select{
+    width: 24%;
+}
+
+.table>tbody>tr>td{
+
+    border-top: 0px solid #ddd;
+}
+.table-bordered>tbody>tr>td{
+border-top: 0px solid #ddd;
+}
+#fee select{
+    width: 77%;
+    }
+
+.addrInput input{
+    width: 92%;
+}
+
+
+.bold{
+    font-weight: bold;
+}
+
+.alignTh{
+    font-weight: bold;
+    text-align: center;
+}
+
+
+ .current input{
+  width: 99%;
+ }
+ .city input{
+    width: 93%;
+ }
+ #example_length label{
+display:none;
+}
+
+.dataTables_filter label{
+display:none;
+}
+</style>
+
+<script type="text/javascript">
+$(document).ready(function(){
+
+    $('#example').DataTable();
+
+   $("#validateForm").click(function() {
+var textbox=$('#application_status').val();
+
+if(textbox== "rejected"){
+    var textbox1=$('#Rejection_reason').val();
+
+    if(textbox1==null){
+    alert("Please Select Rejection Reason");
+return false;
+}
+else{
+    return true;
+}
+}
+else{
+    return true;
+}
+   });
+
+
+});
+</script>
+        <script>
+        $(function() {
+   $('input[name=checks]').on('change',function() {
+        var checked = this.checked;
+
+
+$(this).closest('tr').find(':checkbox').not(this).prop('disabled',checked);
+$(this).closest('tr').find('#dropd').not(this).prop("disabled", "disabled");
+
+    });
+      $('input[name=check1]').on('change',function() {
+        var checked = this.checked;
+
+
+$(this).closest('tr').find(':checkbox').not(this).prop('disabled',checked);
+
+
+    });
+});
+
+
+        </script>
+</head>
+<body >
+<form method="post" action="{%url 'registrationForm:review_application_details' form.id%}"  id="form" class="my-form-class">
+    {% csrf_token %}
+<div class="container">
+<h3 style="font-size: x-large;text-align: center;">Applicant Details</h3>
+<div id="stuDiv">
+{% if messages %}
+<div class="span12">
+{% for message in messages %}
+<div class="alert alert-{{ message.tags }}">
+    {{ message|safe }}
+</div>
+{% endfor %}
+</div>
+{% endif %}
+<div class="divInfoBlock">&nbsp;
+    <span class="glyphicon glyphicon-star"></span>Education Details
+</div>
+
+</br>
+<div>
+    <div style="overflow-x: auto;">
+         <div  >
+            <table class="table table-bordered table-hover" id="tableedu">
+
+                <thead>
+                   <tr>
+                      <th class="alignTh" style="width: 17%;">Degree<p class="required"> *</p></th>
+                      <th class="alignTh" style="width: 15%;">School/College<p class="required"> *</p></th>
+                      <th class="alignTh" style="width: 10%;">Duration<p class="required"> *</p></th>
+                      <th class="alignTh" style="width: 28%;">Discipline<p class="required"> *</p></th>
+                      <th class="alignTh" style="width: 7%;">Year of Passing<p class="required"> *</p></th>
+                      <th class="alignTh" style="width: 6%;">% Marks / CGPA<p class="required"> *</p></th>
+                      <th class="alignTh" style="width: 9%;">Division<p class="required"> *</p></th>
+                    </tr>
+
+                </thead>
+                <tbody>
+                     {% for y in qual1 %}
+                         <tr>
+
+
+                                 <td id="degree" style="width: 15px;" >{{y.degree}}</td>
+                          <td style="width: 15px;">{{y.school_college}}</td>
+                          <td style="width: 7px;">{{y.get_duration_display}}</td>
+
+                           <td style="width: 28px;" id="discipline">{{y.discipline}}</td>
+                            <td id="hi12" style="width: 4px;">{{y.completion_year}}</td>
+                              <td style="width: 5px;">{{y.percentage_marks_cgpa}}</td>
+                                <td style="width: 7px;">{{y.get_division_display}}</td>
+
+
+                        </tr>
+                      {% endfor %}
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+    </div>
+</div>
+
+
+<table class="table table-bordered table-hover">
+    <tr>
+        <td class="bold">Level of Studies in Mathematics <p class="required"> *</p> </td>
+        <td>{{form.get_math_proficiency_level_display}}</td>
+    </tr>
+    <tr>
+        <td class="bold">Are you a past student of Bits Pilani <p class="required"> *</p> </td>
+        <td>{{form.get_prior_student_flag_display}}</td>
+
+    </tr>
+    <tr>
+        <td>{{form.application_status}}</td>
+        <td>BITS ID Number (if past student)  </td>
+        <td>{{form.bits_student_id}}</td>
+    </tr>
+</table>
+
+<table class="table table-bordered table-hover">
+    <tr>
+        <td class="bold">Are you currently pursuing studies in any other university or college<p class="required"> *</p> </td>
+
+    </td>
+    <td>{{form.get_parallel_studies_flag_display}}</td>
+    </tr>
+    <tr>
+    <td>{{form.bonafide_flag}}
+</td>
+<td class="bold">I Certify that the information provided by me in the  application form is correct to the best of my knowledge</td>
+
+</tr>
+</table>
+
+</div><div class="divInfoBlock">&nbsp;Uploaded Documents</div>
+</br>
+<table class="table table-bordered table-hover" id="example"style="margin-left: 7px;width:98%">
+<thead>
+
+    <tr >
+        <th class="tableHeader">Document Name</th>
+        <th class="tableHeader">Link</th>
+        <th class="tableHeader">Reviewed and Verified?</th>
+        <th class="tableHeader">Rejected?</th>
+        <th class="tableHeader">Rejection Reason</th>
+        </tr>
+</thead>
+<tbody>
+
+      {% for x in uploadFiles %}
+      <tr>
+        <td>
+        {{x.document}}
+        </td>
+        <td>
+        <a href="{{x.file.url}}" TARGET="_blank">{{x}}</a>
+
+        </td>
+
+
+
+
+        <td><input type="checkbox" id="cbox1{{x.id}}" name="checks" value="{{x.id}}"></td>
+        <td><input type="checkbox" id="cbox2{{x.id}}" name="check1" value="{{x.id}}"></td>
+
+        <td>
+            <select name="document_rejection_reason">
+                <option value=''>Select Reason</option>
+            {% for entry in document_rejection_reason %}
+                <option value="{{ entry.id }}">{{ entry.reason }}</option>
+            {% endfor %}
+            </select>
+        </td>
+      </tr>
+
+      {% endfor %}
+</tbody>
+</table>
+</div>
+
+<div>
+<table>
+<tr>
+<td>
+
+<label>Set Application Status
+    <select name='application_status_dropdown'>
+        <option selected="selected" disabled>Select Application Status</option>
+        <option value="selected">Shortlisted</option>
+        <option value="in review">In review</option>
+        <option value="in review escalated">In review - Escalated</option>
+        <option value="rejected">Rejected</option>
+
+    </select>
+
+</label>
+</td>
+<td>
+<label>Rejection Reason
+    </label>
+    <select name="rejection_reason">
+    <option value=''>Select Reason</option>
+    {% for entry in rejection_reason %}
+    <option value="{{ entry.id }}">{{ entry.reason }}</option>
+
+{% endfor %}
+</select>
+</td>
+<td>
+<label>Rejection Comments
+    <input type="textarea", cols="30", rows="5", name="Rejection_comments"value=""/>
+</label>
+</td>
+</tr>
+</table>
+</div>
+
+
+<div style="  text-align:center;">
+<input class="btn btn-sm btn-primary" type="submit" value="Update Application Status"
+id="validateForm">
+
+    </div>
+</form>
+</body>
+<div style="margin-left: 16px;
+">
+
+
+</div>
+
+    <p></p>
+    <div style="padding:0px">
+        <div style="padding:0px"></div>
+    <div class="footerWrapper" style="margin-top: 95px;">
+
+
+<div class="cpInfoFixWrapper">
+    <div class="cpInfoFix">
+        <p class="info">
+            Admissions Office, BITS, Pilani - 333 031 (Rajasthan) India.<br>
+            Call us on: +91-80-48767777</p>
+
+    </div>
+
+
+
+</div>
+
+
+
+
+<!--
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<link rel="stylesheet" type="text/css" href="{% static "assets/css/style.css"%}">
+<link href="{% static "assets/css/bootstrap.min.css"%}" rel="stylesheet">
+<link href="{% static "assets/css/ie10-viewport-bug-workaround.css"%}" rel="stylesheet">
+
+<link href="{% static "assets/css/signin.css"%}" rel="stylesheet">
+<script src="{% static "assets/js/ie-emulation-modes-warning.js"%}"></script>
+  <script src="{% static "assets/js/jquerynew.min.js"%}"></script>
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<link rel="stylesheet" type="text/css" href="{% static "assets/css/jquery.dataTables.min.css" %}">
+<script src="{% static "assets/js/jquery.dataTables.min.js" %}"></script>
+
+<div class="jumbotron">
+<header>
+
+<tr>
+
+<title>BITS WILP</title>
+<div class="headerWrapper" style=" height: 167px;">
+
+<h1 class="hidden">BITS Pilani</h1>
+<div class="logoWrapper" padding-top: 17px;>
+<img src="{% static "assets/images/BIts_Logo-01.png" %}" id="headercontrol_imgu" alt="BITS Pilani logo" class="logoFunc" >
+
+<h2 class="appCentre" ><i>Application Centre</i></h2>
+
+
+
+</div>
+</div>
+
+</tr>
+</header>
+
+</div>
+
+
+
+
+<style>
+.required {
+    color: #e32;
+    content: ' *';
+    display:inline;
+}
+        ul {
+    list-style-type: none;
+    margin: 1px;
+padding: 3px;
+}
+
+li {
+    display: inline;
+}
+td, th {
+padding: 7px;
+}
+div#stuDiv{
+    padding: 10px;
+}
+.add-row{
+
+    padding: 8px 21px;
+    border-radius: 6px;
+    color:black;
+
+
+    background-size:  38px 34px;sorting_1
+    background-repeat: no-repeat;
+    position: relative;
+    left: 1%;
+}
+.delete-row{
+
+    padding: 8px 21px;
+    border-radius: 6px;
+    color:black;
+
+    position: relative;
+
+    background-size:  38px 34px;
+    background-repeat: no-repeat;
+
+}
+
+
+#work select{
+     width: 99%;
+
+}
+#industry select{
+    width: 76%;
+}
+.phone select{
+    width: 24%;
+}
+
+.table>tbody>tr>td{
+
+    border-top: 0px solid #ddd;
+}
+.table-bordered>tbody>tr>td{
+border-top: 0px solid #ddd;
+}
+#fee select{
+    width: 77%;
+    }
+
+.addrInput input{
+    width: 92%;
+}
+
+
+.bold{
+    font-weight: bold;
+}
+
+.alignTh{
+    font-weight: bold;
+    text-align: center;
+}
+
+
+ .current input{
+  width: 99%;
+ }
+ .city input{
+    width: 93%;
+ }
+ #example_length label{
+display:none;
+}
+
+.dataTables_filter label{
+display:none;
+}
+</style>
+
+<script type="text/javascript">
+$(document).ready(function(){
+
+    $('#example').DataTable();
+
+   $("#validateForm").click(function() {
+var textbox=$('#application_status').val();
+
+if(textbox== "rejected"){
+    var textbox1=$('#Rejection_reason').val();
+
+    if(textbox1==null){
+    alert("Please Select Rejection Reason");
+return false;
+}
+else{
+    return true;
+}
+}
+else{
+    return true;
+}
+   });
+
+
+});
+</script>
+        <script>
+        $(function() {
+   $('input[name=checks]').on('change',function() {
+        var checked = this.checked;
+
+
+$(this).closest('tr').find(':checkbox').not(this).prop('disabled',checked);
+$(this).closest('tr').find('#dropd').not(this).prop("disabled", "disabled");
+
+    });
+      $('input[name=check1]').on('change',function() {
+        var checked = this.checked;
+
+
+$(this).closest('tr').find(':checkbox').not(this).prop('disabled',checked);
+
+
+    });
+});
+
+        </script>
+</head>
+<body >
+<form method="post" action="{%url 'registrationForm:review_application_details' form.id%}"  id="form" class="my-form-class">
+    {% csrf_token %}
+<div class="container">
+<h3 style="font-size: x-large;text-align: center;">Applicant Details</h3>
+<div id="stuDiv">
+<div>
+</br>
+<table class="table table-bordered table-hover">
+    <a href={% url 'registrationForm:applicantData'%}>View Complete Applicant Details</a>&nbsp|&nbsp
+    <a href={% url 'registrationForm:applicantView'%} TARGET="_blank">Download Application PDF</a>
+    </br>
+    </br>
+    <label>Application ID -</label><label>{{form.application_id}}</label>
+</br>
+
+        </br>
+        </br>
+        <tr>
+        <td class="bold">First name</td>
+        <td >{{form.first_name}}</td>
+        <td class="bold col-md-2" >Middle name</td>
+        <td>{{form.middle_name}}</td>
+            <td class="bold">Last name</td>
+            <td>{{form.last_name}}</td>
+            <td class="bold col-md-4">Date of birth</td>
+        <td>{{form.date_of_birth|date:'d-m-Y'}}</td>
+         <td class="bold">Gender</td>
+         <td>{{form.get_gender_display}}</td>
+        </tr>
+        <tr>
+         <td class="bold">Nationality</td>
+         <td>{{form.get_nationality_display}}</td>
+         <td class="bold col-md-4"> Applying for Programme</td>
+        <td class= "col-md-4">{{form.program.program_name}}</td>
+         <td class="bold col-md-3">Current Organization</td><td>{{form.current_organization}}</td>
+         <td class="bold col-md-5">Current Designation </td><td>{{form.current_designation}}</td>
+        </tr>
+        <tr>
+        <td class="bold col-md-2">Current Employment Status </td>
+<td>{{form.get_current_employment_status_display}}</td>
+        <td class="bold">Total Work Experience  </td>
+        <td class="current">{{form.total_work_experience_in_months}}</td>
+        <td class="bold">Current Work Location  </td>
+        <td id="work">{{form.work_location}}</td>
+        <td class="bold">Current Industry  </td>
+        <td id="industry"style="width: 99%;">{{form.current_org_industry}}
+
+        </tr>
+    </table>
+    <table class="table table-bordered table-hover">
+        <tr>
+            <td class="bold">Will be you be able to find a mentor in your current organization?  </td>
+            <td>{{form.employer_mentor_flag}}</td>
+            <td class="bold" style="padding-left: 0px;">Will your current employer give consent for attending the chosen programme?  </td>
+            <td>{{form.employer_consent_flag}}</td>
+
+        </tr>
+        <tr>
+            <td class="bold">Are you currently pursuing studies in any other university or college</td><td>{{form.get_parallel_studies_flag_display}}</td>
+            <td class="bold">Are you a past student of Bits Pilani</td>
+        <td>{{form.get_prior_student_flag_display}}</td>
+        </tr>
+
+    </table>
+    <div>
+            <label><a href="#" TARGET="_blank">View Applicant Mentor Details</a></lable>
+            <label><input type="checkbox" name="Mentor_review_and_approved" value="1"> Mentor Details Reviewed and Approved</label>
+        </div>
+<div class="divInfoBlock">&nbsp;Uploaded Documents</div>
+</br>
+<table class="table table-bordered table-hover" id="example"style="margin-left: 7px;width:98%">
+<thead>
+
+    <tr >
+        <th class="tableHeader">Document Name</th>
+        <th class="tableHeader">Link</th>
+        <th class="tableHeader">Reviewed and Verified?</th>
+        <th class="tableHeader">Rejected?</th>
+        <th class="tableHeader">Rejection Reason</th>
+        </tr>
+</thead>
+<tbody>
+
+      {% for x in uploadFiles %}
+      <tr>
+        <td>
+        {{x.document}}
+        </td>
+        <td>
+        <a href="{{x.file.url}}" TARGET="_blank">{{x}}</a>
+
+        </td>
+
+
+
+
+        <td><input type="checkbox" id="cbox1{{x.id}}" name="checks" value="{{x.id}}"></td>
+        <td><input type="checkbox" id="cbox2{{x.id}}" name="check1" value="{{x.id}}"></td>
+
+        <td><select name='document_rejection_dropdown' id="dropd">
+            <option selected="selected" >Select Reason</option>
+            <option value="Not Scanned Properly_{{x.id}}">Not Scanned Properly</option>
+            <option value="Not SIgned_{{x.id}}">Not SIgned</option>
+            <option value="Incorrect Document_{{x.id}}">Incorrect Document</option>
+            </select>
+
+        </td>
+      </tr>
+
+      {% endfor %}
+</tbody>
+</table>
+</div>
+
+<div>
+<table>
+<tr>
+<td>
+<label>Set Application Status
+    <select name='application_status_dropdown' id="application_status">
+        <option selected="selected" disabled>Select Application Status</option>
+        <option value="selected">Selected</option>
+        <option value="rejected">Rejected</option>
+        <option value="in review">In review</option>
+
+    </select>
+
+</label>
+</td>
+<td>
+<label>Rejection Reason
+    <select name='rejection_reson_dropdown' id="Rejection_reason">
+        <option selected="selected" disabled>Select Rejection Reason</option>
+        <option value="document are incorrect">Documents are incorrect</option>
+        <option value="rejected">Unsuitable Profile</option>
+
+    </select>
+
+
+</label>
+</td>
+<td>
+<label>Rejection Comments
+    <input type="textarea", cols="30", rows="5", name="Rejection_comments"value=""/>
+</label>
+</td>
+</tr>
+</table>
+</div>
+
+
+<div style="  text-align:center;">
+<input class="btn btn-sm btn-primary" type="submit" value="Update Application Status"
+id="validateForm">
+
+    </div>
+</form>
+</body>
+<div style="margin-left: 16px;
+">
+
+
+
+</div>
+
+    <p></p>
+    <div style="padding:0px">
+        <div style="padding:0px"></div>
+    <div class="footerWrapper" style="margin-top: 95px;">
+
+
+<div class="cpInfoFixWrapper">
+    <div class="cpInfoFix">
+        <p class="info">
+            Admissions Office, BITS, Pilani - 333 031 (Rajasthan) India.<br>
+            Tel: 01596-242205, 01596-515330 Fax: 01596-244183</p>
+
+    </div>
+
+
+
+</div> -->

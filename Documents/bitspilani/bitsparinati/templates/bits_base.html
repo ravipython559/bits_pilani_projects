@@ -1,0 +1,91 @@
+<!-- -->
+
+{% load static %}
+
+{% load widget_tweaks %}
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+  <title> {% block title %}BITS WILP{% endblock %} </title>
+
+  <link rel="stylesheet" type="text/css" href="{% static "assets/css/style.css"%}">
+  <link href="{% static "assets/css/bootstrap.min.css"%}" rel="stylesheet">
+  <link href="{% static "assets/css/ie10-viewport-bug-workaround.css"%}" rel="stylesheet">
+
+    <!--Custom styles for this template -->
+  <link href="{% static "assets/css/signin.css"%}" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="{% static "assets/css/style.css"%}">
+  <script src="{% static "assets/js/ie-emulation-modes-warning.js"%}"></script>
+  <script src="{% static "assets/js/jquerynew.min.js"%}"></script>
+  <script src="{% static "assets/js/bootstrap.min.js"%}"></script>
+
+  <script src="{% static "assets/js/jquery-1.9.1.min.js" %}"></script>
+  <script src="{% static "assets/js/jquery-1.11.1.min.js" %}"></script>
+  <script src="{% static "assets/js/jquery-ui.js" %}"></script>
+  <script src="{% static "assets/js/jquery.validate.min.js" %}"></script>
+  <script src="{% static "assets/js/additional-methods.min.js" %}"></script>
+  <link rel="stylesheet" type="text/css" href="{% static "assets/css/jquery.dataTables.min.css" %}">
+  <script src="{% static "assets/js/jquery.dataTables.min.js" %}"></script>
+<style type="text/css">
+.tH{
+  font-size: 12px;
+  font-family:Arial, Helvetica, sans-serif;
+}
+</style>
+
+  {% block staticContent %}
+
+  {% endblock %}
+</head>
+
+<div class="headerWrapper" style=" height: 167px;"> <!--Header Section starts here-->
+
+  <h1 class="hidden">BITS Pilani</h1>
+  <div class="logoWrapper" padding-top: 17px;>
+    <img src="{% static "assets/images/BIts_Logo-01.png" %}" id="headercontrol_imgu" alt="BITS Pilani logo" class="logoFunc" >
+
+    <h2 class="appCentre" ><i>Application Centre</i></h2>
+      <div id="tag"  >
+       {% block navigationLinks %}
+
+         <!-- Page Navigation Links -->
+
+       {% endblock %}
+     </div>
+
+  </div>
+</div> <!--Header Section ends here -->
+
+<body>
+
+  <div class="container"> <!-- class Container starts here-->
+    <h3 style="font-size: x-large;text-align: center;margin-top: 1%;">
+      {%block titleOfContent %} Enter title for your content {% endblock %}
+    </h3>
+    <br>
+    <br>
+        {% block container %}
+          ***Body content goes here...***
+
+        {% endblock %}
+
+  </div> <!-- class Container ends here-->
+
+
+ <div style="padding:0px">
+ <div style="padding:0px"></div>
+  <!-- Footer starts here -->
+  <div class="footerWrapper" style="margin-top: 15%;bottom:0;padding-top: 0px;width: 100%;">
+    <div class="cpInfoFixWrapper">
+        <div class="cpInfoFix">
+            <p class="info">
+                Admissions Office, BITS, Pilani - 333 031 (Rajasthan) India.<br>
+                Call us on: +91-80-48767777</p>
+        </div>
+    </div>
+  </div>  <!-- Footer ends here  -->
+
+</body>
+

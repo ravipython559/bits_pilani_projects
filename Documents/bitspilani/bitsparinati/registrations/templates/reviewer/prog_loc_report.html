@@ -1,0 +1,126 @@
+{% extends 'reviewer/bits_base_reviewer.html' %}
+
+{% load static %}
+{% load widget_tweaks %}
+{% load admission_filter %}
+{% load super_reviewer_filter %}
+{% load table_tags %}
+
+{% block title %} {{ title }} {% endblock %}
+
+
+{% block staticContent %}
+  <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css">
+  <script src="{% static 'bits-static/js/jquery.doubleScroll.js' %}"></script>
+
+  <script>
+  $(document).ready(function(){
+    $('.table-responsive').doubleScroll();
+    });
+  </script>
+  <style type="text/css">
+
+    .table td,
+    .table th
+      {
+          text-align:left;
+      }
+
+    .table td + td
+      {
+          text-align:right
+      }
+
+    td:last-child { 
+      font-weight: bold 
+    }
+
+    th:last-child {
+     font-weight: bold ;
+      font-size: 13px;
+    }
+
+    .table{
+      font-size: 12px;
+      font-family: Arial; 
+    }
+  </style>
+
+{% endblock %}
+
+{%block titleOfContent %} 
+    {{ title }} Program Report by Location
+{% endblock %}
+
+{% block container %}
+<div class="container">
+  <br>
+  <div class="table-responsive">
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          {% for x in table.headers %}
+            <th>{{ x|safe }}</th>
+          {% endfor %}
+        </tr>
+        
+      </thead>
+
+      <tbody>
+       
+          {% for block in table.blocks %}
+            <tr>
+              {% for x in block.header%}
+                <td><b>{{x}}</b></td>
+              {% endfor %}
+            </tr>
+            
+            {% for data in block.data %}
+              <tr>
+                {% for x in data %}
+                  <td>{{ x|safe }}</td>
+                {% endfor %}
+              </tr>
+            {% endfor %}
+
+          <tr>            
+              <td></td>            
+          </tr>
+
+          {% endfor %}
+
+          
+              <tr>
+                  {% for hd in table.status_total.header %}
+                    <td><b>{{hd}}</b></td>
+                  {% endfor %}
+
+              </tr>
+            
+
+          {% for data in table.status_total.data %}
+              <tr>
+                {% for x in data %}
+                  <td><b>{{ x|safe }}</b></td>
+                {% endfor %}
+              </tr>
+            {% endfor %}
+      </tbody>
+
+
+    </table>
+  </div>
+  <br>
+
+  <div class="text-center">
+    <form action="" method="get" id="form"> 
+    {% csrf_token %}
+      <input class="btn btn-sm btn-primary" name="report_xls" type="submit" 
+      value="Download Excel" id="xls" style="width:15%">
+    </form>
+  </div> 
+
+</div>
+<br>
+{% endblock %}

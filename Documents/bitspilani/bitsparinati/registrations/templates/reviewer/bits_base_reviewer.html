@@ -1,0 +1,14 @@
+{% extends 'bits_base_admin.html' %}
+{% load static %}
+{% load admission_filter %}
+
+{% block nav-links %}
+	{% comment %}
+    	condn. checks if user is payment reviewer(although name of the register is pr_check_in_admin)
+	{% endcomment %}
+	{% if user|pr_check_in_admin %}
+		{% include 'payment_reviewer/payment_reviewer_nav_bar.html' %}
+	{% else %}
+		{% include 'reviewer/reviewer_nav_bar.html' %}
+	{% endif %}
+{% endblock %}

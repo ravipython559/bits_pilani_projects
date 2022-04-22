@@ -1,0 +1,21 @@
+{% extends 'bits_BaseTemp.html' %}
+{% load static %}
+{% load admission_filter %}
+
+{% block title %}Eduvanz Acknowledgment{% endblock %}
+{%block titleOfContent %}
+Eduvanz Acknowledgment
+{% endblock %}
+
+{% block container %}
+	<center>
+		<br><br>
+		<h3> {{eduvanz.application.student_application_id}} Eduvanz EMI is under process .. <a href="{% url 'registrationForm:applicantData' %}">home page</a></h3>
+	</center>
+		<br></br>
+		<div class="container">
+			<h5>You Loan Application is now at <strong>{{eduvanz.get_status_code_display}}</strong> stage. Please visit the <a href="https://eduvanz.com/sign" target="_blank" >Eduvanz Site</a> to view the status of your loan OR submit documents and proofs as required by them. You loan status will also be shown on the admission fee payment page</h5>
+		</div>
+	</br>
+	
+{% endblock %}

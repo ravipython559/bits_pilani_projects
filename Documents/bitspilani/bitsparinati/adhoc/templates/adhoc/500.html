@@ -1,0 +1,23 @@
+{% extends 'adhoc/pay_adhoc_fee.html' %}
+{% load static %}
+
+{% block title %} Adhoc Payment Error {% endblock %}
+{%block titleOfContent %}Payment Error{% endblock %}
+
+{% block nav-links %}
+    <li><a href="{{redirect}}">Pay Fee</a></li>
+    {{block.super}}
+{% endblock %}
+
+{% block container %}
+<br><br>
+	<div class="container">
+	    <div class="row">
+	      <div class="col-md-offset-2 col-md-10">
+	          <b>Payment Error Message:</b>
+	          <span class="required">{{payment_error}}</span>			  
+	      </div>
+	    </div>
+	</div>
+
+{% endblock %}

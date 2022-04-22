@@ -1,0 +1,272 @@
+{% extends 'bits_base_admin.html' %}
+
+{% load static %}
+{% load widget_tweaks %}
+{% load admission_filter %}
+{% load super_reviewer_filter %}
+
+{% block title %}Offer Status Change Requests{% endblock %}
+
+{% block staticContent %}
+  <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css">
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
+
+<script>
+$(document).ready(function(){
+    $('#sr_table').DataTable();
+
+    var buttonpressed;
+
+$('#form').on('submit',function(e) {
+          e.preventDefault();
+          // buttonpressed= $(this).attr('id')
+          var btn = $(this).find("input[type=submit]:focus" );
+          buttonpressed = btn.attr("id");
+
+          if(buttonpressed == 'appB')
+            {
+              $("#pop1").html("Are you sure you want to Approve the escalations.");
+            }
+          else
+            {
+              $("#pop1").html("Are you sure you want to Reject the escalations.");
+            }
+                $("#pop1").dialog({
+                modal: true,
+                width: 500,
+                resizable:false,
+                buttons: {
+                  "YES": function(){
+                   // var c = checks();
+                   if(checks() == true)
+                   {
+
+                      $("form").unbind("submit");
+                      $('#'+ buttonpressed).click();
+                   }
+                   $(this).dialog("close");
+                   },
+                  "NO": function(){
+                    
+                   $(this).dialog("close");
+                   /*return false;*/
+                   },
+
+                 }});
+
+  });
+
+
+function checks(){
+            document.getElementById('popAcb').textContent = "";
+            var allow = false;
+            $('#extra_form').empty();
+
+           // Iterate over all inputs in the table
+           $('#sr_table').DataTable().$('input, select, textarea').each(function(index, value){
+
+            var f_id = value.name.split('-');
+
+                  var chk_id = f_id[0]+'-'+f_id[1]+'-su_rev_app';
+                  if(value.name == chk_id && value.checked && !(value.disabled)){
+                    allow = true;
+                    
+                  }
+              // If element doesn't exist in DOM
+              if(!$.contains(document, this)){
+                 // If it's not a checkbox 
+                 // or it's a checkbox and it's checked
+                 if(!$(this).is('input[type="checkbox"]') || this.checked){
+                  
+                  // Create a hidden element 
+                    $('#extra_form').append(
+                       $('<input>')
+                          .attr('type', 'hidden')
+                          .attr('name', this.name)
+                          .val(this.value)
+                    );
+                    
+                 }
+              }
+           });
+
+            if(! allow && buttonpressed == 'appB') {
+              
+              document.getElementById('popAcb').textContent ="You need to choose atleast one applicant for making the approval.";
+              return false;
+            }
+            else if(! allow && buttonpressed == 'rejB') {
+              
+              document.getElementById('popAcb').textContent ="You need to choose atleast one applicant for making the rejection.";
+              return false;
+            }
+            else 
+            { 
+
+              if ($("#id_super_comment").val() == '' && buttonpressed == 'appB')
+              { 
+                
+                document.getElementById('popAcb').textContent ="Please enter approval comments.";
+                return false;
+              }
+               else if ($("#id_super_comment").val() == '' && buttonpressed == 'rejB')
+              { 
+                
+                document.getElementById('popAcb').textContent ="Please enter rejection comments.";
+                return false;
+              }
+              else
+                
+                return true;
+
+            }
+}
+
+  });
+
+
+  function popD(x,y) {
+          $(y).html(x);
+          $(y).dialog({
+          modal: true,
+          width: 500,
+          resizable:false,
+          buttons: {
+            "OK": function(){
+             $(this).dialog("close");
+             },
+          }});
+
+    }
+
+</script>
+<style type="text/css">
+    textarea{
+      vertical-align: top;
+    }
+    #pop1{
+      font-weight:bold;
+      font-size:14px;
+    }
+    #popAcb{
+      font-weight:bold;
+      font-size:14px;
+      color:red;
+    }
+    #esc_comm{
+      cursor:pointer;
+    }
+    .note{
+      font-weight:bold;
+    }
+    .btn{
+      width:35%;
+    }
+    .dataTables_filter { display: none; } 
+  </style>
+{% endblock %}
+
+{% block nav-links %}
+  <li><a href={% url "super_reviewer:sr-home" %}>Home</a></li>
+  <li><a href={% url 'auth_logout'%}>Log out</a></li>
+{% endblock %}
+
+
+{%block titleOfContent %} 
+    Applicants Escalated for Review (Offer Status Change Requests)
+{% endblock %}
+
+{% block container %}
+<br>
+<div class="container">
+        <span id="pop1"></span>
+
+        <span id="popAcb"></span>
+
+          <br><br>
+    <form method="post" action="#" id="form" class=" my-form-class" >
+        {% csrf_token %}
+        {{ cs_formset.management_form }}
+    
+            <table class="table table-striped table-bordered" id="sr_table" >
+            <thead>
+              <tr>
+                <th>Application ID</th>
+                <th>Name</th>
+                <th>Applied On</th>
+                <th>Program Applied for</th>
+                <th>Escalation Comment</th>
+                <th>Select for Approval or Rejection</th>
+              </tr>
+            </thead>
+            <tbody>
+               {%for form in cs_formset.forms %}
+                <tr>
+                  <td>
+                    <a href="{% url 'super_reviewer:sr-review-application-details' form.app_id.value %}" target="_blank">
+                  
+                      {% show_application_status form.application_student_id.value %}
+                      </a>
+       
+        {{ form.application_student_id }}</td>
+             
+                  <td > {{ form.full_name.value }} {{ form.full_name }}
+                  {{ form.app_id }}
+                  </td>
+                  <td > 
+                  
+                  {% display_url form.created_on_datetime.value %}
+                  {{ form.created_on_datetime }}
+                  </td>
+                  <td> 
+                  {{ form.program_applied_for.value }}
+                  {{ form.program_applied_for }}
+
+                  </td>
+                  <td >
+                      <a id='esc_comm'
+                         onclick='popD("{{ form.es_com.value }}","#pop1")'>
+                        <u>Escalation Comment</u>
+                      </a>
+                            {{ form.es_com }}     
+                  </td>
+                  <td>
+                    {{ form.su_rev_app }}
+
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+            </table>
+        
+  <br>
+
+  <div class='note'>
+    <p><strong>NOTE</strong></p>
+    <p>1. Escalation Cases that are APPROVED will to back to in Review Stage for change in Selection Status</p>
+    <p>2. Escalation Cases that are REJECTED will see no Status Change 
+    </p>
+  </div>
+  <br>
+
+  <div>
+    {{super_comment}}
+ 
+  </div>
+
+  
+  <br><br><br><br>
+
+    <div class="row container text-center">
+    <input class="col-md-offset-1 col-md-4 btn btn-sm btn-primary" name="Approve" type="submit" value="Approve Escalations of Selected Candidates" id='appB'>
+    
+    <input class="col-md-offset-1 col-md-4 btn btn-sm btn-primary" name="Reject" type="submit" value="Reject Escalations of Selected Candidates" id='rejB'>
+    </div>
+    <br><br>
+    <div id="extra_form"></div>
+</form>
+</div>
+<br>
+{% endblock %}

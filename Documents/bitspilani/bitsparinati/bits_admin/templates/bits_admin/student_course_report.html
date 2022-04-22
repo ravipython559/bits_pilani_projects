@@ -1,0 +1,47 @@
+{% extends 'bits_base_admin.html' %}
+
+{% load static %}
+{% load widget_tweaks %}
+{% load admission_filter %}
+{% load super_reviewer_filter %}
+{% load table_tags %}
+
+{% block title %} {{ title }} {% endblock %}
+
+
+{% block staticContent %}
+  <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css">
+
+   <script>
+  $(document).ready(function(){
+    $('#form').submit(function(e){
+      $('#fee_waiver_search').val($('input[type=search]').val());
+    });
+
+  });
+  </script>
+{% endblock %}
+
+{%block titleOfContent %} 
+    {{ title }}
+{% endblock %}
+
+{% block container %}
+<div class="container">
+  <br>
+    {% render_table table %}
+  <br>
+
+<div class="text-center">
+  <form id='form' action="" method="get" > 
+  {% csrf_token %}
+    <input  type="hidden" name="fee_waiver_search" id='fee_waiver_search' >
+    <input class="btn btn-sm btn-primary" name="report_csv" type="submit" 
+    value="Download CSV" id="xls" style="width:15%"> 
+  </form> 
+</div>
+
+</div>
+<br>
+{% endblock %}

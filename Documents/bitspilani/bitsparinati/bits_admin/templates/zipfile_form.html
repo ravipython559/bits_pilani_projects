@@ -1,0 +1,21 @@
+{% extends 'bits_base_admin.html' %}
+{% load static %}
+{% load i18n %}
+{% load widget_tweaks %}
+{% load admission_filter %}
+
+{% block title %}Photo Download{% endblock %}
+
+{%block titleOfContent %} 
+  Download Photograph
+{% endblock %}
+
+{% block container %}
+<center>
+  <form action="{% url 'bits_admin:passport_photo' %}" method="post" style="font-size:13px;">
+    {% csrf_token %}
+    {{form}}
+    <input type="submit" value="Download Photograph"/>
+  </form>
+</center>
+{% endblock %}

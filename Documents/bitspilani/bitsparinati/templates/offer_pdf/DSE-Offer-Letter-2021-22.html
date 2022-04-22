@@ -1,0 +1,136 @@
+{% extends "easy_pdf/base.html" %}
+{% load static %}
+{% load i18n %}
+{% load widget_tweaks %}
+{% load admission_filter %}
+{% load humanize %}
+
+<head>
+<link href="{% static "assets/css/bootstrap.min.css" %}" rel="stylesheet">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head>
+
+
+{% block content %}
+<style>
+  table, th, td{
+    border: 1px solid black; 
+    border-collapse: collapse;
+    }
+  th{
+    text-align: left;
+    }
+  th, td{
+    padding: 2px;
+  }
+  .tableNB{
+    border: none;
+  }
+@page {
+  margin: 2cm;
+  @frame footer {
+    -pdf-frame-content: footerContent;
+    left: 450pt;
+    width: 512pt;
+    bottom: 20pt; 
+    height: 40pt;
+  }
+} 
+  </style>
+ <div style="padding-bottom:25px; text-align:right;">
+    <img 
+    src="{% static "assets/images/BIts_Logo-01.png" %}" 
+      alt="BITS Pilani logo" width=400>
+ </div>
+    <div style="clear:right;">
+    <h1 style="text-align:center;"><b><u>Admission Offer</u></b></h2> 
+    </div>
+    <p>
+       <b>Ref:</b> Adm/{{ cs.application.admit_batch }}/Admit/{{cs.application.student_application_id}}
+    </p>
+    <p>
+
+        Dear {{ cs.application.full_name }},<br>
+
+      </p>
+      <p>
+
+        Congratulations! We are pleased to inform you that based on your educational background, professional experience, work profile and performance in the Online Learning Readiness Evaluation (if applicable) you have been <strong>provisionally selected for admission to {{ program_name }}.
+
+      </strong>
+      </p>
+
+      <p>
+        To confirm your admission, you required to submit INR <strong>{{ cs.adm_fees|intcomma }}</strong>/- (towards one time Admission Fee of INR 16,500/-, and Semester Fee of INR {{ semFees|intcomma }}/- for Semester 1). You can make this payment through the 
+        <a href="https://wilpadmissions.bits-pilani.ac.in/accounts/login/">Online Application Centre</a> using PayTm/ Netbanking/ Credit Card/ Debit Card. You may also submit the fee using EMIs with 0% interest. <a href="https://bits-pilani-wilp.ac.in/emi-option-datascience.php">Click here</a> to learn more about the EMI option.
+      </p>
+
+      <p>
+        Note:  The Institute offers a choice between taking the examination Online or taking them at a designated examination center. When the examination schedule is announced during the programme, the student will be able to choose one of these options depending on his or her own preference and circumstances. The option of Online Exams will remain available throughout the duration of the programme. In case a student chooses to take a break in the programme, the options on the mode of examination available will be as prevailing at the time the student resumes the programme.
+      </p>
+
+      <p>
+      <a href="https://wilpadmissions.bits-pilani.ac.in/accounts/login/">Click here</a> to login to the Online Application Center now and submit the fee.<br> 
+      <strong>You must pay the fee by {{ cs.fee_payment_deadline_dt|date:'M j, Y'|default:'will be provided later' }}.</strong>
+      </p>
+
+      <p>
+       Please note that Classes for <strong>{{ program_name }}</strong> will begin on <strong>{{ cs.lecture_start_dt|date:'d M Y' }}</strong>. Lectures will be delivered by BITS Pilani faculty members mostly over weekends using live online classes. Lectures are conducted on Sat/Sun as per Indian Standard Time.
+      </p>
+
+      <p>
+        Within 3 days of receipt of the fees, you will receive your BITS Student ID Number, Student email ID, and login information to the BITS Pilani e-learning portal. You will also be sent important information related to timing of the Classes, and additional contact information.
+      </p>
+
+      <p>
+        Please note that in case you decide to discontinue from the programme after confirmation of admission and registration, you will forfeit the entire Admission Fee and Semester Fee of INR {{ cs.adm_fees|intcomma }}/-.
+      </p>
+
+      <p>
+        Work Integrated Learning Programmes offer a unique learning methodology that demands commitment to upholding the high academic standards of BITS Pilani, along with meeting the work-related demands of your employer organisation. You are expected to be employed for the entire duration of the programme.
+      </p>
+
+      <p>
+        After admission, in case you change your organisation and/ or mentor, you must inform Work Integrated Learning Programmes Division by submitting a new Employer Consent Form and/ or Mentor Consent Form on your profile page in e-Learn.
+      </p>
+
+      <p>
+        For the First Semester of <strong>{{ program_name }}</strong> programme, you will be enrolled in the following courses:
+      </p>
+
+      <!-- Change to be asked -->
+    {% if cs.application|get_course_list %}
+      <table align="center" style="text-align:center; border: 1px solid black; 
+        border-collapse: collapse;padding:2px" width="80%" >
+        <tr>
+          <th width="20%" style="text-align:center;">Course No.</th>
+          <th width="50%" style="text-align:center;">Course Title</th>
+          <th width="10%" style="text-align:center;">Units</th>
+        </tr>
+        <tbody>
+        {%for course in courseL%}
+        <tr>
+          <td> {{course.course_id}}</td>
+          <td> {{course.course_name}}</td>
+          <td> {{course.course_unit}}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    
+{% endif %} 
+
+    <p>
+      We once again congratulate you on being accepted to the programme. Should you have any queries, please write to us at <a href="mailto:admission@wilp.bits-pilani.ac.in">admission@wilp.bits-pilani.ac.in</a>, or call +91-80-48767777 (all days between 9am - 7pm).
+    </p>
+    <br>
+    <p><strong>Admission Cell</strong><br>
+    <strong>Work Integrated Learning Programmes</strong><br>
+    <strong>Birla Institute of Technology & Science, Pilani</strong></p>
+    <footer>
+    <div id="footerContent">
+      <img src="{% static "assets/images/companyBranding.gif"%}" width="200" height="80" >
+    </div>
+    </footer>
+
+{% endblock %}

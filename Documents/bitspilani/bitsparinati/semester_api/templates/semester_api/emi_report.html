@@ -1,0 +1,42 @@
+{% extends 'bits_base_admin.html' %}
+{% load static %}
+{% load table_tags %}
+{% load widget_tweaks %}
+
+{% block title %}
+  {{ block.super }} Semester Loan Applications Report
+{% endblock %}
+
+{%block titleOfContent %}
+  Semester EMI Loan Applications Report
+{% endblock %}
+
+{% block container %}
+  <br>
+  <div class="container-fluid">
+    <center>
+       <form method="post" action="{% url 'semester_api:sync_status' %}">
+            <input type="submit" 
+              class="btn btn-sm btn-primary" 
+              id="id-refresh-button" 
+              name="refresh-button" 
+              value="Sync Status"
+            >
+          </form>
+        {% render_table table %}
+          <form method="get" action="{% url 'semester_api:emi-report'%}">
+            <input type="hidden" name="hidden_search" id="id_hidden_search">
+            <input id="applicant_report" class="btn btn-sm btn-primary" 
+            type="submit" value="Export CSV" name="applicant_report" >   
+          </form>        	
+    </center>
+  </div>
+  <script>
+    $(document).ready(function() {
+
+      $( "input[type=search]" ).change(function() {
+        $('#id_hidden_search').val($( "input[type=search]" ).val());
+      });
+    });
+  </script>
+{% endblock %}

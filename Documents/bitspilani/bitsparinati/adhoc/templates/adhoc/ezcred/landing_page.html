@@ -1,0 +1,21 @@
+{% extends 'bits_BaseTemp.html' %}
+{% load static %}
+{% load admission_filter %}
+
+{% block title %}Ezcred Acknowledgment{% endblock %}
+{%block titleOfContent %}
+Ezcred Acknowledgment
+{% endblock %}
+
+{% block container %}
+	<center>
+		<br><br>
+		<h3> Loan Application for {{ezcred.application.student_application_id}} Ezcred EMI is under process ..</h3>
+	</center>
+		<br></br>
+		<div class="container">
+			<h5>Your Loan Application is now at <strong>{{ ezcred.status }}</strong> stage. Please visit the <a href="{{ezcred.lead_link}}" target="_blank" >Ezcred Site</a> to view the status of your loan OR submit documents and proofs as required by ABFL. Your loan status is also shown on the admission fee payment page</h5>
+		</div>
+	</br>
+	
+{% endblock %}

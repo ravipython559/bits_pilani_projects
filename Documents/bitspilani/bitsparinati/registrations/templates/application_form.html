@@ -1,0 +1,1859 @@
+{% load static %}
+
+{% load widget_tweaks %}
+{% load admission_filter %}
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<link rel="stylesheet" type="text/css" href="{% static "assets/css/style.css"%}">
+<link href="{% static "assets/css/bootstrap.min.css"%}" rel="stylesheet">
+<link href="{% static "assets/css/ie10-viewport-bug-workaround.css"%}" rel="stylesheet">
+
+
+    <!-- Custom styles for this template -->
+<link href="{% static "assets/css/signin.css"%}" rel="stylesheet">
+<script src="{% static "assets/js/ie-emulation-modes-warning.js"%}"></script>
+ <!--<script src="{% static "assets/js/bootstrap.min.js"%}"></script>-->
+  <script src="{% static "assets/js/jquerynew.min.js"%}"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+
+
+<div class="jumbotron">
+<header>
+
+<tr>
+
+<title>BITS WILP</title>
+<div class="headerWrapper" style=" height: 167px;">
+
+<h1 class="hidden">BITS Pilani</h1>
+<div class="logoWrapper" padding-top: 17px;>
+<img src="{% static "assets/images/BIts_Logo-01.png" %}" id="headercontrol_imgu" alt="BITS Pilani logo" class="logoFunc" >
+
+<h2 class="appCentre" ><i>Application Centre</i></h2>
+ <div id="tag"  >
+<a href={% url 'registrationForm:applicantData'%}>Home</a> |
+
+{% if user.email|is_CIOT_user %}
+  <a href="{% static "static_pdf/How_to_Apply_IoT.pdf" %}" target="_blank">How to Apply</a> |
+{% elif not user.email|is_specific_user %}
+  <a href={% static "static_pdf/How_to_Apply-NonSpecific.pdf" %} target="_blank">How to Apply</a> | 
+{% else %}
+  <a href={% static "How_to_Apply.pdf" %} target="_blank">How to Apply</a> |
+{% endif %}
+
+  
+
+<a href={% url 'auth_logout'%}> Log out</a>
+
+                 
+ 
+                
+            </div>
+
+</div>
+</div>
+
+</tr>
+
+
+
+ <!-- Static navbar -->
+
+
+  </header>
+
+</div>
+
+
+
+
+<style>
+.del1 , .del2
+{
+  color: black;
+}
+
+#id_a-0-program_display{
+  width: 50%;
+}
+
+
+.required {
+    color: #e32;
+    content: ' *';
+    display:inline;
+}
+        ul {
+    list-style-type: none;
+    margin: 1px;
+padding: 3px;
+}
+
+li {
+    display: inline;
+}
+td, th {
+padding: 7px;
+}
+div#stuDiv{
+    padding: 10px;
+}
+.add-row{
+
+    padding: 8px 21px;
+    border-radius: 6px;
+    color:black;
+
+   /* background-image: url("{% static "assets/images/ic_add.png" %}");*/
+    background-size:  38px 34px;
+    background-repeat: no-repeat;
+    position: relative;
+    left: 1%;
+}
+.delete-row{
+
+    padding: 8px 21px;
+    border-radius: 6px;
+    color:black;
+    
+    position: relative;
+    /*background-image: url("{% static "assets/images/ic_delete (1).png" %}");*/
+    background-size:  38px 34px;
+    background-repeat: no-repeat;
+
+}
+/*td select{
+    width: 57%;
+}*/
+
+#work select{
+     width: 99%;
+
+}
+#industry select{
+    width: 76%;
+}
+.phone select{
+    width: 24%;
+}
+
+.table>tbody>tr>td{
+
+    border-top: 0px solid #ddd;
+}
+.table-bordered>tbody>tr>td{
+border-top: 0px solid #ddd;
+}
+#fee select{
+    width: 77%;
+    }
+    /*#degree select{
+        width: 93%;
+    }*/
+.addrInput input{
+    width: 92%;
+}
+  
+/*
+Tool Tip
+*/
+.tooltip1 {
+     /*display:inline;*/
+     /*position:absolute;
+     border:1px solid #333;
+     background-color:#5383DC;
+     border-radius:5px;*/
+    /* padding:4px;*/
+     color:red;
+     font-size:12px Arial;
+         /*z-index: 999;*/
+}
+
+.tooltipdiv{
+    padding-top: 8px;
+    padding-right: 4px;
+    padding-left: 5px;
+    padding-bottom: 8px;
+    height: 30px;
+    z-index: 9999;
+}
+
+
+.bold{
+    font-weight: bold;
+}
+
+.alignTh{
+    font-weight: bold;
+    text-align: center;
+}
+
+@media only screen 
+and (max-width : 1662px) {
+/* Styles */
+
+background-color:red;
+font-size: 20px;
+width: 100%;
+}
+ .current input{
+  width: 52%;  
+ }
+ .city input{
+    width: 93%;
+ }
+ #tableedu tr:first-child td:last-child{
+ display: none;
+ } 
+ .formwidth1 input{
+width: 101%;
+
+ }
+  .formwidth2 input{
+width: 106%;
+ }
+.alignTh1{
+ width: 33%;
+ text-align: center;
+}
+.alignTh2{
+width: 27%;
+ text-align: center;
+}
+.alignThno{
+    
+    text-align: center;
+}
+
+.datepicker:read-only { 
+    background-color: yellow;
+}
+.alignTh8 input{
+  width: 51%
+
+  }
+  .col-md-2 {   
+width: 20.666667%;    
+}
+
+.incr{
+  width: 100%;
+}
+#id_a-0-country{
+  width: 200px;
+}
+</style>
+<script type="text/javascript">
+
+function popP(ippopup) {
+      $(ippopup).dialog({
+      width: 500,
+      resizable:false,
+      buttons: {
+        "OK": function(){
+         $(this).dialog("close");
+         },
+      }});
+    }
+
+function checkMobile(text) {
+
+   var obj = document.getElementById('id_a-0-mobile_1').value ;
+
+   var id=$("#id_a-0-mobile_0").val();
+   
+
+   document.getElementById('id_a-0-mobile_1').setCustomValidity('');
+    var testvar_1;
+    if(obj == ""){
+           
+          document.getElementById('id_a-0-mobile_1').setCustomValidity('Please Enter Number');
+          return false;
+    }  
+    else {
+          
+          $.ajax({
+                  type: "GET",
+                  url: "{% url 'registrationForm:student-ajax-mob'%}",
+
+                  data: {'a':id+"."+obj},
+                  cache: false,
+                  success: function(data){
+                            testvar_1=data;                   
+                            },
+                  async:false,
+                  failure: function(data) { 
+                      
+                      }
+                  });
+
+                  if(testvar_1['num']==1){
+                    
+
+                    document.getElementById('id_a-0-mobile_1').setCustomValidity('Invalid Mobile Number');
+                    return false;
+                  }
+                  document.getElementById('id_a-0-mobile_1').setCustomValidity('');
+                  return true;
+              }        
+}
+function checkPhone(text) {
+
+   var obj = document.getElementById('id_a-0-phone_1').value ;
+
+   var id=$("#id_a-0-phone_0").val();
+   
+
+   document.getElementById('id_a-0-phone_1').setCustomValidity('');
+    var testvar_1;
+    if(obj == ""){
+      
+       
+          document.getElementById('id_a-0-phone_1').setCustomValidity('Please Enter Number');
+          return false;
+    } 
+    else {
+         
+          $.ajax({
+                  type: "GET",
+                  url: "{% url 'registrationForm:student-ajax-mob'%}",
+
+                  data: {'a':id+"."+obj},
+                  cache: false,
+                  success: function(data){
+                            testvar_1=data;                   
+                            },
+                  async:false,
+                  failure: function(data) { 
+                     
+                      }
+                  });
+          
+                  if(testvar_1['num']==1){
+
+                    document.getElementById('id_a-0-phone_1').setCustomValidity('Invalid Phone Number');
+                    return false;
+                  }
+                  document.getElementById('id_a-0-phone_1').setCustomValidity('');
+                  return true;
+              }        
+}
+
+/*Email Validation starts*/
+function checkEmail(text) {
+
+   var obj = document.getElementById('id_a-0-email_id').value ;
+
+   document.getElementById('id_a-0-email_id').setCustomValidity('');
+    var testvar_1;
+    if(obj == ""){
+       
+          document.getElementById('id_a-0-email_id').setCustomValidity('Please Enter Email');
+          return false;
+    } 
+    else if(text.validity.patternMismatch){
+                       
+        document.getElementById('id_a-0-email_id').setCustomValidity('Please enter valid format');
+        return false;
+      } 
+    else {
+         
+          $.ajax({
+                  type: "GET",
+                  url: "{% url 'registrationForm:student-ajax-email-id' %}",
+
+                  data: {'a':obj},
+                  cache: false,
+                  success: function(data){
+                            testvar_1=data;                   
+                            },
+                  async:false,
+                  failure: function(data) { 
+                   
+                      }
+                  });
+                  if(testvar_1['num']==1){
+
+                    document.getElementById('id_a-0-email_id').setCustomValidity('Invalid Email ID');
+                    return false;
+                  }
+                  document.getElementById('id_a-0-email_id').setCustomValidity('');
+                  return true;              
+                }        
+}
+
+/*Email Validation ends*/
+
+
+
+
+        </script>
+</head>
+<body >
+<h2 style="text-align: center;color: rgb(12, 12, 112);">{{title}}</h2>
+<form method="post" action="{%url 'registrationForm:student-application' pg_code %}"  id="form" class="my-form-class">
+    {% csrf_token %}
+
+
+
+
+<!--     <div>
+        {{ studentFormset.as_p }}
+    </div>
+<div> -->
+
+
+
+<div id="stuDiv">
+{{ studentFormset.management_form }}
+<div>
+ {% for form in studentFormset.forms %}
+{% if form.errors%}
+
+<!-- <div class="alert alert-danger" style="    width: 214%;">
+
+ {{form.mobile.errors}}
+ {{form.phone.errors}}
+</div> -->
+ {% endif %}
+
+ {{ form.id }}
+</br>
+
+
+
+
+            <table class="table ">
+               
+                <div class="divInfoBlock">&nbsp;
+                  <span class="glyphicon glyphicon-star"></span> Personal Details </div>
+            </br>
+            <tr>
+    <td width="20%" class="bold">Full Name<br>(name as per your degree certificate)<p class="required"> *</p></td>
+    <td>{{form.full_name|add_class:"incr"|attr:'required:true'|attr:'oninvalid:Invalidname(this);'|attr:'oninput:Invalidname(this);'|attr:"pattern:^[a-zA-Z][a-zA-Z\s,-\.`']*$"}}
+    <span style="font-size:smaller; color:blue">NOTE : Allowed special characters are:
+    <span style="font-size:small;">( ",", "-", ".", " ` ", " ' " )</span></span>
+    </td>
+  </tr>
+        <tr>
+
+       <td class="bold">Date of birth<p class="required"> *</p></td>
+            <td class='DOB' >{{form.date_of_birth|attr:'autocomplete:off'| attr:'onkeydown:return false;'|attr:'required:true'|attr:'oninvalid:Invaliddate(this);'|attr:'onchange:Invaliddate(this);'}}
+          </td>
+ <td class="bold">Gender<p class="required"> *</p></td><td>{{form.gender|attr:'required:true'|attr:'oninvalid:setCustomValidity("Please Select Gender ")'|attr:'onchange:setCustomValidity("")'}}</td>
+ <td class="bold">Nationality<p class="required"> *</p></td><td>{{form.nationality|attr:'required:true'|attr:'oninvalid:setCustomValidity("Please Select Nationality ")'|attr:'onchange:setCustomValidity("")'}}</td>
+            </tr>
+
+            <tr>
+
+            <td class="bold">Father's Name<p class="required"> *</p></td><td>{{form.fathers_name|attr:'required:true'|attr:'oninvalid:Invalidname(this);'|attr:'oninput:Invalidname(this);'|attr:'maxlength:100'|attr:'pattern:^[A-Za-z]+( [A-Za-z]+)*$'}}</td>
+            <td class="bold">Mother's Name<p class="required"> *</p></td><td>{{form.mothers_name|attr:'required:true'|attr:'oninvalid:Invalidname(this);'|attr:'oninput:Invalidname(this);'|attr:'maxlength:100'|attr:'pattern:^[A-Za-z]+( [A-Za-z]+)*$'}}</td>
+        </tr>
+        <!-- <tr>
+            <td > Applying for Programme<p class="required"> *</p></td><td >{{form.program|attr:'required:true'}}</td>
+        </tr> -->
+
+
+            <table class="table ">
+                <tr>
+                    <td class="col-md-1 bold" > Applying for Programme <p class="required"> *</p></td><td class="col-md-2" id="appProgram" >{{ form.program }}{{form.program_display}}</td>
+                    <td class="col-md-1 bold" >Location <p class="required"> *</p> </td><td class="col-md-2" id="curentLocation">{{form.current_location|attr:'required:true'|attr:'oninvalid:setCustomValidity("Please Select Location ")'|attr:'onchange:setCustomValidity("")'}}</td>
+                </tr>
+
+            </table>
+
+            {% if form.teaching_mode.label %}
+
+            <table class="table ">
+                  <tr>
+                      <td class="bold">{{form.teaching_mode.label}}</td>
+                      <td>{{form.teaching_mode|attr:'required:true'|attr:'oninvalid:setCustomValidity("Please Select Teaching Mode ")'|attr:'onchange:setCustomValidity("")'}}</td>
+                       <td><b style="color: blue;">  &nbsp;&nbsp;{{form.teaching_mode.help_text}} </b></td>
+                      
+                  </tr>
+            </table>
+
+            {% endif %}
+
+
+            <table  class="table ">
+            <tr>
+                <td class="bold" nowrap>Address line 1<p class="required"> *</p> </td>
+             
+                <td class="addrInput">{{form.address_line_1|attr:'required:true'|attr:'oninvalid:Invalidadd(this);'|attr:'oninput:Invalidadd(this);'|attr:'maxlength:50'}}</td>
+                <td nowrap>Address line 2</td><td class="addrInput">{{form.address_line_2|attr:'maxlength:40'}}</td>
+                <td nowrap>Address line 3</td><td class="addrInput">{{form.address_line_3|attr:'maxlength:40'}}</td>
+            </tr>
+            <tr>
+<td class="bold">City<p class="required"> *</p> </td><td class="city">{{form.city|attr:'required:true'|attr:'oninvalid:Invalidcity(this);'|attr:'oninput:Invalidcity(this);'|attr:'pattern:^[A-Za-z]+( [A-Za-z]+)*$'}}</td>
+
+<td class="bold">Pin Code<p class="required"> *</p> </td>
+<td >{{form.pin_code|attr:'required:true'}}</td>
+
+ <td class="bold">State<p class="required"> *</p> </td><td>{{form.state|attr:'required:true'|attr:'oninvalid:setCustomValidity("Please Select State")'|attr:'onchange:setCustomValidity("")'}}</td>
+ <td class="bold">Country<p class="required"> *</p> </td>
+ <td>{{form.country|attr:'required:true'|attr:'oninvalid:setCustomValidity("Please Select Country")'|attr:'onchange:setCustomValidity("")'}}</td>
+            </tr>
+
+            <tr>
+          <td class="bold">Phone<p class="required"> *</p> </td><td class="col-md-3" id="phoneId">{{form.phone|attr:'required:true'|attr:'onblur:checkPhone(this);'|attr:'maxlength:15'}}</td>
+            <td class="bold">Mobile<p class="required"> *</p> </td><td class="col-md-3" id="mobileId">{{form.mobile|attr:'required:true'|attr:'onblur:checkMobile(this);'|attr:'maxlength:13'}}</td>
+
+
+
+  <td class="bold">Email ID<p class="required"> *</p> </td><td class="city">{{form.email_id|attr:'required:true'|attr:'pattern:[^@]+@[^@]+\.[a-zA-Z]{2,}'|attr:'oninput:Invalidemail(this);'|attr:'maxlength:50'}}</td>
+
+            </tr>
+
+             {% if form.alternate_email_id.label %}
+
+                  <tr>
+                      <td class="bold">{{form.alternate_email_id.label}}<p class="required"> *</p></td>
+                      <td colspan="5">{{form.alternate_email_id|attr:'required:true'|attr:'pattern:[^@]+@[^@]+\.[a-zA-Z]{2,}'|attr:'oninvalid:InvalidAltemail(this);'|attr:'oninput:InvalidAltemail(this);'|attr:'maxlength:50'}} <b style="color: blue;">  &nbsp;&nbsp;{{form.alternate_email_id.help_text}} </b></td>                 
+                  </tr>
+
+            {% endif %}
+            </table>
+
+
+                <table class="table ">
+                </br>
+               <div class="divInfoBlock">&nbsp;<span class="glyphicon glyphicon-arrow-right"></span> Current Employment Details
+
+
+    </div>
+</br>
+</br>
+                    <tr>
+                    <td  class="col-md-1 bold" style="width :1.1%;">Current Employment Status<p class="required"> *</p> </td><td class="col-md-1" style="padding-left: 35.2px;
+">{{form.current_employment_status|attr:'required:true'}} <b style="color: blue;">  &nbsp;&nbsp;NOTE : It is mandatory to have full-time employment to enroll for this programme.</b>
+</td>
+                    
+                    </tr>
+                  </table>
+<div id="mainTable"> 
+  <table>
+                    <tr>
+<td class="col-md-0 bold" >Current Organization<p class="required"> *</p> </td><td>
+{% with org=user.email|get_ELOA_org %} 
+  {%if user.email|get_payfee_waiver_permission %}
+    {% render_field form.current_organization readonly="true" value=org %}
+  {% else %}
+    {{form.current_organization|attr:'required:true'|attr:'oninvalid:InvalidcurrnetOra(this);'|attr:'oninput:InvalidcurrnetOra(this);'|attr:'maxlength:50'}}
+  {% endif %}
+{% endwith %}
+</td>
+                    </tr>
+                    <tr>
+                    <td >Current Employee Number </td><td class="current">
+
+        {% with org=user.email|get_ELOA_org_num %} 
+                      {%if user.email|get_payfee_waiver_permission %}
+                        {% render_field form.current_org_employee_number readonly="true" value=org %}
+                      {% else %}
+                        {{form.current_org_employee_number|attr:'maxlength:15'}}
+                      {% endif %}
+                    {% endwith %}
+                   </td>
+
+
+
+                        <td class="col-md-2 bold" style="padding-left: 7%;
+">Current Designation <p class="required"> *</p> </td><td>{{form.current_designation|attr:'required:true'|attr:'oninvalid:InvalidcurrnetDesign(this);'|attr:'oninput:InvalidcurrnetDesign(this);'|attr:'maxlength:30'}}</td></tr><tr>
+                        <td class=" col-md-2 bold" style="padding-left: 6px;">Current Work Location <p class="required"> *</p> </td><td id="work">{{form.work_location|attr:'required:true'|attr:'oninvalid:setCustomValidity("Please Select Current Work Location")'|attr:'onchange:setCustomValidity("")'}}</td>
+                        <td class="col-md-2 bold" style="padding-left: 7%;
+">Current Industry <p class="required"> *</p> </td><td id="industry"style="width: 99%;">{{form.current_org_industry|attr:'required:true'|attr:'oninvalid:setCustomValidity("Please Select Current Industry")'|attr:'onchange:setCustomValidity("")'}}</td></tr>
+
+
+            <tr>
+                <td class="bold">Date of Joining Current Organization <p class="required"> *</p> </td><td id='currentDate' class="current">
+
+               {{form.current_org_employment_date|attr:'autocomplete:off'| attr:'onkeydown:return false;'|attr:'required:true'|attr:'onblur:InvalidDOB(this);'|attr:'oninvalid:InvaliddateOrgan(this);'|attr:'onchange:InvaliddateOrgan(this);'}}</td>
+                <td id="fee" class="col-md-2 bold" style="padding-left: 7%;
+">Fee Payment Entity <p class="required"> *</p> </td><td>{{form.fee_payment_owner|attr:'required:true'|attr:'oninvalid:setCustomValidity("Please Select Fee Payment Entity")'|attr:'onchange:setCustomValidity("")'}}</td>
+            </tr>
+
+	    <tr>
+              <td colspan="6">
+                <b style="color: blue;">&nbsp;&nbsp;NOTE : Employment Start year is taken to be at least 10 years from your year of birth</b>
+              </td>
+            </tr>
+
+            <tr>
+                <td class="current">{{form.total_work_experience_in_months|attr:'type:hidden'}}</td>
+
+            </tr>
+            <tr>
+              <td>
+              </td>
+              <td>
+              <span style="color:red" id="cur_join_date"></span>
+              </td>
+            </tr>
+            </table>
+            </div>
+                
+                <td colspan="6">
+                    <table>
+                    <tr>
+ <td>{{form.employer_mentor_flag}}</td>
+
+<td class="bold">{{form.employer_mentor_flag.label}}
+    (<a style="font-weight:normal;color:#337ab7;cursor:pointer;" onclick="popP(document.getElementById('pop1'))">
+    <u>Who is a Mentor?</u></a>)
+    <span style="display:none; font-weight:bold; font-size:14px;" id="pop1">
+    A Mentor is a senior officer of the student-employee who has been nominated by his employing organization or is a person in a senior position willing to undertake and discharge the academic responsibilities on his own volition 
+    </span>
+</td>
+
+  <td>
+    <b style="color: blue; ">
+      <table>
+        <tr>
+          <td>&nbsp;&nbsp;NOTE: </td>
+          <td>{{form.employer_mentor_flag.help_text}}
+          </td>
+        </tr>
+      </table>
+    </b>
+  </td>
+
+</tr>
+<tr>
+ <td>{{form.employer_consent_flag}}</td>
+
+<td class="bold">{{form.employer_consent_flag.label}}
+    (<a style="font-weight: normal;color:#337ab7;cursor:pointer;" onclick="popP(document.getElementById('pop2'))"><u>What is Organization Consent?</u></a>)
+    <span style="display:none; font-weight:bold; font-size:14px;" id="pop2">
+      Your employing organization will give you its consent to travel for any BITS related examination.
+    </span> 
+</td>
+
+  <td>
+    <b style="color: blue;">
+    <table>
+      <tr>
+          <td>&nbsp;&nbsp;NOTE:</td>
+          <td> {{form.employer_consent_flag.help_text}}
+          </td>
+      </tr>
+    </table>
+    </b>
+  </td>
+
+                    </tr>
+                    </table>
+                </td>
+            </tr>
+
+            </table>
+
+            </tr>
+            </table>
+
+<div class="divInfoBlock">&nbsp;<span class="glyphicon glyphicon-star"></span> Prior Employment Details
+
+
+    </div>
+
+
+            <div>
+          
+            <div>
+
+             
+             <div >
+                 <div style="margin-left: 0px; ">
+                     <table class="table">
+                        <thead>
+                         <tr>
+                             <th class="alignTh1" > Organization </th>
+                             <th class="alignTh2" >Designation Held </th>        
+                             <th class="alignThno" style="width: 17%;">Start Date  </th>
+                             <th class="alignThno" style="width: 17%;">End Date  </th>
+                             <th></th>
+                       
+                         </tr></thead>
+
+            {% for x in exformset.forms %}
+            {{ x.id }}
+                         <tr class="link-formset">
+                            
+                             <td class="formwidth1" >
+                            
+                             {{x.organization|attr:'class:organization'|attr:'maxlength:50'}} </td> 
+                             <td class="formwidth2">{{x.designations|attr:'maxlength:100'}}</td>        
+                             <td class="1 alignTh alignTh8" style="width: 17%;text-align: center;">{{x.start_date|attr:'autocomplete:off'| attr:'onkeydown:return false;'|attr:'onblur:InvalidDOB(this);'}}</td>
+                             <td class="2 alignTh alignTh8" style="width: 17%;text-align: center;">{{x.end_date|attr:'autocomplete:off'| attr:'onkeydown:return false;'|attr:'onblur:InvalidDOB(this);'}}</td>
+                               <td ></td>
+
+                        </tr>
+                         {% endfor %}
+                     </table>
+
+		     <b style="color: blue;">&nbsp;&nbsp;NOTE : Prior employment dates should be EARLIER than your current organization joining date. Start date should be < End Date </b>
+
+                     {{ exformset.management_form }}
+                </div>
+            <b>{{form.total_work_experience_in_months.errors}}</b>
+           <span id="wrkerr" style="color:red"></span>
+	   <span id="doberr" style="color:red"></span>
+            </div>
+                   
+
+              </div>
+            </div>
+
+</br>
+                        <div class="divInfoBlock">&nbsp;
+<span class="glyphicon glyphicon-star"></span>
+                            Education Details
+
+
+    </div>
+
+</br>
+        <div>
+       
+        <div style="overflow-x: auto;">
+
+     
+         <div  >
+
+
+                    <table class="table " id="tableedu">
+
+<thead>
+   <tr>
+<th class="alignTh" style="width: 17px;">Qualification Level<p class="required"> *</p></th>
+      <th class="alignTh" style="width: 17px;">Qualification Name<p class="required"> *</p></th>
+      <th class="alignTh" style="width: 15px;">Board/University<p class="required"> *</p></th>
+      <th class="alignTh" style="width: 10px;">Duration<p class="required"> *</p></th>
+      <th class="alignTh" style="width: 28px;">Discipline<p class="required"> *</p></th>
+      <th class="alignTh" style="width: 4px;">Year of Passing<p class="required">*</p></th>
+      <th class="alignTh" style="width: 1px;">% Marks/CGPA<p class="required">*</p></th>
+      <th class="alignTh" style="width: 9px;">Division<p class="required"> *</p></th>  
+      <th class="alignTh" style="">&nbsp;</th>
+    </tr>
+
+</thead>
+<font size="5"> <strong> {{ educationFormset.non_form_errors }}</strong></font>
+ <font size="5"> <strong> {{ educationFormset.form_errors }}</strong></font>
+    {% for y in educationFormset.forms %}
+   {{ y.id }}
+     <tr class="link-formset2 " id="row">
+     <td id="qualCat">
+      {{y.qual_cat|attr:'required:true'|attr:'onchange:QualCategory(this);'}}
+     </td>
+      <td id="degree" style="width: 15px;" >
+  {{y.degree|attr:'required:true'|attr:'oninvalid:this.setCustomValidity("Please Select Qualification Name")'|attr:'onchange:OtherBox(this);'}}
+  <br>
+      <span class="o_box">
+        {{y.other_degree|attr:'maxlength:30'}}
+      </span>
+      </td>
+
+           <td style="width: 15px;">{{y.school_college|attr:'required:true'|attr:'oninvalid:Invalidschool(this);'|attr:'oninput:Invalidschool(this);'|attr:'maxlength:45'}}</td>
+     
+      <td style="width: 7px;">{{y.duration|attr:'required:true'|attr:'oninvalid:setCustomValidity("Please Select Duration")'|attr:'onchange:setCustomValidity("")'}}</td>
+     
+       <td style="width: 28px;" id="discipline">{{y.discipline|attr:'required:true'|attr:'oninvalid:this.setCustomValidity("Please Select Discipline")'|attr:'onchange:OtherBox(this);'|attr:'maxlength:99'}}
+        <br>
+       <span class="o_box">
+        {{y.other_discipline|attr:'maxlength:40'}}
+      </span>
+       </td> 
+        <td id="hi12" style="width: 4px;">{{y.completion_year|attr:'style:width:100%'|attr:'required:true'|attr:'pattern:[0-9]{4}'|attr:'oninvalid:InvalidMsg(this);'|attr:'oninput:InvalidMsg(this);'|attr:'maxlength:4'}}</td>
+         <td style="width: 5px;">{{y.percentage_marks_cgpa|attr:'style:width:100%'|attr:'required:true'|attr:'type:text'|attr:'pattern:((\d{1,2})((\.\d{1,2})?))$'|attr:'oninvalid:Invalidcgpa(this);'|attr:'oninput:Invalidcgpa(this);'|attr:'maxlength:13'}}</td>
+          
+            <td style="width: 7px;">{{y.division|attr:'required:true'|attr:'required:true'|attr:'oninvalid:setCustomValidity("Please Select Division")'|attr:'onchange:setCustomValidity("")'}}</td>
+            <td ></td>
+
+    </tr>
+
+    {% endfor %}
+                                 </table>
+                                  {{ educationFormset.management_form }}
+                    </div>
+            
+
+          </div>
+        </div>
+
+<table>
+    {% if form.programming_flag.label %}
+    <tr>
+        <td class="col-md-6 bold">{{form.programming_flag.label}}<p class="required"> *</p> </td>
+        <td>{{form.programming_flag|attr:'required:true'}}</td>
+    </tr>
+    {% endif %}
+</table>
+<table>
+    <tr>
+        <td class="bold">Level of Studies in Mathematics <p class="required"> *</p> </td>
+        <td>{{form.math_proficiency_level|attr:'required:true'|attr:'oninvalid:setCustomValidity("Please Select Level of Studies in Mathematics")'|attr:'onchange:setCustomValidity("")'}}</td>
+    </tr>
+    <tr>
+        <td class="bold">Are you a past student of BITS Pilani <p class="required"> *</p> </td>
+        <td>{{form.prior_student_flag|attr:'required:true'|attr:'oninvalid:setCustomValidity("Please Select Are you a past student of BITS Pilani")'|attr:'onchange:setCustomValidity("")'}}</td>
+        <td>BITS ID Number (if past student)  </td>
+         <td>{{form.bits_student_id|attr:'maxlength:15'}}</td>
+    </tr>
+</table>
+</br>
+</br>
+<table>
+    <tr>
+        <td class="bold">Are you currently pursuing studies in any other university or college<p class="required"> *</p> </td>
+        <td>{{form.parallel_studies_flag|attr:'required:true'}}</td>
+         <td><b style="color: blue;">  &nbsp;&nbsp;NOTE : You cannot enroll for the programme if you are pursuing another degree </b></td>
+        <td id="preferredLocation">{{form.exam_location}}</td>
+        
+  </tr>
+</table>
+
+<table>
+<tr>
+    <td>{{form.bonafide_flag|attr:'required:true'}}
+</td>
+<td class="bold">I Certify that the information provided by me in the  application form is correct to the best of my knowledge<p class="required"> *</p>
+</td>
+
+</tr></table>
+
+        <!--     <table>
+            <tr>
+            <td colspan="8"></td>
+            <table>
+                <tr>
+                <td>Level of Studies in Mathematics<p class="required"> *</p> </td>
+            <td>{{form.math_proficiency_level|attr:'required:true'}}</td>
+            <td>Are you a past student of BITS Pilan<p class="required"> *</p> i</td>
+            <td>{{form.prior_student_flag|attr:'required:true'}}</td>
+            <td>BITS ID Number (if past student) <p class="required"> *</p> </td>
+            <td>{{form.BITS_student_id|attr:'required:true'}}</td>
+
+            </tr>
+            </table>
+            </tr>
+            <tr>
+            <table border="1">
+            <tr>
+            <td>Are you currently pursuing studies in any other university or college <p class="required"> *</p> </td>
+            <td>{{form.parallel_studies_flag|attr:'required:true'}}</td>
+            <td><b style="color: blue;">  &nbsp;&nbsp;NOTE : You cannot enroll for the programme if you are pursuing another degree </b></td>
+            </tr>
+            <tr>
+            <td>Bonafide_flag <p class="required"> *</p> </td>
+            <td>{{form.bonafide_flag|attr:'required:true'}}</td>
+<td></td>
+            </tr>
+
+
+
+
+
+            </table>
+            </tr>
+
+
+            </table> -->
+
+        {% endfor %}
+  </div>
+</div>
+
+</div>
+
+
+
+<div style="margin-left: 16px;
+">
+
+
+<!-- <input type="checkbox" name="checkboxes[]" id='checkboxes' value="Students">&nbsp&nbsp I Certify that the information provided by me in the  application form is correct to the best of my knowledge</input> -->
+</div>
+<div style="  text-align:center;">
+<input class="btn btn-sm btn-primary" type="submit" value="Submit Application" id="validateradio" onclick="checkOrgDes();checkPinCode();
+InvalidCurrentEmpStatus(document.getElementById('id_a-0-current_employment_status'));
+  InvalidMentor(document.getElementById('id_a-0-employer_mentor_flag'));
+  InvalidOrgConsent(document.getElementById('id_a-0-employer_consent_flag'));
+  InvalidParallelFlag(document.getElementById('id_a-0-parallel_studies_flag'));">
+
+<input class="btn btn-sm btn-primary" type="button" value="Reset All Entries" id="reset-form">
+
+    </div>
+    <p></p>
+    <div style="padding:0px">
+        <div style="padding:0px"></div>
+    <div class="footerWrapper" style="margin-top: 95px;">
+
+
+<div class="cpInfoFixWrapper">
+    <div class="cpInfoFix">
+        <p class="info">
+            Admissions Office, BITS, Pilani - 333 031 (Rajasthan) India.<br>
+            For Assistance Call +91-80-48767777</p>
+
+    </div>
+
+</div>
+
+
+</div>
+
+</form>
+
+<script src="{% static 'assets/js/jquery-1.9.1.js' %}"></script>
+<link rel="stylesheet" href="{% static 'assets/css/jquery-ui.css' %}"></link>
+
+
+<script src="{% static 'assets/js/jquery.min.js' %}"></script>
+
+<script src="{% static 'assets/js/jquery.formset.js' %}"></script>
+<script src="{% static 'assets/js/jquery-ui.js' %}"></script>
+
+<script>
+
+function renewDatePickers(row) {
+    try {
+        var other_degree = row.find('input[id$="other_degree"]').attr('id');
+        var other_discipline = row.find('input[id$="other_discipline"]').attr('id');
+        $('#'+other_degree).attr("type","hidden");
+        $('#'+other_discipline).attr("type","hidden");
+    }
+    catch(err) {
+        console.log(err.message);
+    }
+    
+    var cur_org_date = $("#id_a-0-current_org_employment_date").val();
+    var d_o_b = $("#id_a-0-date_of_birth").val();
+    var sel = d_o_b.split('-')    
+    var yr = parseInt(sel[2])+10
+    dob_select = sel[0] + '-' + sel[1] + '-' + yr;
+
+    $('.datepicker').datepicker('destroy');
+    $('.DOB').children('input').datepicker({
+        dateFormat: 'dd-mm-yy',
+        changeMonth: true,
+        changeYear: true,
+        maxDate: '-1',
+        yearRange: "1900:nn",
+        showOn: "button",
+        buttonImage: "{% static "assets/images/img-calendar-lg.gif" %}",
+        buttonImageOnly: true,
+        buttonText: "Select date",
+        onSelect: function(selected) {
+        $("#currentDate").children('input').val('');
+        var sel = selected.split('-')    
+        var yr = parseInt(sel[2])+10
+        selected = sel[0] + '-' + sel[1] + '-' + yr;
+        $("#currentDate").children('input').datepicker("option","minDate",selected );
+        $(".1").children('input').val('');
+        $(".2").children('input').val('');
+        $(".1").children('input').datepicker("option","minDate", selected);
+        $(".2").children('input').datepicker("option","minDate", selected);
+      }
+            
+    });
+
+
+  $('#currentDate').children('input').datepicker({
+      dateFormat: 'dd-mm-yy',
+      changeMonth: true,
+      changeYear: true,
+      maxDate: '-1',
+      yearRange: "1900:nn",
+      showOn: "button",
+      buttonImage: "{% static "assets/images/img-calendar-lg.gif" %}",
+      buttonImageOnly: true,
+      buttonText: "Select date",
+      onSelect: function(selected) {
+        $(".1").children('input').val('');
+        $(".2").children('input').val('');
+        $(".1").children('input').datepicker("option","maxDate", selected);
+        $(".2").children('input').datepicker("option","maxDate", selected);
+
+      }
+            
+    });
+
+  $(".1").children('input').datepicker({
+                dateFormat: "dd-mm-yy",
+                numberOfMonths: 1,
+                changeMonth: true,
+                changeYear: true,
+                showOn: "button",
+                maxDate: '-1',
+                yearRange: "1900:nn",
+                buttonImage: "{% static "assets/images/img-calendar-lg.gif" %}",
+                buttonImageOnly: true,
+                buttonText: "Select date",
+                onSelect: function(selected) {
+                  var cur_org_date = $("#id_a-0-current_org_employment_date").val();
+                  var id = $(this).attr('id');
+                  var index = id.split('-');
+                  
+                  $("#id_expForm-"+index[1]+"-end_date").datepicker("option","minDate", selected);
+                  $("#id_expForm-"+index[1]+"-end_date").datepicker("option","maxDate", cur_org_date);                   
+                  $("#id_expForm-"+index[1]+"-end_date").val('');
+                }
+            });
+
+
+    $(".2").children('input').datepicker({
+            dateFormat: "dd-mm-yy",
+            numberOfMonths: 1,
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "1900:nn",
+            showOn: "button",
+            buttonImage: "{% static "assets/images/img-calendar-lg.gif" %}",
+            buttonImageOnly: true,
+            buttonText: "Select date",
+            onSelect: function(selected) {
+              var id = $(this).attr('id');
+              var index = id.split('-');
+              var start= $("#id_expForm-"+index[1]+"-start_date").val()
+              $("#id_expForm-"+index[1]+"-end_date").datepicker("option","minDate", start);
+          }            
+        }); 
+
+    $("#currentDate").children('input').datepicker("option","minDate",dob_select );
+    $(".1").children('input').datepicker("option","minDate", dob_select);
+    $(".2").children('input').datepicker("option","minDate", dob_select);
+
+    if (!cur_org_date || cur_org_date=='01-01-0001'){
+      $(".2").children('input').datepicker("option","maxDate", '-1');
+    }
+    else if(cur_org_date!='01-01-0001'){
+          $(".1").children('input').datepicker("option","maxDate", cur_org_date);
+          $(".2").children('input').datepicker("option","maxDate", cur_org_date);
+    }
+    
+
+$('#discipline select option[value=""]').text('Choose Discipline');
+$('#degree select option[value=""]').text('Choose');
+$('#qualCat select option[value=""]').text('Choose Qualification Level');
+
+
+}
+
+$(renewDatePickers);
+
+        $('.link-formset').formset({
+        addText: 'Add more Employment details',
+	deleteCssClass:'del1',
+        deleteText: 'Delete',
+        prefix: '{{ exformset.prefix }}',
+        formCssClass: 'dynamic-link-formset',
+        added: renewDatePickers,
+	removed: renewDatePickers,
+        
+    });
+
+    $('.link-formset2').formset({
+        addText: 'Add more Education details',
+	deleteCssClass:'del2',
+        deleteText: 'Delete',
+        prefix: '{{ educationFormset.prefix }}',
+        formCssClass: 'dynamic-link-formset2',
+        added: renewDatePickers
+    });
+ function Showtooltip(data)
+{
+               
+    var title = data;
+    $('<p class="tooltip"></p>')
+    .text(title)
+    .appendTo('body')
+    .fadeIn('slow');      
+}
+function Hidetooltip()
+{
+    $('.tooltip').remove();  
+}
+
+function tooltiptext(data)
+{
+    
+    var title = document.getElementById(data).value;
+   if(title!=""){
+    $('<p class="tooltip"></p>')
+    .text(title)
+    .appendTo('body')
+    .fadeIn('slow');}    
+}
+
+function tooltiptextforselect(data)
+{
+    var title = $("."+data+" option:selected").text();
+    
+   if(title!=""){
+    $('<p class="tooltip"></p>')
+    .text(title)
+    .appendTo('body')
+    .fadeIn('slow');}  
+
+       
+}
+
+
+$(document).ready(function () {
+
+    {% if  not is_pg_active %}
+      $('#validateradio').attr("disabled",true);
+    {%endif%}
+      
+      $("#form").on('submit',function(e) {
+  
+  if(calWorkExp() == false){
+          e.preventDefault();
+        }
+      });
+{% if not educationFormset.errors and not studentFormset.errors and not exformset.errors %}
+
+  alert("Please enable pop-up by going to your browser setting so that you can automatically download the PDF of the application after submission. Else you need to download the PDF from the application home page");
+{% endif %}
+    $("#phoneId select option[value='+91']").attr("selected", "selected");
+    $("#mobileId select option[value='+91']").attr("selected", "selected");
+
+
+
+
+$('#curentLocation select option[value=""]').text('Choose Preferred Exam Location');
+
+ $('#appProgram select option[value=""]').text('Choose Program');
+    
+    $('#work select option[value=""]').text('Choose Work Location');
+
+$('#industry select option[value=""]').text('Choose Industry');
+$('#discipline select option[value=""]').text('Choose Discipline');
+$('#degree select option[value=""]').text('Choose');
+
+$('#preferredLocation select option[value=""]').text('Choose Exam Location');
+$('#id_a-0-email_id').val("{{user.email}}");
+$("#id_a-0-current_location option[value='10']").remove();
+var textbox=$('#id_a-0-current_employment_status').val();
+
+
+
+});
+
+function QualCategory(selectBox)
+{
+  var str_id = selectBox.id;
+  var select_id =$( "#"+ str_id ).val();
+  
+  
+  var t = str_id.split('-');
+  var deg_id = '#'+t[0]+'-'+t[1]+'-'+'degree';
+  
+
+  $.ajax({
+    type: "GET",
+    url: "{% url 'registrationForm:qual-category-ajax'%}",
+    data: {'select_id':select_id},
+    cache: false,
+    success: function(data)
+    {
+      testvar_1=data;
+    },
+    async:false,
+    failure: function(data) {}
+  });
+    
+
+    var alpha = Object.keys( testvar_1 ).sort(
+    function( a, b ) {
+     return testvar_1[a].toLowerCase() > testvar_1[b].toLowerCase() ? 1 : -1;
+  });
+    
+
+  childSelect = $(deg_id).empty();
+  childSelect.append(new Option('Choose ',''));
+  for (var key in alpha){
+    var o = new Option(testvar_1[alpha[key]], alpha[key]);
+    $(o).html(testvar_1[alpha[key]]);
+    $(childSelect).append(o);
+ 
+  }
+}
+
+
+function OtherBox(selectBox){
+  var select_id =$( "#"+selectBox.id ).val();
+  var select_value =$( "#"+selectBox.id +" option:selected" ).text();
+  var sibling=$( "#"+selectBox.id ).siblings( "span" );
+  var select_input=$( "#"+selectBox.id ).siblings( "span" ).find( "input" );
+
+  if (select_value == "Others"){
+    select_input.attr("type","text");
+    select_input.attr("required","true");
+
+  }
+  else{
+    select_input.attr("type","hidden");
+    select_input.attr("required","false");
+  }
+selectBox.setCustomValidity("");
+}
+
+function InvalidMsg(textbox) {
+  if(textbox.value==""){
+   
+ 
+     textbox.setCustomValidity('Please Enter Year Of Passing');
+  }
+
+else{
+  var d_o_b = $("#id_a-0-date_of_birth").val();
+     if(textbox.validity.patternMismatch){
+      
+        textbox.setCustomValidity('Please enter 4 numeric value');
+    }
+    else if(textbox.value < d_o_b.split('-')[2]){
+      textbox.setCustomValidity('Year of Passing should be greater than year of birth');
+    }    
+    else {
+        textbox.setCustomValidity('');
+    }
+    return true;
+}
+}
+
+function InvalidPhone(textbox) {
+ if(textbox.value==""){
+   
+ 
+     textbox.setCustomValidity('Please Enter Number');
+  }
+  else{
+
+     if(textbox.validity.patternMismatch){
+      
+        textbox.setCustomValidity('Please enter 10 numeric value');
+    }    
+    else {
+        textbox.setCustomValidity('');
+    }
+    return true;
+}
+}
+
+function Invalidemail(textbox) {
+  if(textbox.value==""){
+   
+ 
+     textbox.setCustomValidity('Please Enter EmailId');
+  }
+else{
+     if(textbox.validity.patternMismatch){
+      
+        textbox.setCustomValidity('Please Enter Valid EmailId');
+    }    
+    else {
+        textbox.setCustomValidity('');
+    }
+    return true;
+}
+}
+
+function InvalidAltemail(textbox) {
+  if(textbox.value==""){
+   
+ 
+     textbox.setCustomValidity('Please Enter Alternate EmailId');
+  }
+else{
+     if(textbox.validity.patternMismatch){
+      
+        textbox.setCustomValidity('Please Enter Valid Alternate EmailId');
+    }
+    else if (textbox.value == $('#id_a-0-email_id').val()){
+        textbox.setCustomValidity('Entry for email ID and alternate email ID should be different');
+    }
+    else {
+        textbox.setCustomValidity('');
+    }
+    return true;
+}
+}
+
+/////
+
+function checkOrgDes() {
+
+    var counter = $('#id_expForm-TOTAL_FORMS').val();
+        for (var a=0; a<counter; a++){
+
+        var org = $("#id_expForm-"+a+"-organization").val();
+        var des = $("#id_expForm-"+a+"-designations").val();
+        var start= $("#id_expForm-"+a+"-start_date").val();
+        var end = $("#id_expForm-"+a+"-end_date").val();
+
+        if ((start && end && org && des) || (!start && !end && !org && !des)){
+          document.getElementById("id_expForm-"+a+"-organization").setCustomValidity('');
+          document.getElementById("id_expForm-"+a+"-designations").setCustomValidity('');
+          document.getElementById("id_expForm-"+a+"-start_date").setCustomValidity('');
+          document.getElementById("id_expForm-"+a+"-end_date").setCustomValidity('');
+        }
+        
+         else if( start || end || org || des ){
+          if (!org)
+          document.getElementById("id_expForm-"+a+"-organization").setCustomValidity('Please Enter Organization');
+          else
+          document.getElementById("id_expForm-"+a+"-organization").setCustomValidity('');
+
+        if (!des)
+           document.getElementById("id_expForm-"+a+"-designations").setCustomValidity('Please Enter Designation');
+         else
+          document.getElementById("id_expForm-"+a+"-designations").setCustomValidity('');
+        if (!start)
+          document.getElementById("id_expForm-"+a+"-start_date").setCustomValidity('Please Enter start date');
+          else
+          document.getElementById("id_expForm-"+a+"-start_date").setCustomValidity('');
+
+        if (!end)
+           document.getElementById("id_expForm-"+a+"-end_date").setCustomValidity('Please Enter end date');
+         else
+          document.getElementById("id_expForm-"+a+"-end_date").setCustomValidity('');
+          
+        }
+
+      }
+
+
+}
+//////
+
+
+function checkPinCode() {
+
+    var country = $("#id_a-0-country").val();
+    var pincode_length = $("#id_a-0-pin_code").val().length;
+    if (country == 'IN' && pincode_length !=6)
+    {
+      document.getElementById('id_a-0-pin_code').setCustomValidity('Not Valid Indian Pin Code');
+      return false;
+    }
+    document.getElementById('id_a-0-pin_code').setCustomValidity('');
+    return true;
+}
+
+/////
+
+function calWorkExp(){
+    $("#wrkerr").html("");
+    var pattern = /(\d{2})\-(\d{2})\-(\d{4})/;
+
+    var total_form = $('#id_expForm-TOTAL_FORMS').val();
+    var ol_flag = false;
+
+    var current_org_date = $('#id_a-0-current_org_employment_date').val();
+    var now = new Date();
+    var todayUTC = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    current_org_date = new Date(current_org_date.replace(pattern,'$3-$2-$1'));
+
+    var timeDiff = Math.abs(todayUTC.getTime() - current_org_date.getTime());
+
+    var total_days=Math.ceil(timeDiff / (1000 * 3600 * 24));
+
+    for(var i=0;i<total_form;i++)
+    {
+      
+      x = $('#id_expForm-'+i+'-end_date').val();
+      y = $('#id_expForm-'+i+'-start_date').val();
+      form_delete = $('#id_expForm-'+i+'-DELETE').val() == 'on';
+      
+      if ( ( x != '') && ( y != '') && (x != undefined ) && ( y != undefined ) && (!form_delete)  ) {
+
+      var ed = new Date($('#id_expForm-'+i+'-end_date').val().replace(pattern,'$3-$2-$1'));
+      
+      var sd = new Date($('#id_expForm-'+i+'-start_date').val().replace(pattern,'$3-$2-$1'));
+      var t = Math.round(ed.getTime() - sd.getTime());
+      var w_days =Math.ceil(t / (1000 * 3600 * 24))
+      if (w_days>15){
+      total_days += w_days;
+      }
+      else{
+        $("#wrkerr").html("Row "+(parseInt(i)+1)+ " has Work Experience less than 15 days.");
+        return false;
+      }
+      for(var j=0;j<total_form;j++){
+        if ((j==i) || ($('#id_expForm-'+j+'-DELETE').val() == 'on')) continue;
+        var st_elem = $('#id_expForm-'+i+'-start_date');
+        var ed_elem = $('#id_expForm-'+i+'-end_date');
+        var st_date = new Date($('#id_expForm-'+j+'-start_date').val().replace(pattern,'$3-$2-$1'));
+        var ed_date = new Date($('#id_expForm-'+j+'-end_date').val().replace(pattern,'$3-$2-$1'));
+
+        if ( sd >= st_date && sd <= ed_date ) {
+            ol_flag = true;
+            $("#wrkerr").html("Row "+(parseInt(i)+1)+ " dates are overlapping with Row "+(parseInt(j)+1)+" dates.");
+            st_elem[0].setCustomValidity('Dates are Overlapping');
+            ed_elem[0].setCustomValidity('Dates are Overlapping');
+            break;
+        }
+        else{
+            st_elem[0].setCustomValidity('');
+            ed_elem[0].setCustomValidity('');
+        }
+      }
+
+      if (ol_flag) return false;
+
+    }
+
+    }
+  if(isNaN(total_days)){
+          total_days=0;
+       }
+    
+    $('#id_a-0-total_work_experience_in_months').val(total_days);
+
+}
+
+
+function InvalidMentor(textbox) {        
+         var obj = textbox.checked ;
+         textbox.setCustomValidity('');
+         var testvar_1;
+
+          $.ajax({
+                  type: "GET",
+                  url: "{% url 'registrationForm:student-ajax-mentor' pg_code %}",
+
+                  data: {'a':obj},
+                  cache: false,
+                  success: function(data){
+                            testvar_1=data;                   
+                            },
+                  async:false,
+                  failure: function(data) { 
+                      
+                      }
+                  });
+          
+                  if(testvar_1['num']==1){
+                    
+
+                    textbox.setCustomValidity('Mentor is mandatory for qualifying for this program');
+                    return false;
+                  }
+                  textbox.setCustomValidity('');
+                  return true;
+    
+}
+
+
+function InvalidOrgConsent(textbox) {         
+         
+         
+         textbox.setCustomValidity('');
+         if (textbox.checked == false)
+         {
+                    textbox.setCustomValidity('Consent from your current organization is required for this program');
+                    return false;
+                  }
+                  
+                  textbox.setCustomValidity('');
+                  return true;
+    
+}
+
+
+function InvalidParallelFlag(textbox) {
+   if(textbox.value==""){
+   
+ 
+     textbox.setCustomValidity('Please Select');
+     return false;
+  }
+  
+else if(textbox.value=="1"){
+ 
+     textbox.setCustomValidity('You cannot be enrolled in another program while attending this program');
+     return false;
+  }
+  else
+    {
+        textbox.setCustomValidity("");
+    }
+    return true;
+
+}
+
+
+function InvalidCurrentEmpStatus(textbox) {         
+         
+         
+         
+         if(textbox.value=="")
+           {
+
+             textbox.setCustomValidity('Please Enter Current Employee Status');
+             return false;
+           }
+         else if (textbox.value == 2)
+          {
+              textbox.setCustomValidity('You have to be employed to qualify for attending this program');
+              return false;
+          }
+                  
+         else
+          {
+              textbox.setCustomValidity("");
+          }
+                  return true;
+    
+}
+
+function Invalidname(textbox){
+    if(textbox.value==""){
+      textbox.setCustomValidity('Please Enter Name');
+    }
+
+    else{
+    if(textbox.value.match(/^[0-9]+$/)){
+      textbox.setCustomValidity('Please enter the name without digits');
+    }
+
+    else if(textbox.validity.patternMismatch){
+      textbox.setCustomValidity('Please enter the name without special characters');
+    }    
+    else{
+      textbox.setCustomValidity('');
+    }
+    return true;
+  }
+}
+
+
+function InvalidWorkExp(textbox) {
+                 
+  if(textbox.value==""){
+   
+ 
+     textbox.setCustomValidity('Please Enter Total Work Experience In Months');
+  }
+
+else{
+     if(textbox.validity.patternMismatch){
+      
+        textbox.setCustomValidity('Please enter  numeric value');
+    }    
+    else {
+        textbox.setCustomValidity('');
+    }
+    return true;
+}
+}
+
+function Invalidcgpa(textbox) {
+  if(textbox.value==""){
+   
+ 
+     textbox.setCustomValidity('Please Enter CGPA');
+  }
+  else{
+
+     if(textbox.validity.patternMismatch){
+     
+        textbox.setCustomValidity('Please Enter Proper CGPA');
+    }    
+    else {
+        textbox.setCustomValidity("");
+    }
+    return true;
+}
+}
+function Invalidcity(textbox) {
+
+ if(textbox.value==""){
+   
+ 
+     textbox.setCustomValidity('Please Enter city');
+  }
+  else{
+
+     if(textbox.validity.patternMismatch){
+      
+        textbox.setCustomValidity('Please Enter city');
+    }    
+    else {
+        textbox.setCustomValidity('');
+    }
+    return true;
+  }
+}
+
+function InvalidcurrnetOra(textbox){
+  if(textbox.value==""){
+   
+ 
+     textbox.setCustomValidity('Please Enter Current Organization');
+  }
+else{
+  var ab=textbox.value.trim().length
+
+  if(textbox.value.trim().length==0){
+      textbox.setCustomValidity('Please Enter Current Organization');
+  }
+  else{
+    textbox.setCustomValidity('');
+  }
+
+}
+}
+
+function Invalidbitsno(textbox){
+if(textbox.value==""){
+   
+ 
+     textbox.setCustomValidity('Please Enter BITS ID Number');
+  }
+else{
+  var ab=textbox.value.trim().length
+
+  if(textbox.value.trim().length==0){
+      textbox.setCustomValidity('Please Enter BITS ID Number');
+  }
+  else{
+    textbox.setCustomValidity('');
+  }
+
+}
+}
+function Invalidschool(textbox)
+{
+  if(textbox.value==""){
+   
+ 
+     textbox.setCustomValidity('Please Enter Board/University');
+  }
+else{
+  var ab=textbox.value.trim().length
+
+  if(textbox.value.trim().length==0){
+      textbox.setCustomValidity('Please Enter Board/University');
+  }
+  else{
+    textbox.setCustomValidity('');
+  }
+
+}
+}
+
+function InvalidcurrnetDesign(textbox){
+  if(textbox.value==""){
+   
+ 
+     textbox.setCustomValidity('Please Enter Current Designation');
+  }
+else{
+  var ab=textbox.value.trim().length
+
+  if(textbox.value.trim().length==0){
+      textbox.setCustomValidity('Please Enter Current Designation');
+  }
+  else{
+    textbox.setCustomValidity('');
+  }
+
+}
+}
+
+function InvalidcurrnetNo(textbox){
+  if(textbox.value==""){
+   
+ 
+     textbox.setCustomValidity('Please Enter Current Employee Number');
+  }
+else{
+  var ab=textbox.value.trim().length
+
+  if(textbox.value.trim().length==0){
+      textbox.setCustomValidity('Please Enter Current Employee Number');
+  }
+  else{
+    textbox.setCustomValidity('');
+  }
+
+}
+}
+function Invalidadd(textbox) {
+
+  if(textbox.value==""){
+   
+ 
+     textbox.setCustomValidity('Please Enter Address line 1');
+  }
+else{
+  var ab=textbox.value.trim().length
+
+  if(textbox.value.trim().length==0){
+      textbox.setCustomValidity('Please Enter Address line 1');
+  }
+  else{
+    textbox.setCustomValidity('');
+  }
+
+}
+}
+
+
+
+
+function Invaliddate(textbox){
+if(textbox.value==""){
+
+    textbox.setCustomValidity('Please Enter Date Of Birth');
+  }
+  else{
+
+   textbox.setCustomValidity('');
+  }
+
+ 
+}
+function InvaliddateOrgan(textbox){
+if(textbox.value==""){
+
+    textbox.setCustomValidity('Please Enter Date Of Joining Current Organization');
+  }
+  else{
+
+   textbox.setCustomValidity('');
+
+  }
+
+ 
+}
+
+
+function InvalidDOB(textbox){ 
+   if (textbox.id == "id_a-0-current_org_employment_date"){
+      $("#cur_join_date").html("");
+   }
+   else{
+      $("#doberr").html("");
+   }
+
+  var d_o_b = $('#id_a-0-date_of_birth').val()
+      if ( d_o_b == "" ){
+        
+            if (textbox.id == "id_a-0-current_org_employment_date"){
+                $("#cur_join_date").html("Please Enter Date Of Birth");
+             }
+             else{
+                $("#doberr").html("Please Enter Date Of Birth");
+             }
+           
+      }
+      else{
+              var sel = d_o_b.split('-')
+              var dob_select = (parseInt(sel[2])+10).toString() +  (sel[1].replace(0,'')).toString() + (sel[0].replace(0,'')).toString()
+
+              var date = new Date();    
+              var cur_date = date.getFullYear().toString() + (date.getMonth()+1).toString() + date.getDate().toString()
+
+              if (cur_date <= dob_select)
+                {
+                     if (textbox.id == "id_a-0-current_org_employment_date"){
+                      $("#cur_join_date").html("Minimum age should be 10 years.");
+                     }
+                     else{
+                    $("#doberr").html("Minimum age should be 10 years.");
+                     }
+
+                }
+              else
+                {
+                  if (textbox.id == "id_a-0-current_org_employment_date"){
+                    $("#cur_join_date").html("");
+                   }
+                   else{
+                  $("#doberr").html("");
+                   }
+                }
+       
+     
+      }
+
+}
+
+$( "#reset-form" ).click(function() {
+
+    location.reload();
+});
+
+
+
+
+
+$( "#validateradio" ).click(function() {
+   var abc=$('#id_a-0-date_of_birth').val();
+  $('#id_a-0-country').attr("disabled", false);    
+});
+$("#id_a-0-current_employment_status").change(function(){
+var textbox=$('#id_a-0-current_employment_status').val();
+
+if(textbox== "2"){
+  {% if not user.email|get_payfee_waiver_permission %}
+    $('#id_a-0-current_organization').val("NA");
+  {% endif %}
+  $('#id_a-0-current_designation').val("NA");
+  $('#id_a-0-work_location').val('10');
+  $('#id_a-0-current_org_industry').val('31');
+  $('#id_a-0-fee_payment_owner').val('4');
+  $('#id_a-0-total_work_experience_in_months').val("0");
+  $('#id_a-0-current_org_employment_date').val("01-01-0001");
+  document.getElementById('id_a-0-current_employment_status').setCustomValidity('');
+  document.getElementById('id_a-0-current_organization').setCustomValidity('');
+  document.getElementById('id_a-0-current_designation').setCustomValidity('');
+  document.getElementById('id_a-0-current_org_employment_date').setCustomValidity('');
+  document.getElementById('id_a-0-total_work_experience_in_months').setCustomValidity('');
+  document.getElementById('id_a-0-work_location').setCustomValidity('');
+  document.getElementById('id_a-0-current_org_industry').setCustomValidity('');
+  document.getElementById('id_a-0-fee_payment_owner').setCustomValidity('');
+  renewDatePickers(); 
+       
+
+               
+}
+else{
+  {% if not user.email|get_payfee_waiver_permission %}
+    $('#id_a-0-current_organization').val("");
+  {% endif %}
+  $('#id_a-0-current_designation').val("");
+  $('#id_a-0-work_location').val('');
+  $('#id_a-0-current_org_industry').val('');
+  $('#id_a-0-fee_payment_owner').val('');
+  $('#id_a-0-total_work_experience_in_months').val("");
+  $('#id_a-0-current_org_employment_date').val("");
+  renewDatePickers(); 
+}
+
+    
+});
+$("#id_a-0-state").change(function(){
+var state=$('#id_a-0-state').val();
+if(state=="30")
+{
+
+ $('#id_a-0-country').val('');
+ 
+}
+
+else{
+ 
+  $('#id_a-0-country').val('IN');
+  document.getElementById('id_a-0-country').setCustomValidity('');
+  
+}
+});
+
+
+
+</script>

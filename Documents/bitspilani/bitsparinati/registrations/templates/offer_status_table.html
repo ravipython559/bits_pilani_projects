@@ -1,0 +1,16 @@
+{% load static %}
+{% load admission_filter %}
+{% load super_reviewer_filter %}
+
+<td>
+	<a href ="{% url 'registrationForm:review_application_details' id %}" 
+	target='_blank'>
+		{% show_application_status app_stud_id %}
+	</a>
+</td>
+<!-- <td>{{admit_batch}}</td> -->
+<td>{{ fullname }}</td>
+<td>{{ c_o_d|date:'Y-m-d' }}</td>
+<td>{{ program_name }}</td>
+<td>{% application_fees_paid app_status %}</td>
+
